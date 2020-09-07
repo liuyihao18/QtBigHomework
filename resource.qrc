@@ -1,0 +1,61 @@
+<RCC>
+    <qresource prefix="/splash">
+        <file>splash/fuko.jpg</file>
+        <file>splash/opacity.png</file>
+        <file>splash/splash.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>icon/exit.png</file>
+        <file>icon/maximize.png</file>
+        <file>icon/minimize.png</file>
+        <file>icon/edit.png</file>
+        <file>icon/open.png</file>
+        <file>icon/save.png</file>
+        <file>icon/screeshot.png</file>
+        <file>icon/option.png</file>
+        <file>icon/fullscreen.png</file>
+        <file>icon/saveAs.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>qss/main.qss</file>
+    </qresource>
+    <qresource prefix="/images/background">
+        <file>images/background/Kiminona.jpg</file>
+        <file>images/background/SAO.jpg</file>
+        <file>images/background/background.png</file>
+    </qresource>
+    <qresource prefix="/images/player">
+        <file>images/player/plane.png</file>
+        <file>images/player/mario.png</file>
+    </qresource>
+    <qresource prefix="/images/monster">
+        <file>images/monster/monster.png</file>
+        <file>images/monster/monster1.jpg</file>
+        <file>images/monster/monster2.jpg</file>
+        <file>images/monster/monster3.jpg</file>
+    </qresource>
+    <qresource prefix="/images/terrain/ground">
+        <file>images/terrain/ground/floor_grass.jpg</file>
+        <file>images/terrain/ground/rock.jpg</file>
+    </qresource>
+    <qresource prefix="/images/terrain">
+        <file>images/terrain/flyingBrick.jpg</file>
+        <file>images/terrain/spring.jpg</file>
+        <file>images/terrain/destuctibleBrick.png</file>
+    </qresource>
+    <qresource prefix="/images/trap">
+        <file>images/trap/activeTrap.jpg</file>
+        <file>images/trap/passiveTrap.jpg</file>
+        <file>images/trap/arrowTrap.jpg</file>
+    </qresource>
+    <qresource prefix="/images/buff">
+        <file>images/buff/flowerBuff.png</file>
+        <file>images/buff/mushroomBuff.png</file>
+    </qresource>
+    <qresource prefix="/images/gold">
+        <file>images/gold/gold.png</file>
+    </qresource>
+    <qresource prefix="/images/goal">
+        <file>images/goal/goal.jpg</file>
+    </qresource>
+</RCC>

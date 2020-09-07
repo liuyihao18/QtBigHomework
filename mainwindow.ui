@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1920</width>
+    <height>1080</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="Scene" name="scene" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="stateLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright &lt;span style=&quot; font-family:'Arial';&quot;&gt;&amp;copy;&lt;/span&gt;2020 刘怡豪&amp;amp;刘怡馨&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1920</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="action">
+   <property name="windowTitle">
+    <string>Buttons</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actOpen"/>
+   <addaction name="actSave"/>
+   <addaction name="actSaveAs"/>
+   <addaction name="actEdit"/>
+   <addaction name="actOption"/>
+   <addaction name="actScreenShot"/>
+   <addaction name="actMinimize"/>
+   <addaction name="actExit"/>
+  </widget>
+  <widget class="QToolBar" name="sceneWidgets">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>SceneWidgets</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="srcPlayer"/>
+   <addaction name="srcRock"/>
+   <addaction name="srcFloorGrass"/>
+   <addaction name="srcSpring"/>
+   <addaction name="srcFlyingBrick"/>
+   <addaction name="srcDestructibleBrick"/>
+   <addaction name="srcActiveTrap"/>
+   <addaction name="srcPassiveTrap"/>
+   <addaction name="srcArrowTrap"/>
+   <addaction name="srcFirstMonster"/>
+   <addaction name="srcSecondMonster"/>
+   <addaction name="srcThirdMonster"/>
+   <addaction name="srcMushroomBuff"/>
+   <addaction name="srcFlowerBuff"/>
+   <addaction name="srcGold"/>
+   <addaction name="srcGoal"/>
+  </widget>
+  <action name="actExit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/exit.png</normaloff>:/icons/icon/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>退出</string>
+   </property>
+   <property name="toolTip">
+    <string>退出程序</string>
+   </property>
+  </action>
+  <action name="actMaximize">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/maximize.png</normaloff>:/icons/icon/maximize.png</iconset>
+   </property>
+   <property name="text">
+    <string>最大化</string>
+   </property>
+   <property name="toolTip">
+    <string>最大化窗口</string>
+   </property>
+  </action>
+  <action name="actMinimize">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/minimize.png</normaloff>:/icons/icon/minimize.png</iconset>
+   </property>
+   <property name="text">
+    <string>最小化</string>
+   </property>
+   <property name="toolTip">
+    <string>最小化窗口</string>
+   </property>
+  </action>
+  <action name="actEdit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/edit.png</normaloff>:/icons/icon/edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>地图编辑</string>
+   </property>
+   <property name="toolTip">
+    <string>编辑地图</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actOpen">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/open.png</normaloff>:/icons/icon/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开</string>
+   </property>
+   <property name="toolTip">
+    <string>打开地图</string>
+   </property>
+  </action>
+  <action name="actSave">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/save.png</normaloff>:/icons/icon/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+   <property name="toolTip">
+    <string>保存地图</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actScreenShot">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/screeshot.png</normaloff>:/icons/icon/screeshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>屏幕快照</string>
+   </property>
+   <property name="toolTip">
+    <string>截图保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actOption">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/option.png</normaloff>:/icons/icon/option.png</iconset>
+   </property>
+   <property name="text">
+    <string>选项</string>
+   </property>
+   <property name="toolTip">
+    <string>设置</string>
+   </property>
+  </action>
+  <action name="actFullScreen">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/fullscreen.png</normaloff>:/icons/icon/fullscreen.png</iconset>
+   </property>
+   <property name="text">
+    <string>全屏</string>
+   </property>
+   <property name="toolTip">
+    <string>全屏显示</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actSaveAs">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/saveAs.png</normaloff>:/icons/icon/saveAs.png</iconset>
+   </property>
+   <property name="text">
+    <string>另存为</string>
+   </property>
+   <property name="toolTip">
+    <string>另存地图</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="srcPlayer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/player/images/player/mario.png</normaloff>:/images/player/images/player/mario.png</iconset>
+   </property>
+   <property name="text">
+    <string>Player</string>
+   </property>
+   <property name="toolTip">
+    <string>放置人物</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="srcRock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/terrain/ground/images/terrain/ground/rock.jpg</normaloff>:/images/terrain/ground/images/terrain/ground/rock.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Rock</string>
+   </property>
+   <property name="toolTip">
+    <string>放置岩石</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="srcFloorGrass">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/terrain/ground/images/terrain/ground/floor_grass.jpg</normaloff>:/images/terrain/ground/images/terrain/ground/floor_grass.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>FloorGrass</string>
+   </property>
+   <property name="toolTip">
+    <string>放置草坪</string>
+   </property>
+   <property name="shortcut">
+    <string>3</string>
+   </property>
+  </action>
+  <action name="srcSpring">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/terrain/images/terrain/spring.jpg</normaloff>:/images/terrain/images/terrain/spring.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Spring</string>
+   </property>
+   <property name="toolTip">
+    <string>放置弹簧</string>
+   </property>
+   <property name="shortcut">
+    <string>4</string>
+   </property>
+  </action>
+  <action name="srcFlyingBrick">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/terrain/images/terrain/flyingBrick.jpg</normaloff>:/images/terrain/images/terrain/flyingBrick.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>FlyingBrick</string>
+   </property>
+   <property name="toolTip">
+    <string>放置飞行砖块</string>
+   </property>
+   <property name="shortcut">
+    <string>5</string>
+   </property>
+  </action>
+  <action name="srcDestructibleBrick">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/terrain/images/terrain/destuctibleBrick.png</normaloff>:/images/terrain/images/terrain/destuctibleBrick.png</iconset>
+   </property>
+   <property name="text">
+    <string>DestructibleBrick</string>
+   </property>
+   <property name="toolTip">
+    <string>放置可破坏的岩石</string>
+   </property>
+   <property name="shortcut">
+    <string>6</string>
+   </property>
+  </action>
+  <action name="srcActiveTrap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/trap/images/trap/activeTrap.jpg</normaloff>:/images/trap/images/trap/activeTrap.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>ActiveTrap</string>
+   </property>
+   <property name="toolTip">
+    <string>放置主动陷阱</string>
+   </property>
+   <property name="shortcut">
+    <string>7</string>
+   </property>
+  </action>
+  <action name="srcPassiveTrap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/trap/images/trap/passiveTrap.jpg</normaloff>:/images/trap/images/trap/passiveTrap.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>PassiveTrap</string>
+   </property>
+   <property name="toolTip">
+    <string>放置被动陷阱</string>
+   </property>
+   <property name="shortcut">
+    <string>8</string>
+   </property>
+  </action>
+  <action name="srcFirstMonster">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/monster/images/monster/monster1.jpg</normaloff>:/images/monster/images/monster/monster1.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>FirstMonster</string>
+   </property>
+   <property name="toolTip">
+    <string>放置第一种怪物</string>
+   </property>
+   <property name="shortcut">
+    <string>Q</string>
+   </property>
+  </action>
+  <action name="srcSecondMonster">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/monster/images/monster/monster2.jpg</normaloff>:/images/monster/images/monster/monster2.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>SecondMonster</string>
+   </property>
+   <property name="toolTip">
+    <string>放置第二种怪物</string>
+   </property>
+   <property name="shortcut">
+    <string>W</string>
+   </property>
+  </action>
+  <action name="srcThirdMonster">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/monster/images/monster/monster3.jpg</normaloff>:/images/monster/images/monster/monster3.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>ThirdMonster</string>
+   </property>
+   <property name="toolTip">
+    <string>放置第三种怪物</string>
+   </property>
+   <property name="shortcut">
+    <string>E</string>
+   </property>
+  </action>
+  <action name="srcMushroomBuff">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/buff/images/buff/mushroomBuff.png</normaloff>:/images/buff/images/buff/mushroomBuff.png</iconset>
+   </property>
+   <property name="text">
+    <string>MushroomBuff</string>
+   </property>
+   <property name="toolTip">
+    <string>放置蘑菇类Buff</string>
+   </property>
+   <property name="shortcut">
+    <string>R</string>
+   </property>
+  </action>
+  <action name="srcFlowerBuff">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/buff/images/buff/flowerBuff.png</normaloff>:/images/buff/images/buff/flowerBuff.png</iconset>
+   </property>
+   <property name="text">
+    <string>FlowerBuff</string>
+   </property>
+   <property name="toolTip">
+    <string>放置花朵类Buff</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
+  </action>
+  <action name="srcArrowTrap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/trap/images/trap/arrowTrap.jpg</normaloff>:/images/trap/images/trap/arrowTrap.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>ArrowTrap</string>
+   </property>
+   <property name="toolTip">
+    <string>放置弓箭陷阱</string>
+   </property>
+   <property name="shortcut">
+    <string>9</string>
+   </property>
+  </action>
+  <action name="srcGold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/gold/images/gold/gold.png</normaloff>:/images/gold/images/gold/gold.png</iconset>
+   </property>
+   <property name="text">
+    <string>Gold</string>
+   </property>
+   <property name="toolTip">
+    <string>放置金币</string>
+   </property>
+   <property name="shortcut">
+    <string>Y</string>
+   </property>
+  </action>
+  <action name="srcGoal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/goal/images/goal/goal.jpg</normaloff>:/images/goal/images/goal/goal.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Goal</string>
+   </property>
+   <property name="toolTip">
+    <string>放置终点</string>
+   </property>
+   <property name="shortcut">
+    <string>U</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Scene</class>
+   <extends>QWidget</extends>
+   <header>scene.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actMaximize</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showMaximized()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actMinimize</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showMinimized()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
