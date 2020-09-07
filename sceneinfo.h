@@ -7,7 +7,7 @@ struct SceneInfo{
     int m_width; // 保存窗口宽度
     int m_height; // 保存窗口高度
     Player** player; // 地图的角色指针
-    Goal** goal;
+    Goal** goal; // 地图的目的地指针
     QSet<Terrain*>* terrains; // 地图的地形指针
     QSet<Trap*>* traps; // 地图的陷阱指针
     QSet<Monster*>* monsters; // 地图的怪物指针

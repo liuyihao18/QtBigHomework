@@ -11,3 +11,8 @@ Values::Values(int x, int y, int width, int height, const QString& imgPath, int 
 
 }
 
+int Values::getValue() const
+{
+    return value;
+}
+

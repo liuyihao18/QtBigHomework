@@ -20,13 +20,13 @@ public:
     bool isCollide(const QRect& rect) const; // 返回是否发生碰撞
     bool isInSky(const QRect& rect) const; // 返回是否在天空中
     bool isOnGround(const QRect& rect) const; // 返回是否在地上
-    bool dealWithCollision() const; // 处理所有的碰撞
+    bool dealWithPlayerCollision(Player* player); // 处理玩家有关的碰撞
 
 protected:
     SceneInfo sceneinfo;
 
 signals:
-
+    void gameSuccess();
 };
 
 #endif // COLLISIONINSPECTOR_H

@@ -12,7 +12,7 @@ class Updater : public QObject
 public:
     explicit Updater(QObject *parent = nullptr);
     Updater(int fps, QObject *parent = nullptr);
-    bool updatePlayer(Player* player, const CollisionInspector& ci, const QSet<int>& pressedKeys); // 更新玩家的位置
+    bool updatePlayer(Player* player, CollisionInspector& ci, const QSet<int>& pressedKeys); // 更新玩家的位置
 
 protected:
     int fps; // 帧率

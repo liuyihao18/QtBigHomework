@@ -2,9 +2,8 @@
 #define FLYINGPROP_H
 
 #include "baseobject.h"
-#include "movething.h"
 
-class FlyingProp : public BaseObject, public MoveThing
+class FlyingProp : public BaseObject
 {
     Q_OBJECT
 public:

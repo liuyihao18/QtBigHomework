@@ -9,6 +9,7 @@ class Values : public BaseObject
 public:
     Values(QObject* parent = nullptr);
     Values(int x,int y,int width,int height,const QString& imgPath, int value, QObject* parent=nullptr);
+    int getValue() const;
 
 protected:
     int value;

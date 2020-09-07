@@ -1,4 +1,5 @@
 #include "collisioninspector.h"
+#include <QDebug>
 
 CollisionInspector::CollisionInspector(QObject *parent) : QObject(parent)
 {
@@ -51,8 +52,10 @@ bool CollisionInspector::isInScene(const QRect &rect) const
 bool CollisionInspector::isCollide(const QRect &rect) const
 {
     for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
-        if((*iter)->getRect().intersects(rect)){
-            return true;
+        if((*iter)->isShow()){
+            if((*iter)->getRect().intersects(rect)){
+                return true;
+            }
         }
     }
     return false;
@@ -69,10 +72,56 @@ bool CollisionInspector::isOnGround(const QRect &rect) const
 {
     for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
         // 偏移1像素判断
-        if((*iter)->getRect().contains(QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1))
-                ||(*iter)->getRect().contains(QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1))){
-            return true;
+        if((*iter)->isShow()){
+            if((*iter)->getRect().contains(QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1))
+                    ||(*iter)->getRect().contains(QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1))){
+                return true;
+            }
         }
     }
     return false;
+}
+
+bool CollisionInspector::dealWithPlayerCollision(Player* player)
+{
+    bool collision = false;
+    if(player){
+        if(*(sceneinfo.goal)){
+            if((*(sceneinfo.goal))->getRect().contains(player->getRect())){
+                emit gameSuccess();
+                return true;
+            }
+        }
+        for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
+            if((*iter)->isShow()){
+                if((*iter)->getRect().intersects(player->getRect())){
+                    player->reduceHP((*iter)->getHPReduce());
+                }
+            }
+        }
+        for(auto iter=sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
+            if((*iter)->isShow()){
+                if((*iter)->getRect().intersects(player->getRect())){
+                    player->reduceHP((*iter)->getHPReduce());
+                }
+            }
+        }
+        for(auto iter=sceneinfo.buffs->begin();iter!=sceneinfo.buffs->end();++iter){
+            if((*iter)->isShow()){
+                if((*iter)->getRect().intersects(player->getRect())){
+                    (*iter)->hide();
+                    player->addBuff((*iter)->metaObject()->className());
+                }
+            }
+        }
+        for(auto iter=sceneinfo.values->begin();iter!=sceneinfo.values->end();++iter){
+            if((*iter)->isShow()){
+                if((*iter)->getRect().intersects(player->getRect())){
+                    (*iter)->hide();
+                    player->addPoins((*iter)->getValue());
+                }
+            }
+        }
+    }
+    return collision;
 }

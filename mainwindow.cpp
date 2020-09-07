@@ -86,6 +86,12 @@ void MainWindow::clearStateLabel()
     stateTimer.stop();
 }
 
+// 清楚键盘状态
+void MainWindow::clearKeyPressed()
+{
+    pressedKeys.clear();
+}
+
 void MainWindow::on_actEdit_triggered(bool checked)
 {
     // 进入编辑模式，向场景类发送进入编辑模式的信号
@@ -154,4 +160,6 @@ void MainWindow::makeConnection()
     // 状态栏与编辑模式清空状态栏显示
     connect(&stateTimer,SIGNAL(timeout()),this,SLOT(clearStateLabel()));
     connect(this,SIGNAL(edit(bool)),this,SLOT(clearStateLabel()));
+    // 游戏过关或者结束清楚键盘状态
+    connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
 }

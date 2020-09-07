@@ -34,19 +34,20 @@ private:
     Updater updater; // 更新场景的类
     bool isEdit,isShowChooseWidget,isMovingThing; // 与编辑模式时的显示有关
     void makeName2Num(); // 构造映射
+    void makeConnection(); // 构造连接
     void initialize(); // 初始化
 
 protected:
-    void paintEvent(QPaintEvent *); // 绘图事件
-    void enterEvent(QEvent *); // 进入事件
-    void leaveEvent(QEvent *); // 离开事件
-    void mouseMoveEvent(QMouseEvent *); // 鼠标移动事件
-    void mouseReleaseEvent(QMouseEvent *); // 鼠标松开事件
+    void paintEvent(QPaintEvent *) override; // 绘图事件
+    void enterEvent(QEvent *) override;; // 进入事件
+    void leaveEvent(QEvent *) override;; // 离开事件
+    void mouseMoveEvent(QMouseEvent *) override;; // 鼠标移动事件
+    void mouseReleaseEvent(QMouseEvent *) override;; // 鼠标松开事件
+    void resizeEvent(QResizeEvent *) override;; // 窗口变化事件
     void addSceneWidget(int x, int y); // 增加组件
     void eraseSceneWidget(int x,int y); // 擦除组件
     void deleteSceneWidget(int x, int y); // 删除组件
     void moveSceneWidget(int x, int y); // 移动组件
-    void resizeEvent(QResizeEvent *); // 窗口变化事件
 
 protected slots:
     void updateScene(const QSet<int>&); // 更新场景
@@ -54,6 +55,8 @@ protected slots:
     void chooseSceneWidget(bool, const QString&); // 选择的组件
     void loadScene(const QString& scenePath); // 加载场景
     void saveScene(const QString& scenePath); // 保存场景
+    void gameStart(); // 游戏开始
+    void gameSuccess(); // 游戏通关
 
 
 public:
@@ -63,6 +66,7 @@ public:
 
 signals:
     void clearChooseSceneWidget(); // 右击清除已选择，返回信号给主窗口
+    void clearKeyPressed(); // 清楚键盘状态
 };
 
 #endif // MAP_H

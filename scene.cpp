@@ -25,6 +25,13 @@ void Scene::makeName2Num()
     name2num["Goal"] = ClassName::Goal; // 终点
 }
 
+// 构造连接
+void Scene::makeConnection()
+{
+    // 通关连接
+    connect(&ci,SIGNAL(gameSuccess()),this,SLOT(gameSuccess()));
+}
+
 // 初始化场景
 void Scene::initialize()
 {
@@ -113,6 +120,11 @@ void Scene::paintEvent(QPaintEvent *)
     if(temp && isShowChooseWidget){
         p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
     }
+    // 绘制人物生命
+
+    // 绘制游戏分数
+
+    // 绘制游戏时间
 }
 
 // 鼠标进入事件，在Edit模式下，将显示临时指针的内容
@@ -167,6 +179,15 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
         mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
     }
     QWidget::mouseReleaseEvent(event);
+}
+
+// 窗口大小发生改变事件
+void Scene::resizeEvent(QResizeEvent *)
+{
+    m_width = width();
+    m_height = height();
+    ci.setWidth(width());
+    ci.setHeight(height());
 }
 
 // 增加组件
@@ -360,16 +381,6 @@ void Scene::moveSceneWidget(int x, int y)
     }
 }
 
-// 窗口大小发生改变事件
-void Scene::resizeEvent(QResizeEvent *)
-{
-    m_width = width();
-    m_height = height();
-    ci.setWidth(width());
-    ci.setHeight(height());
-}
-
-
 // 更新场景事件，使用Updater类
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
@@ -378,7 +389,6 @@ void Scene::updateScene(const QSet<int>& pressedKeys)
         if(player){
             updater.updatePlayer(player,ci,pressedKeys);
         }
-        ci.dealWithCollision();
         //        for(auto iter = movethings.begin();iter!=movethings.end();++iter){
         //            (*iter)->updatePos();
         //        }
@@ -401,14 +411,7 @@ void Scene::edit(bool edit)
         isShowChooseWidget = false;
         isMovingThing = false;
     } else {
-        // 恢复玩家的位置
-        if(player){
-            player->returnOrigin();
-        }
-        // 恢复移动物体的位置
-        for(auto iter = movethings.begin();iter!=movethings.end();++iter){
-            (*iter)->returnOrigin();
-        }
+        gameStart();
     }
 }
 
@@ -585,9 +588,15 @@ void Scene::loadScene(const QString &scenePath)
     }
     file.close();
     // 小提示
-    if(player==nullptr){
-        QMessageBox::information(this,"Info","请放置你的人物哟~");
+    if(player==nullptr&&goal==nullptr){
+        QMessageBox::information(this,"Info","请放置你的人物和目的地哟~");
     }
+    else if(player==nullptr){
+        QMessageBox::information(this,"Info","请放置你的人物哟~");
+    } else if(goal==nullptr){
+        QMessageBox::information(this,"Info","请放置你的目的地哟~");
+    }
+    gameStart();
 }
 
 // 保存场景
@@ -618,16 +627,49 @@ void Scene::saveScene(const QString &scenePath)
     file.close();
 }
 
+void Scene::gameStart()
+{
+    // 人物回到原位
+    if(player){
+        player->returnOrigin();
+    }
+
+    // 移动物体回到原位
+    for(auto iter=movethings.begin();iter!=movethings.end();++iter){
+        (*iter)->returnOrigin();
+    }
+
+    // 重新显示
+    if(sceneMap){
+        for(int i=0;i<map_width;i++){
+            for(int j=0;j<map_height;j++){
+                if(sceneMap[i][j]) {
+                    sceneMap[i][j]->show();
+                }
+            }
+        }
+    }
+}
+
+// SLOT，过关
+void Scene::gameSuccess()
+{
+    QMessageBox::information(this,"Congratulation","恭喜过关！");
+    gameStart();
+    emit clearKeyPressed();
+}
+
 // 构造函数，初始化
 Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map_unit(50),map_width(m_width/map_unit),map_height(m_height/map_unit),
     fps(16),background(":/images/background/images/background/background.png"), sceneMap(nullptr),player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&terrains,&traps,&monsters,&buffs,&values)), updater(fps,this),
     isEdit(false), isShowChooseWidget(false),isMovingThing(false)
 {
-    resize(m_width,m_height);
+    resize(m_width,m_height); // 重构大小
     setMouseTracking(true); // 鼠标追踪
-    makeName2Num();
-    initialize();
+    makeName2Num(); // 初始化映射
+    makeConnection(); // 初始化连接
+    initialize(); // 初始化变量
 }
 
 // 析构函数，释放空间

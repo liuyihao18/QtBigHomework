@@ -9,7 +9,7 @@ class FirstMonster : public Monster
     Q_OBJECT
 public:
     FirstMonster(QObject *parent=nullptr);
-    FirstMonster(int x,int y, int width,int height,  QObject* parent=nullptr);
+    FirstMonster(int x,int y, int width,int height, QObject* parent=nullptr);
 };
 
 #endif // FIRSTMONSTER_H

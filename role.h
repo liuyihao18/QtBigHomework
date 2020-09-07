@@ -3,6 +3,7 @@
 
 #include "baseobject.h"
 #include "movething.h"
+#include <QTimer>
 
 class Role : public BaseObject, public MoveThing
 {
@@ -11,9 +12,17 @@ public:
     Role(QObject* parent = nullptr);
     Role(int x,int y, int width, int height, const QString& imgPath, int speed, int HP, QObject* parent=nullptr);
     void returnOrigin() override;
+    void addHP(int x);
+    void reduceHP(int x);
 
 protected:
     int HP;
+    int originHP;
+    bool invincible;
+    QTimer invincibleTimer;
+
+protected slots:
+    void invincibleOver();
 };
 
 #endif // ROLE_H

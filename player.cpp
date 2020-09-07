@@ -8,10 +8,35 @@ Player::Player(QObject* parent) :Role(parent)
 }
 
 Player::Player(int x, int y, int width,int height, QObject* parent)
-    :Role(x,y,width,height,":/images/player/images/player/mario.png",500,3,parent)
-    ,down_speed(500), up_speed(500), jump_time(300)
+    :Role(x,y,width,height,":/images/player/images/player/mario.png",500,3,parent),
+    points(0),down_speed(500), up_speed(500), jump_time(300), canAttack(false)
 {
 
+}
+
+int Player::getPoints() const
+{
+    return points;
+}
+
+void Player::addPoins(int point)
+{
+    points+=point;
+}
+
+void Player::reducePoints(int point)
+{
+    points-=point;
+}
+
+void Player::addBuff(const QString &buffName)
+{
+    if(buffName==QString("MushroomBuff")){
+        addHP(1);
+    }else if(buffName==QString("FlowerBuff")){
+        addHP(1);
+        canAttack = true;
+    }
 }
 
 int Player::getJumpTime() const
@@ -46,6 +71,13 @@ void Player::confirmPos()
 void Player::cancelPos()
 {
     tempPos = rect;
+}
+
+void Player::returnOrigin()
+{
+    Role::returnOrigin();
+    points = 0;
+    canAttack = false;
 }
 
 

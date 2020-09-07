@@ -27,6 +27,7 @@ protected slots:
     void triggerSceneWidgets(QAction*); // 选择场景组件时
     void clearChooseSceneWidget(); // 清除选择的场景组件
     void clearStateLabel(); // 清楚状态栏提示
+    void clearKeyPressed(); // 清楚键盘状态
 
 signals:
     void updateScene(const QSet<int>&); // 更新场景，发送传递键盘情况

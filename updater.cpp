@@ -14,8 +14,11 @@ Updater::Updater(int fps, QObject *parent)
     connect(&jumpTimer,SIGNAL(timeout()),this,SLOT(jumpOver()));
 }
 
-bool Updater::updatePlayer(Player *player, const CollisionInspector &ci, const QSet<int> &pressedKeys)
+bool Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
+    if(!player){
+        return false;
+    }
     bool moved = false;
 
     // 玩家的大小
@@ -69,6 +72,7 @@ bool Updater::updatePlayer(Player *player, const CollisionInspector &ci, const Q
                 player->moveRect(new_x, new_y);
             }
         }
+        ci.dealWithPlayerCollision(player);
     }
     return moved;
 }
