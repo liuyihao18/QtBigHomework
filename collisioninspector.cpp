@@ -92,6 +92,9 @@ bool CollisionInspector::dealWithPlayerCollision(Player* player)
                 return true;
             }
         }
+        for(auto iter=sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
+
+        }
         for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){

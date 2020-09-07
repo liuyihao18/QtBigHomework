@@ -17,7 +17,7 @@ protected:
 
 public:
     BaseObject(QObject *parent=nullptr);
-    BaseObject(int x, int y, int width,int height,const QString& imgPath, QObject* parent=nullptr);
+    BaseObject(int x, int y, int width,int height, const QString& imgPath, QObject* parent=nullptr);
     int width() const;
     int height() const;
     int x() const;

@@ -11,7 +11,7 @@ FlyingBrick::FlyingBrick(int x, int y, int width,int height, QObject *parent)
 
 }
 
-void FlyingBrick::returnOrigin()
+void FlyingBrick::initialize()
 {
     moveRect(originX(),originY());
 }

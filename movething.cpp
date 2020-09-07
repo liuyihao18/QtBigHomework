@@ -12,7 +12,12 @@ MoveThing::MoveThing(int x,int y, int width, int height, int moveSpeed)
 }
 
 
-void MoveThing::returnOrigin()
+void MoveThing::initialize()
+{
+
+}
+
+void MoveThing::returnOriginPos()
 {
 
 }

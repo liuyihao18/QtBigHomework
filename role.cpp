@@ -7,16 +7,26 @@ Role::Role(QObject* parent) :BaseObject(parent), HP(3)
 
 Role::Role(int x, int y, int width,int height, const QString &imgPath, int speed,int HP, QObject* parent)
     :BaseObject(x,y,width,height,imgPath, parent), MoveThing(x,y,width,height,speed) ,
-     HP(HP), originHP(HP), invincible(false),invincibleTimer(this)
+      HP(HP), originHP(HP), invincible(false),invincibleTimer(this)
 {
     invincibleTimer.setInterval(1000);
     connect(&invincibleTimer,SIGNAL(timeout()),this,SLOT(invincibleOver()));
 }
 
-void Role::returnOrigin()
+void Role::initialize()
 {
     moveRect(originX(),originY());
     HP = originHP;
+}
+
+void Role::returnOriginPos()
+{
+    moveRect(originX(),originY());
+}
+
+int Role::getHP() const
+{
+    return HP;
 }
 
 void Role::addHP(int x)
@@ -30,10 +40,9 @@ void Role::reduceHP(int x)
         HP-=x;
         if(HP<=0){
             hide();
-        }else{
-            invincible = true;
-            invincibleTimer.start();
         }
+        invincible = true;
+        invincibleTimer.start();
     }
 }
 

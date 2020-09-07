@@ -43,7 +43,8 @@ bool Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<in
         // 重力和跳跃移动
         player->updatePos(jumping,judge_unit);
         if(!ci.isInScene(player->getTempPos())){
-            player->returnOrigin();
+            player->returnOriginPos();
+            player->reduceHP(player->getFallDownHPReduce());
             return true;
         }
         if(!ci.isCollide(player->getTempPos())){

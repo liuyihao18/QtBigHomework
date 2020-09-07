@@ -8,7 +8,8 @@ class MoveThing
 public:
     MoveThing();
     MoveThing(int x,int y, int width,int height, int move_speed);
-    virtual void returnOrigin();
+    virtual void initialize();
+    virtual void returnOriginPos();
     virtual void updatePos(int judge_unit);
     virtual void confirmPos();
     virtual void cancelPos();

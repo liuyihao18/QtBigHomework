@@ -11,7 +11,7 @@ class FlyingBrick : public Terrain, public MoveThing
 public:
     FlyingBrick(QObject* parent = nullptr);
     FlyingBrick(int x,int y,int width, int height, QObject* parent = nullptr);
-    void returnOrigin() override;
+    void initialize() override;
 };
 
 #endif // FLYINGBRICKS_H

@@ -18,6 +18,7 @@ class Scene : public QWidget
 private:
     int m_width, m_height, map_unit ,map_width, map_height; // 场景的长宽、指针地图的长宽，指针地图长度 = 场景长度 / map_unit
     int fps; // 游戏帧率
+    clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
     QImage background; // 背景图片
     BaseObject** *sceneMap; // 指针地图
@@ -55,6 +56,7 @@ protected slots:
     void chooseSceneWidget(bool, const QString&); // 选择的组件
     void loadScene(const QString& scenePath); // 加载场景
     void saveScene(const QString& scenePath); // 保存场景
+    void gameReload(); // 游戏恢复
     void gameStart(); // 游戏开始
     void gameSuccess(); // 游戏通关
 

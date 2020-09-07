@@ -9,7 +9,7 @@ Player::Player(QObject* parent) :Role(parent)
 
 Player::Player(int x, int y, int width,int height, QObject* parent)
     :Role(x,y,width,height,":/images/player/images/player/mario.png",500,3,parent),
-    points(0),down_speed(500), up_speed(500), jump_time(300), canAttack(false)
+    points(0),downSpeed(500), upSpeed(500), jumpTime(300), fallDownHPReduce(1), canAttack(false)
 {
 
 }
@@ -39,27 +39,32 @@ void Player::addBuff(const QString &buffName)
     }
 }
 
+int Player::getFallDownHPReduce() const
+{
+    return fallDownHPReduce;
+}
+
 int Player::getJumpTime() const
 {
-    return jump_time;
+    return jumpTime;
 }
 
 int Player::getDownSpeed() const
 {
-    return down_speed;
+    return downSpeed;
 }
 
 int Player::getUpSpeed() const
 {
-    return up_speed;
+    return upSpeed;
 }
 
 void Player::updatePos(bool jumping,int judge_unit)
 {
     if(jumping){
-        tempPos.moveTo(x(),y()-judge_unit*up_speed/move_speed);
+        tempPos.moveTo(x(),y()-judge_unit*upSpeed/move_speed);
     }else{
-        tempPos.moveTo(x(),y()+judge_unit*down_speed/move_speed);
+        tempPos.moveTo(x(),y()+judge_unit*downSpeed/move_speed);
     }
 }
 
@@ -73,9 +78,9 @@ void Player::cancelPos()
     tempPos = rect;
 }
 
-void Player::returnOrigin()
+void Player::initialize()
 {
-    Role::returnOrigin();
+    Role::initialize();
     points = 0;
     canAttack = false;
 }

@@ -5,7 +5,8 @@ BaseObject::BaseObject(QObject *parent) : QObject(parent)
 
 }
 
-BaseObject::BaseObject(int x, int y, int width, int height, const QString &imgPath, QObject* parent)
+BaseObject::BaseObject(int x, int y, int width, int height,
+                       const QString &imgPath, QObject* parent)
     :QObject(parent), rect(x,y,width,height), image(imgPath), m_origin_x(x), m_origin_y(y), is_show(true)
 {
 

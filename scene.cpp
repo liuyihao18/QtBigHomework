@@ -120,11 +120,24 @@ void Scene::paintEvent(QPaintEvent *)
     if(temp && isShowChooseWidget){
         p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
     }
-    // 绘制人物生命
 
-    // 绘制游戏分数
-
+    QFont font("华文新魏",32,QFont::Bold,false);
+    p.setFont(font);
+    if(player){
+        // 绘制人物生命
+        p.drawText(QRect(100,10,200,50),QString::number(player->getHP()));
+        // 绘制游戏分数
+        p.drawText(QRect(300,10,200,50),QString::number(player->getPoints()));
+    }else{
+        // 绘制人物生命
+        p.drawText(QRect(100,10,200,50),QString("???"));
+        // 绘制游戏分数
+        p.drawText(QRect(300,10,200,50),QString("???"));
+    }
     // 绘制游戏时间
+    if(!isEdit){
+        p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
+    }
 }
 
 // 鼠标进入事件，在Edit模式下，将显示临时指针的内容
@@ -410,8 +423,9 @@ void Scene::edit(bool edit)
         // 与编辑模式有关的变量初始化
         isShowChooseWidget = false;
         isMovingThing = false;
-    } else {
-        gameStart();
+        gameTime = clock();
+    }else{
+        gameReload();
     }
 }
 
@@ -627,16 +641,16 @@ void Scene::saveScene(const QString &scenePath)
     file.close();
 }
 
-void Scene::gameStart()
+void Scene::gameReload()
 {
     // 人物回到原位
     if(player){
-        player->returnOrigin();
+        player->initialize();
     }
 
     // 移动物体回到原位
     for(auto iter=movethings.begin();iter!=movethings.end();++iter){
-        (*iter)->returnOrigin();
+        (*iter)->initialize();
     }
 
     // 重新显示
@@ -651,6 +665,12 @@ void Scene::gameStart()
     }
 }
 
+void Scene::gameStart()
+{
+    gameReload();
+    gameTime = clock();
+}
+
 // SLOT，过关
 void Scene::gameSuccess()
 {
@@ -661,7 +681,7 @@ void Scene::gameSuccess()
 
 // 构造函数，初始化
 Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map_unit(50),map_width(m_width/map_unit),map_height(m_height/map_unit),
-    fps(16),background(":/images/background/images/background/background.png"), sceneMap(nullptr),player(nullptr),goal(nullptr), temp(nullptr),
+    fps(16),gameTime(0),background(":/images/background/images/background/background.png"), sceneMap(nullptr),player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&terrains,&traps,&monsters,&buffs,&values)), updater(fps,this),
     isEdit(false), isShowChooseWidget(false),isMovingThing(false)
 {
