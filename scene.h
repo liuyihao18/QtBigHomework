@@ -16,20 +16,21 @@ class Scene : public QWidget
 {
     Q_OBJECT
 private:
-    int m_width, m_height, map_unit ,map_width, map_height; // 场景的长宽、指针地图的长宽，指针地图长度 = 场景长度 / map_unit
+    int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
     clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
     QImage background; // 背景图片
-    BaseObject** *sceneMap; // 指针地图
     Player* player; // 玩家
     Goal* goal; // 终点
+    QSet<BaseObject*> allWidgets; // 保存所有的指针
     QSet<Terrain*> terrains; // 保存地形指针的基类数组
     QSet<Trap*> traps; // 保存陷阱指针的基类数组
     QSet<Monster*> monsters; // 保存怪物指针的基类数组
     QSet<Buff*> buffs; // 保存Buff指针的基类数组
     QSet<Values*> values; // 保存有分数物体的基类数组
-    QSet<MoveThing*> movethings; // 保存会动的物体的指针
+    QSet<MoveThing*> moveThings; // 保存会动的物体的指针
+    QSet<FlyingProp*> flyingProps; // 保存飞行物的指针
     BaseObject* temp; // 保存临时指针，在放置物体的时候显示
     CollisionInspector ci; // 碰撞检测类
     Updater updater; // 更新场景的类
@@ -46,7 +47,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *) override;; // 鼠标松开事件
     void resizeEvent(QResizeEvent *) override;; // 窗口变化事件
     void addSceneWidget(int x, int y); // 增加组件
-    void eraseSceneWidget(int x,int y); // 擦除组件
+    void eraseSceneWidget(BaseObject* object); // 擦除组件
     void deleteSceneWidget(int x, int y); // 删除组件
     void moveSceneWidget(int x, int y); // 移动组件
 
@@ -54,6 +55,7 @@ protected slots:
     void updateScene(const QSet<int>&); // 更新场景
     void edit(bool); // 编辑模式
     void chooseSceneWidget(bool, const QString&); // 选择的组件
+    void newScene(); // 新建场景
     void loadScene(const QString& scenePath); // 加载场景
     void saveScene(const QString& scenePath); // 保存场景
     void gameReload(); // 游戏恢复

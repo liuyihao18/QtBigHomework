@@ -31,16 +31,20 @@ protected slots:
 
 signals:
     void updateScene(const QSet<int>&); // 更新场景，发送传递键盘情况
+    void newScene(); // 新建场景
     void loadScene(const QString&); // 发送加载的场景文件
     void saveScene(const QString&); // 发送保存的场景文件
     void edit(bool); // 发送是否处于编辑状态
     void chooseSceneWidget(bool, const QString&); // 发送选择的场景组件
+    void gameStart(); // 开始游戏
 
 private slots:
     void on_actEdit_triggered(bool checked); // Edit按钮触发
+    void on_actNew_triggered(); // 新建按钮触发
     void on_actOpen_triggered(); // 打开按钮触发
     void on_actSave_triggered(); // 保存按钮触发
     void on_actSaveAs_triggered(); // 另存为按钮触发
+    void on_actRestart_triggered(); // 重新开始当前游戏
 
 private:
     Ui::MainWindow *ui; // ui指针

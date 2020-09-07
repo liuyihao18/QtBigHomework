@@ -7,20 +7,22 @@ Updater::Updater(QObject *parent) : QObject(parent)
 }
 
 Updater::Updater(int fps, QObject *parent)
-    :QObject(parent), fps(fps), judge_unit(1), jumping(false), jumpTimer(this)
+    :QObject(parent), fps(fps), judge_unit(1)
 {
-    jumpTimer.setInterval(0);
-    // 连接跳跃计时器的timeout()信号
-    connect(&jumpTimer,SIGNAL(timeout()),this,SLOT(jumpOver()));
+
 }
 
-bool Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<int> &pressedKeys)
+void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, const QSet<FlyingProp *> &flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
-    if(!player){
-        return false;
+    updateMoveThings(movethings,ci);
+    if(player){
+        updatePlayer(player,ci,pressedKeys);
     }
-    bool moved = false;
+    updateFlyingProps(flyingProps,ci);
+}
 
+void Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<int> &pressedKeys)
+{
     // 玩家的大小
     int width = player->width();
     int height = player->height();
@@ -32,24 +34,21 @@ bool Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<in
     // 跳跃
     if(pressedKeys.contains(Qt::Key_K)||pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up)){
         // 禁止多次跳跃与空中跳跃
-        if(!jumping&&ci.isOnGround(player->getRect())){
-            jumping = true;
-            jumpTimer.setInterval(player->getJumpTime());
-            jumpTimer.start();
+        if(ci.isOnGround(player->getRect())){
+            player->jump();
         }
     }
 
     for(int i=1;i<=unit_speed;i+=judge_unit){
         // 重力和跳跃移动
-        player->updatePos(jumping,judge_unit);
+        player->updatePos(judge_unit);
         if(!ci.isInScene(player->getTempPos())){
             player->returnOriginPos();
             player->reduceHP(player->getFallDownHPReduce());
-            return true;
+            return;
         }
-        if(!ci.isCollide(player->getTempPos())){
+        if(!ci.isCollideTerrain(player->getTempPos())){
             player->confirmPos();
-            moved = true;
         }else{
             player->cancelPos();
         }
@@ -59,27 +58,44 @@ bool Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<in
         int new_y = player->y();
         if((pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left))){
             if(ci.isInScene(QRect(new_x-judge_unit,new_y,width,height))
-                    &&!ci.isCollide(QRect(new_x-judge_unit,new_y,width,height))){
+                    &&!ci.isCollideTerrain(QRect(new_x-judge_unit,new_y,width,height))){
                 new_x -= judge_unit;
-                moved = true;
                 player->moveRect(new_x, new_y);
             }
         }
         if((pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right))){
             if(ci.isInScene(QRect(new_x+judge_unit,new_y,width,height))
-                    &&!ci.isCollide(QRect(new_x+judge_unit,new_y,width,height))){
+                    &&!ci.isCollideTerrain(QRect(new_x+judge_unit,new_y,width,height))){
                 new_x += judge_unit;
-                moved = true;
                 player->moveRect(new_x, new_y);
             }
         }
         ci.dealWithPlayerCollision(player);
     }
-    return moved;
 }
 
-void Updater::jumpOver()
+void Updater::updateMoveThings(const QSet<MoveThing *> &movethings, CollisionInspector &ci)
 {
-    jumping = false;
-    jumpTimer.stop();
+    for(auto iter = movethings.begin();iter!=movethings.end();++iter){
+        (*iter)->updatePos(judge_unit);
+        if(!ci.isStrictInScene((*iter)->getTempPos())){
+            (*iter)->cancelPos();
+            (*iter)->needToChangeMove();
+            continue;
+        }
+        if(dynamic_cast<FlyingBrick*>((*iter))){
+            if(ci.isCollideExcept((*iter)->getTempPos(),dynamic_cast<FlyingBrick*>(*iter))){
+                (*iter)->cancelPos();
+                (*iter)->needToChangeMove();
+                continue;
+            }else{
+                (*iter)->confirmPos();
+            }
+        }
+    }
+}
+
+void Updater::updateFlyingProps(const QSet<FlyingProp *> &flyingProps, CollisionInspector &ci)
+{
+
 }

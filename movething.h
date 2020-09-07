@@ -13,6 +13,7 @@ public:
     virtual void updatePos(int judge_unit);
     virtual void confirmPos();
     virtual void cancelPos();
+    virtual void needToChangeMove();
     virtual const QRect& getTempPos();
     int getMoveSpeed() const;
 

@@ -13,9 +13,14 @@ Role::Role(int x, int y, int width,int height, const QString &imgPath, int speed
     connect(&invincibleTimer,SIGNAL(timeout()),this,SLOT(invincibleOver()));
 }
 
+void Role::updatePos(int judge_unit)
+{
+
+}
+
 void Role::initialize()
 {
-    moveRect(originX(),originY());
+    returnOriginPos();
     HP = originHP;
 }
 
@@ -23,6 +28,17 @@ void Role::returnOriginPos()
 {
     moveRect(originX(),originY());
 }
+
+void Role::confirmPos()
+{
+    rect = tempPos;
+}
+
+void Role::cancelPos()
+{
+    tempPos = rect;
+}
+
 
 int Role::getHP() const
 {

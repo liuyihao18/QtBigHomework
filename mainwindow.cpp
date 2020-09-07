@@ -92,6 +92,17 @@ void MainWindow::clearKeyPressed()
     pressedKeys.clear();
 }
 
+
+void MainWindow::on_actNew_triggered()
+{
+    sceneFileName = "";
+    emit newScene();
+    ui->actEdit->setChecked(true);
+    emit ui->actEdit->triggered(true);
+    ui->stateLabel->setText("新建成功"); // 提示文字
+    stateTimer.start();
+}
+
 void MainWindow::on_actEdit_triggered(bool checked)
 {
     // 进入编辑模式，向场景类发送进入编辑模式的信号
@@ -140,6 +151,12 @@ void MainWindow::on_actSaveAs_triggered()
     stateTimer.start();
 }
 
+void MainWindow::on_actRestart_triggered()
+{
+    emit gameStart();
+}
+
+
 void MainWindow::makeConnection()
 {
     // 主定时器的timeout()与主窗口的timeout()连接
@@ -153,6 +170,8 @@ void MainWindow::makeConnection()
     connect(this,SIGNAL(chooseSceneWidget(bool, const QString&)),ui->scene,SLOT(chooseSceneWidget(bool, const QString&)));
     // 清空选择的组件
     connect(ui->scene,SIGNAL(clearChooseSceneWidget()),this,SLOT(clearChooseSceneWidget()));
+    // 新建场景
+    connect(this,SIGNAL(newScene()),ui->scene,SLOT(newScene()));
     // 打开场景
     connect(this,SIGNAL(loadScene(const QString&)),ui->scene,SLOT(loadScene(const QString&)));
     // 保存场景
@@ -162,4 +181,8 @@ void MainWindow::makeConnection()
     connect(this,SIGNAL(edit(bool)),this,SLOT(clearStateLabel()));
     // 游戏过关或者结束清楚键盘状态
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
+    // 游戏开始
+    connect(this,SIGNAL(gameStart()),ui->scene,SLOT(gameStart()));
 }
+
+

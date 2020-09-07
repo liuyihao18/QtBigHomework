@@ -9,9 +9,10 @@ Player::Player(QObject* parent) :Role(parent)
 
 Player::Player(int x, int y, int width,int height, QObject* parent)
     :Role(x,y,width,height,":/images/player/images/player/mario.png",500,3,parent),
-    points(0),downSpeed(500), upSpeed(500), jumpTime(300), fallDownHPReduce(1), canAttack(false)
+    points(0),downSpeed(500), upSpeed(500), jumpTime(300), fallDownHPReduce(1), canAttack(false), jumping(false),
+    jumpTimer(this)
 {
-
+    connect(&jumpTimer,SIGNAL(timeout()),this,SLOT(jumpOver()));
 }
 
 int Player::getPoints() const
@@ -33,9 +34,13 @@ void Player::addBuff(const QString &buffName)
 {
     if(buffName==QString("MushroomBuff")){
         addHP(1);
+        jumpTime = 333;
+        addPoins(10);
     }else if(buffName==QString("FlowerBuff")){
         addHP(1);
+        jumpTime = 333;
         canAttack = true;
+        addPoins(20);
     }
 }
 
@@ -59,7 +64,20 @@ int Player::getUpSpeed() const
     return upSpeed;
 }
 
-void Player::updatePos(bool jumping,int judge_unit)
+void Player::jump(int springJumpTime)
+{
+    if(!jumping){
+        jumping = true;
+        if(springJumpTime == 0){
+            jumpTimer.setInterval(jumpTime);
+        }else{
+            jumpTimer.setInterval(springJumpTime);
+        }
+        jumpTimer.start();
+    }
+}
+
+void Player::updatePos(int judge_unit)
 {
     if(jumping){
         tempPos.moveTo(x(),y()-judge_unit*upSpeed/move_speed);
@@ -68,21 +86,17 @@ void Player::updatePos(bool jumping,int judge_unit)
     }
 }
 
-void Player::confirmPos()
-{
-    rect = tempPos;
-}
-
-void Player::cancelPos()
-{
-    tempPos = rect;
-}
-
 void Player::initialize()
 {
     Role::initialize();
     points = 0;
     canAttack = false;
+}
+
+void Player::jumpOver()
+{
+    jumping = false;
+    jumpTimer.stop();
 }
 
 

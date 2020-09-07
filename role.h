@@ -11,8 +11,11 @@ class Role : public BaseObject, public MoveThing
 public:
     Role(QObject* parent = nullptr);
     Role(int x,int y, int width, int height, const QString& imgPath, int speed, int HP, QObject* parent=nullptr);
+    void updatePos(int judge_unit) override;
     void initialize() override;
     void returnOriginPos() override;
+    void confirmPos() override;
+    void cancelPos() override;
     int getHP() const;
     void addHP(int x);
     void reduceHP(int x);

@@ -37,11 +37,12 @@ void Scene::initialize()
 {
     // 如果存在角色指针，则删除置空
     if(player){
-        // delete player; 已经在sceneMap中被删除
+    //  delete player;
         player = nullptr;
     }
     // 如果存在终点指针，则删除置空
     if(goal){
+        // delete goal;
         goal = nullptr;
     }
     // 如果存在临时指针，则删除置空
@@ -49,27 +50,19 @@ void Scene::initialize()
         delete temp;
         temp = nullptr;
     }
-    // 如果存在指针地图，则重置
-    if(sceneMap){
-        for(int i=0;i<map_width;i++){
-            for(int j=0;j<map_height;j++){
-                delete sceneMap[i][j];
-            }
-            delete[] sceneMap[i];
-        }
-        delete[] sceneMap;
+    // 删除所有信息
+    for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
+        delete *iter;
     }
-    sceneMap = new BaseObject**[map_width]();
-    for(int i=0;i<map_width;i++){
-        sceneMap[i]=new BaseObject*[map_height]();
-    }
+    allWidgets.clear();
     // 清空各指针数组
     terrains.clear();
     traps.clear();
     monsters.clear();
     buffs.clear();
     values.clear();
-    movethings.clear();
+    moveThings.clear();
+    flyingProps.clear();
 }
 
 // 绘图事件，绘制场景的各种东西
@@ -116,11 +109,17 @@ void Scene::paintEvent(QPaintEvent *)
     if(player&&player->isShow()){
         p.drawPixmap(player->getRect(),QPixmap::fromImage(player->getImage()));
     }
+    // 绘制飞行物
+    for (auto iter=flyingProps.begin();iter!=flyingProps.end();++iter){
+        if((*iter)->isShow()){
+            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+        }
+    }
     // 绘制临时指针，当且仅当存在并且需要显示时
     if(temp && isShowChooseWidget){
         p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
     }
-
+    // 绘制文字
     QFont font("华文新魏",32,QFont::Bold,false);
     p.setFont(font);
     if(player){
@@ -209,22 +208,19 @@ void Scene::addSceneWidget(int x, int y)
     if (!temp){
         return;
     }
-    // 化为指针地图单位
-    x = (x/map_unit)*map_unit;
-    y = (y/map_unit)*map_unit;
-    // 如果这个释放的位置没有东西，则加入，并且再次新建，保证创建的连续性
-    if(!sceneMap[x/map_unit][y/map_unit]){
-        // qDebug()<<"("<<x/map_unit<<", "<<y/map_unit<<")插入"<<temp->metaObject()->className();
-        temp->moveRect(x,y);
-        temp->setOrigin(x,y);
-        sceneMap[x/map_unit][y/map_unit] = temp;
 
+    temp->moveRect(temp->x()/placeAcc*placeAcc,(temp->y()+10)/placeAcc*placeAcc);
+    // 如果这个释放的位置没有东西，则加入，并且再次新建，保证创建的连续性
+    if(ci.canAddInScene(temp->getRect())){
+        // qDebug()<<"("<<x/map_unit<<", "<<y/map_unit<<")插入"<<temp->metaObject()->className();
+        temp->setOrigin(temp->x(),temp->y());
+        allWidgets.insert(temp);
         switch(name2num[temp->metaObject()->className()]){
         case ClassName::None:break;
         case ClassName::Player:
             // 如果原来有玩家，则删除
             if(player){
-                sceneMap[player->originX()/map_unit][player->originY()/map_unit] = nullptr; // 删除原来位置
+                allWidgets.remove(player);
                 delete player;
             }
             player = static_cast<Player*>(temp);
@@ -244,7 +240,7 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::FlyingBrick:
             terrains.insert(static_cast<FlyingBrick*>(temp));
-            movethings.insert(static_cast<FlyingBrick*>(temp));
+            moveThings.insert(static_cast<FlyingBrick*>(temp));
             temp = new FlyingBrick(x,y,map_unit,map_unit,this);
             break;
         case ClassName::DestructibleBrick:
@@ -253,7 +249,7 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::ActiveTrap:
             traps.insert(static_cast<ActiveTrap*>(temp));
-            movethings.insert(static_cast<ActiveTrap*>(temp));
+            moveThings.insert(static_cast<ActiveTrap*>(temp));
             temp = new ActiveTrap(x,y,map_unit,map_unit,this);
             break;
         case ClassName::PassiveTrap:
@@ -262,22 +258,22 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::ArrowTrap:
             traps.insert(static_cast<ArrowTrap*>(temp));
-            movethings.insert(static_cast<ArrowTrap*>(temp));
+            moveThings.insert(static_cast<ArrowTrap*>(temp));
             temp = new ArrowTrap(x,y,map_unit,map_unit,this);
             break;
         case ClassName::FirstMonster:
             monsters.insert(static_cast<FirstMonster*>(temp));
-            movethings.insert(static_cast<FirstMonster*>(temp));
+            moveThings.insert(static_cast<FirstMonster*>(temp));
             temp = new FirstMonster(x,y,map_unit,map_unit,this);
             break;
         case ClassName::SecondMonster:
             monsters.insert(static_cast<SecondMonster*>(temp));
-            movethings.insert(static_cast<SecondMonster*>(temp));
+            moveThings.insert(static_cast<SecondMonster*>(temp));
             temp = new SecondMonster(x,y,map_unit,map_unit,this);
             break;
         case ClassName::ThirdMonster:
             monsters.insert(static_cast<ThirdMonster*>(temp));
-            movethings.insert(static_cast<ThirdMonster*>(temp));
+            moveThings.insert(static_cast<ThirdMonster*>(temp));
             temp = new ThirdMonster(x,y,map_unit,map_unit,this);
             break;
         case ClassName::MushroomBuff:
@@ -294,7 +290,7 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::Goal:
             if(goal){
-                sceneMap[goal->originX()/map_unit][goal->originY()/map_unit] = nullptr; // 删除原来位置
+                allWidgets.remove(goal);
                 delete goal;
             }
             goal = static_cast<Goal*>(temp);
@@ -311,9 +307,9 @@ void Scene::addSceneWidget(int x, int y)
 }
 
 // 擦除地图组件
-void Scene::eraseSceneWidget(int x, int y)
+void Scene::eraseSceneWidget(BaseObject* object)
 {
-    switch(name2num[sceneMap[x/map_unit][y/map_unit]->metaObject()->className()]){
+    switch(name2num[object->metaObject()->className()]){
     case ClassName::None:break;
     case ClassName::Player:
         player = nullptr;
@@ -322,35 +318,35 @@ void Scene::eraseSceneWidget(int x, int y)
     case ClassName::FloorGrass:
     case ClassName::Spring:
     case ClassName::DestructibleBrick:
-        terrains.remove(static_cast<Terrain*>(sceneMap[x/map_unit][y/map_unit]));
+        terrains.remove(static_cast<Terrain*>(object));
         break;
     case ClassName::FlyingBrick:
-        terrains.remove(static_cast<Terrain*>(sceneMap[x/map_unit][y/map_unit]));
-        movethings.remove(static_cast<FlyingBrick*>(sceneMap[x/map_unit][y/map_unit]));
+        terrains.remove(static_cast<Terrain*>(object));
+        moveThings.remove(static_cast<FlyingBrick*>(object));
         break;
     case ClassName::ActiveTrap:
-        traps.remove(static_cast<ActiveTrap*>(sceneMap[x/map_unit][y/map_unit]));
-        movethings.remove(static_cast<ActiveTrap*>(sceneMap[x/map_unit][y/map_unit]));
+        traps.remove(static_cast<ActiveTrap*>(object));
+        moveThings.remove(static_cast<ActiveTrap*>(object));
         break;
     case ClassName::PassiveTrap:
-        traps.remove(static_cast<PassiveTrap*>(sceneMap[x/map_unit][y/map_unit]));
+        traps.remove(static_cast<PassiveTrap*>(object));
         break;
     case ClassName::ArrowTrap:
-        traps.remove(static_cast<ArrowTrap*>(sceneMap[x/map_unit][y/map_unit]));
-        movethings.remove(static_cast<ArrowTrap*>(sceneMap[x/map_unit][y/map_unit]));
+        traps.remove(static_cast<ArrowTrap*>(object));
+        moveThings.remove(static_cast<ArrowTrap*>(object));
         break;
     case ClassName::FirstMonster:
     case ClassName::SecondMonster:
     case ClassName::ThirdMonster:
-        monsters.remove(static_cast<Monster*>(sceneMap[x/map_unit][y/map_unit]));
-        movethings.remove(static_cast<Monster*>(sceneMap[x/map_unit][y/map_unit]));
+        monsters.remove(static_cast<Monster*>(object));
+        moveThings.remove(static_cast<Monster*>(object));
         break;
     case ClassName::MushroomBuff:
     case ClassName::FlowerBuff:
-        buffs.remove(static_cast<Buff*>(sceneMap[x/map_unit][y/map_unit]));
+        buffs.remove(static_cast<Buff*>(object));
         break;
     case ClassName::Gold:
-        values.remove(static_cast<Gold*>(sceneMap[x/map_unit][y/map_unit]));
+        values.remove(static_cast<Gold*>(object));
         break;
     case ClassName::Goal:
         goal = nullptr;
@@ -363,10 +359,11 @@ void Scene::eraseSceneWidget(int x, int y)
 // 删除原先的地图组件
 void Scene::deleteSceneWidget(int x, int y)
 {
-    if(sceneMap[x/map_unit][y/map_unit]){
-        eraseSceneWidget(x,y);
-        delete sceneMap[x/map_unit][y/map_unit];
-        sceneMap[x/map_unit][y/map_unit] = nullptr;
+    BaseObject* object = ci.getWidgetFromPos(x,y);
+    if(object){
+        eraseSceneWidget(object);
+        allWidgets.remove(object);
+        delete object;
     }
 }
 
@@ -376,14 +373,13 @@ void Scene::moveSceneWidget(int x, int y)
     if(temp){
         return;
     }
-    // 转变为地图坐标
-    x = (x/map_unit)*map_unit;
-    y = (y/map_unit)*map_unit;
+
+    BaseObject* object = ci.getWidgetFromPos(x,y);
     // 如果这个位置有物体，则取出
-    if(sceneMap[x/map_unit][y/map_unit]){
-        eraseSceneWidget(x,y);
-        temp = sceneMap[x/map_unit][y/map_unit];
-        sceneMap[x/map_unit][y/map_unit] = nullptr;
+    if(object){
+        eraseSceneWidget(object);
+        temp = object;
+        allWidgets.remove(temp);
         if(temp){
             if(mapFromGlobal(cursor().pos()).x()>0&&mapFromGlobal(cursor().pos()).y()>0){
                 isShowChooseWidget = true;
@@ -397,14 +393,15 @@ void Scene::moveSceneWidget(int x, int y)
 // 更新场景事件，使用Updater类
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
+    // 鼠标是否显示
+    if(temp){
+        setCursor(Qt::BlankCursor);
+    }else{
+        setCursor(Qt::ArrowCursor);
+    }
     // 非编辑模式下，会移动的物体移动
     if(!isEdit){
-        if(player){
-            updater.updatePlayer(player,ci,pressedKeys);
-        }
-        //        for(auto iter = movethings.begin();iter!=movethings.end();++iter){
-        //            (*iter)->updatePos();
-        //        }
+        updater.updateAll(player,moveThings,flyingProps,ci,pressedKeys);
     }
     update();
 }
@@ -504,6 +501,11 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     }
 }
 
+void Scene::newScene()
+{
+    initialize();
+}
+
 // 加载场景
 void Scene::loadScene(const QString &scenePath)
 {
@@ -513,91 +515,88 @@ void Scene::loadScene(const QString &scenePath)
     file.open(QIODevice::ReadOnly);
     QTextStream in(&file);
     QString className; // className
-    int x, y; // x, y坐标
+    int x, y, width ,height; // x, y坐标与长宽
     while(!in.atEnd()){
-        in>>className>>x>>y;
-        // 转换为指针地图单位
-        x = (x/map_unit)*map_unit;
-        y = (y/map_unit)*map_unit;
-        // 如果指针地图中此位置没有
-        if(!sceneMap[x/map_unit][y/map_unit]){
+        in>>className>>x>>y>>width>>height;
+        // 如果这个位置可以放进去
+        if(ci.canAddInScene(QRect(x,y,width,height))){
             BaseObject* newObject = nullptr; // 指针数组中的信息
             switch (name2num[className]) {
             case ClassName::None:break;
             case ClassName::Player:
-                player = new Player(x+1,y+1,map_unit-2,map_unit-2,this);
+                player = new Player(x+1,y+1,width-2,height-2,this);
                 newObject = player;
                 break;
             case ClassName::Rock:
-                newObject = new Rock(x,y,map_unit,map_unit,this);
+                newObject = new Rock(x,y,width,height,this);
                 terrains.insert(static_cast<Rock*>(newObject));
                 break;
             case ClassName::FloorGrass:
-                newObject = new FloorGrass(x,y,map_unit,map_unit,this);
+                newObject = new FloorGrass(x,y,width,height,this);
                 terrains.insert(static_cast<FloorGrass*>(newObject));
                 break;
             case ClassName::Spring:
-                newObject = new Spring(x,y,map_unit,map_unit,this);
+                newObject = new Spring(x,y,width,height,this);
                 terrains.insert(static_cast<Spring*>(newObject));
                 break;
             case ClassName::FlyingBrick:
-                newObject = new FlyingBrick(x,y,map_unit,map_unit,this);
+                newObject = new FlyingBrick(x,y,width,height,this);
                 terrains.insert(static_cast<FlyingBrick*>(newObject));
-                movethings.insert(static_cast<FlyingBrick*>(newObject));
+                moveThings.insert(static_cast<FlyingBrick*>(newObject));
                 break;
             case ClassName::DestructibleBrick:
-                newObject = new DestructibleBrick(x,y,map_unit,map_unit,this);
+                newObject = new DestructibleBrick(x,y,width,height,this);
                 terrains.insert(static_cast<DestructibleBrick*>(newObject));
                 break;
             case ClassName::ActiveTrap:
-                newObject = new ActiveTrap(x,y,map_unit,map_unit,this);
+                newObject = new ActiveTrap(x,y,width,height,this);
                 traps.insert(static_cast<ActiveTrap*>(newObject));
-                movethings.insert(static_cast<ActiveTrap*>(newObject));
+                moveThings.insert(static_cast<ActiveTrap*>(newObject));
                 break;
             case ClassName::PassiveTrap:
-                newObject = new PassiveTrap(x,y,map_unit,map_unit,this);
+                newObject = new PassiveTrap(x,y,width,height,this);
                 traps.insert(static_cast<PassiveTrap*>(newObject));
                 break;
             case ClassName::ArrowTrap:
-                newObject = new ArrowTrap(x,y,map_unit,map_unit,this);
+                newObject = new ArrowTrap(x,y,width,height,this);
                 traps.insert(static_cast<ArrowTrap*>(newObject));
-                movethings.insert(static_cast<ArrowTrap*>(newObject));
+                moveThings.insert(static_cast<ArrowTrap*>(newObject));
                 break;
             case ClassName::FirstMonster:
-                newObject = new FirstMonster(x,y,map_unit,map_unit,this);
+                newObject = new FirstMonster(x,y,width,height,this);
                 monsters.insert(static_cast<FirstMonster*>(newObject));
-                movethings.insert(static_cast<FirstMonster*>(newObject));
+                moveThings.insert(static_cast<FirstMonster*>(newObject));
                 break;
             case ClassName::SecondMonster:
-                newObject = new SecondMonster(x,y,map_unit,map_unit,this);
+                newObject = new SecondMonster(x,y,width,height,this);
                 monsters.insert(static_cast<SecondMonster*>(newObject));
-                movethings.insert(static_cast<SecondMonster*>(newObject));
+                moveThings.insert(static_cast<SecondMonster*>(newObject));
                 break;
             case ClassName::ThirdMonster:
-                newObject = new ThirdMonster(x,y,map_unit,map_unit,this);
+                newObject = new ThirdMonster(x,y,width,height,this);
                 monsters.insert(static_cast<ThirdMonster*>(newObject));
-                movethings.insert(static_cast<ThirdMonster*>(newObject));
+                moveThings.insert(static_cast<ThirdMonster*>(newObject));
                 break;
             case ClassName::MushroomBuff:
-                newObject = new MushroomBuff(x,y,map_unit,map_unit,this);
+                newObject = new MushroomBuff(x,y,width,height,this);
                 buffs.insert(static_cast<MushroomBuff*>(newObject));
                 break;
             case ClassName::FlowerBuff:
-                newObject = new FlowerBuff(x,y,map_unit,map_unit,this);
+                newObject = new FlowerBuff(x,y,width,height,this);
                 buffs.insert(static_cast<FlowerBuff*>(newObject));
                 break;
             case ClassName::Gold:
-                newObject = new Gold(x,y,map_unit,map_unit,this);
+                newObject = new Gold(x,y,width,height,this);
                 values.insert(static_cast<Gold*>(newObject));
                 break;
             case ClassName::Goal:
-                goal = new Goal(x,y,map_unit,map_unit,this);
+                goal = new Goal(x,y,width,height,this);
                 newObject = goal;
                 break;
             default:
                 QMessageBox::warning(this,"Warning","场景文件有奇怪的东西！");
             }
-            sceneMap[x/map_unit][y/map_unit] = newObject; // 保存到指针数组中
+            allWidgets.insert(newObject); // 保存到指针数组中
         }
     }
     file.close();
@@ -620,24 +619,11 @@ void Scene::saveScene(const QString &scenePath)
     QFile file(scenePath);
     file.open(QIODevice::WriteOnly);
     QTextStream out(&file);
-    // 保存玩家信息，要保存初始位置
-    //    if(player){
-    //        out<<player->metaObject()->className()<<" "<<player->originX()<<" "<<player->originY()<<endl;
-    //        sceneMap[player->x()/map_unit][player->y()/map_unit] = nullptr;
-    //    }
-    // 保存地图信息
-    if(sceneMap){
-        for(int i=0;i<map_width;i++){
-            for(int j=0;j<map_height;j++){
-                if(sceneMap[i][j]) {
-                    out << sceneMap[i][j]->metaObject()->className()<<" "<<sceneMap[i][j]->originX()<<" "<<sceneMap[i][j]->originY()<<endl;
-                }
-            }
-        }
+    // 保存地图所有组件信息
+    for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
+        out << (*iter)->metaObject()->className()<< " "<<(*iter)->originX()<<" "<<(*iter)->originY()
+            <<" "<<(*iter)->width()<<" "<<(*iter)->height()<<endl;
     }
-    //    for(auto iter = terrains.begin();iter!=terrains.end();++iter){
-    //        out << (*iter)->metaObject()->className()<<" "<<(*iter)->originX()<<" "<<(*iter)->originY()<<endl;
-    //    }
     file.close();
 }
 
@@ -649,26 +635,23 @@ void Scene::gameReload()
     }
 
     // 移动物体回到原位
-    for(auto iter=movethings.begin();iter!=movethings.end();++iter){
+    for(auto iter=moveThings.begin();iter!=moveThings.end();++iter){
         (*iter)->initialize();
     }
 
     // 重新显示
-    if(sceneMap){
-        for(int i=0;i<map_width;i++){
-            for(int j=0;j<map_height;j++){
-                if(sceneMap[i][j]) {
-                    sceneMap[i][j]->show();
-                }
-            }
-        }
+    for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
+        (*iter)->show();
     }
 }
 
+// 游戏开始
 void Scene::gameStart()
 {
-    gameReload();
-    gameTime = clock();
+    if(!isEdit){
+        gameReload();
+        gameTime = clock();
+    }
 }
 
 // SLOT，过关
@@ -680,29 +663,23 @@ void Scene::gameSuccess()
 }
 
 // 构造函数，初始化
-Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map_unit(50),map_width(m_width/map_unit),map_height(m_height/map_unit),
-    fps(16),gameTime(0),background(":/images/background/images/background/background.png"), sceneMap(nullptr),player(nullptr),goal(nullptr), temp(nullptr),
-    ci(SceneInfo(m_width,m_height,&player,&goal,&terrains,&traps,&monsters,&buffs,&values)), updater(fps,this),
+Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map_unit(50),placeAcc(25),
+    fps(16),gameTime(0),background(":/images/background/images/background/background.png"),player(nullptr),goal(nullptr), temp(nullptr),
+    ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
     isEdit(false), isShowChooseWidget(false),isMovingThing(false)
 {
     resize(m_width,m_height); // 重构大小
     setMouseTracking(true); // 鼠标追踪
     makeName2Num(); // 初始化映射
     makeConnection(); // 初始化连接
-    initialize(); // 初始化变量
+    loadScene("./scene/test.scene");
 }
 
 // 析构函数，释放空间
 Scene::~Scene()
 {
-    if(sceneMap){
-        for(int i=0;i<map_width;i++){
-            for(int j=0;j<map_height;j++){
-                delete sceneMap[i][j];
-            }
-            delete[] sceneMap[i];
-        }
-        delete[] sceneMap;
+    for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
+        delete *iter;
     }
 }
 

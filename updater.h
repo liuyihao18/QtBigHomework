@@ -4,6 +4,7 @@
 #include "scenewidgets.h"
 #include "collisioninspector.h"
 #include <QObject>
+#include <QMap>
 #include <QTimer>
 
 class Updater : public QObject
@@ -12,16 +13,15 @@ class Updater : public QObject
 public:
     explicit Updater(QObject *parent = nullptr);
     Updater(int fps, QObject *parent = nullptr);
-    bool updatePlayer(Player* player, CollisionInspector& ci, const QSet<int>& pressedKeys); // 更新玩家的位置
+    void updateAll(Player* player, const QSet<MoveThing*>& movethings,const QSet<FlyingProp*>& flyingProps,CollisionInspector& ci, const QSet<int>& pressedKeys); // 更新场景中的东西
+    void updatePlayer(Player* player, CollisionInspector& ci, const QSet<int>& pressedKeys); // 更新玩家的位置
+    void updateMoveThings(const QSet<MoveThing*>& movethings, CollisionInspector& ci); // 更新其他移动物体的位置
+    void updateFlyingProps(const QSet<FlyingProp*>& flyingProps,CollisionInspector& ci); // 更新飞行物的位置
 
 protected:
     int fps; // 帧率
     int judge_unit; // 判断精度
-    bool jumping; // 玩家是否跳跃
-    QTimer jumpTimer; // 跳跃计时器
 
-protected slots:
-    void jumpOver(); // 跳跃结束
 
 signals:
 

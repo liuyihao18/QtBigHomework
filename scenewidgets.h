@@ -17,5 +17,6 @@
 #include "flowerbuff.h"
 #include "gold.h"
 #include "goal.h"
+#include "flyingprop.h"
 
 #endif // SCENEWIDGETS_H

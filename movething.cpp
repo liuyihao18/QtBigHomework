@@ -37,6 +37,11 @@ void MoveThing::cancelPos()
 
 }
 
+void MoveThing::needToChangeMove()
+{
+
+}
+
 const QRect &MoveThing::getTempPos()
 {
     return tempPos;

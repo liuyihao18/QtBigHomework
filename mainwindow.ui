@@ -87,10 +87,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actNew"/>
    <addaction name="actOpen"/>
    <addaction name="actSave"/>
    <addaction name="actSaveAs"/>
    <addaction name="actEdit"/>
+   <addaction name="actRestart"/>
    <addaction name="actOption"/>
    <addaction name="actScreenShot"/>
    <addaction name="actMinimize"/>
@@ -556,6 +558,36 @@
    </property>
    <property name="shortcut">
     <string>U</string>
+   </property>
+  </action>
+  <action name="actNew">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/new.png</normaloff>:/icons/icon/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>新建场景</string>
+   </property>
+   <property name="toolTip">
+    <string>新建一个场景</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actRestart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/restart.png</normaloff>:/icons/icon/restart.png</iconset>
+   </property>
+   <property name="text">
+    <string>重新开始</string>
+   </property>
+   <property name="toolTip">
+    <string>重新开始当前游戏</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>

@@ -17,9 +17,8 @@ public:
     int getJumpTime() const;
     int getDownSpeed() const;
     int getUpSpeed() const;
-    void updatePos(bool jumping, int judge_unit);
-    void confirmPos() override;
-    void cancelPos() override;
+    void jump(int springJumpTime = 0);
+    void updatePos(int judge_unit) override;
     void initialize() override;
 
 protected:
@@ -29,6 +28,11 @@ protected:
     int jumpTime;
     int fallDownHPReduce;
     bool canAttack;
+    bool jumping;
+    QTimer jumpTimer;
+
+protected slots:
+    void jumpOver();
 };
 
 #endif // PLAYER_H
