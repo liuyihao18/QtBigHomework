@@ -39,7 +39,7 @@ void Scene::initialize()
 {
     // 如果存在角色指针，则删除置空
     if(player){
-    //  delete player;
+        //  delete player;
         player = nullptr;
     }
     // 如果存在终点指针，则删除置空
@@ -72,81 +72,98 @@ void Scene::initialize()
 void Scene::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    // 绘制背景
-    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background));
-    // 绘制终点
-    if(goal&&goal->isShow()){
-        p.drawPixmap(goal->getRect(),QPixmap::fromImage(goal->getImage()));
-    }
-    // 绘制地形
-    for(auto iter=terrains.begin();iter!=terrains.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制陷阱
-    for (auto iter=traps.begin();iter!=traps.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制怪物
-    for (auto iter=monsters.begin();iter!=monsters.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制Buff
-    for (auto iter=buffs.begin();iter!=buffs.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制分数
-    for (auto iter=values.begin();iter!=values.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制角色
-    if(player&&player->isShow()){
-        p.drawPixmap(player->getRect(),QPixmap::fromImage(player->getImage()));
-    }
-    // 绘制飞行物
-    for (auto iter=flyingProps.begin();iter!=flyingProps.end();++iter){
-        if((*iter)->isShow()){
-            p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
-        }
-    }
-    // 绘制临时指针，当且仅当存在并且需要显示时
-    if(temp && isShowChooseWidget){
-        p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
-    }
-    // 绘制文字
     QFont font("华文新魏",32,QFont::Bold,false);
     p.setFont(font);
-    if(player){
-        // 绘制人物生命
-        p.drawText(QRect(100,10,200,50),QString::number(player->getHP()));
-        // 绘制游戏分数
-        p.drawText(QRect(300,10,200,50),QString::number(player->getPoints()));
-    }else{
-        // 绘制人物生命
-        p.drawText(QRect(100,10,200,50),QString("???"));
-        // 绘制游戏分数
-        p.drawText(QRect(300,10,200,50),QString("???"));
-    }
-    // 绘制游戏时间
-    if(!isEdit){
-        p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
+    // 绘制背景
+    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage()));
+    switch (gameState) {
+    case Loading:
+        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loader.getImage()));
+        break;
+    case Gaming:
+        // 绘制终点
+        if(goal&&goal->isShow()){
+            p.drawPixmap(goal->getRect(),QPixmap::fromImage(goal->getImage()));
+        }
+        // 绘制地形
+        for(auto iter=terrains.begin();iter!=terrains.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制陷阱
+        for (auto iter=traps.begin();iter!=traps.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制Buff
+        for (auto iter=buffs.begin();iter!=buffs.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制分数
+        for (auto iter=values.begin();iter!=values.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制怪物
+        for (auto iter=monsters.begin();iter!=monsters.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制角色
+        if(player&&player->isShow()){
+            p.drawPixmap(player->getRect(),QPixmap::fromImage(player->getImage()));
+        }
+        // 绘制飞行物
+        for (auto iter=flyingProps.begin();iter!=flyingProps.end();++iter){
+            if((*iter)->isShow()){
+                p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
+            }
+        }
+        // 绘制临时指针，当且仅当存在并且需要显示时
+        if(temp && isShowChooseWidget){
+            p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
+        }
+        // 绘制文字
+        if(player){
+            // 绘制人物生命
+            p.drawText(QRect(100,10,200,50),QString::number(player->getHP()));
+            // 绘制游戏分数
+            p.drawText(QRect(300,10,200,50),QString::number(player->getPoints()));
+        }else{
+            // 绘制人物生命
+            p.drawText(QRect(100,10,200,50),QString("???"));
+            // 绘制游戏分数
+            p.drawText(QRect(300,10,200,50),QString("???"));
+        }
+        // 绘制游戏时间
+        if(!isEdit){
+            p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
+        }
+        break;
+    default:
+        break;
     }
 }
 
 // 鼠标进入事件，在Edit模式下，将显示临时指针的内容
 void Scene::enterEvent(QEvent *event)
 {
-    if(isEdit){
-        isShowChooseWidget = true;
+    switch(gameState){
+    case Loading:
+        break;
+    case Gaming:
+        if(isEdit){
+            isShowChooseWidget = true;
+        }
+        break;
+    default:
+        break;
     }
     QWidget::enterEvent(event);
 }
@@ -154,8 +171,16 @@ void Scene::enterEvent(QEvent *event)
 // 鼠标离开事件，在Edit模式下，将不显示显示临时指针的内容
 void Scene::leaveEvent(QEvent *event)
 {
-    if(isEdit){
-        isShowChooseWidget = false;
+    switch(gameState){
+    case Loading:
+        break;
+    case Gaming:
+        if(isEdit){
+            isShowChooseWidget = false;
+        }
+        break;
+    default:
+        break;
     }
     QWidget::enterEvent(event);
 }
@@ -163,10 +188,18 @@ void Scene::leaveEvent(QEvent *event)
 // 鼠标移动事件，在Edit模式下，追踪临时指针内容的位置
 void Scene::mouseMoveEvent(QMouseEvent *event)
 {
-    if(isEdit){
-        if(temp){
-            temp->moveRect(event->pos().x()-temp->width()/2,event->pos().y()-temp->height()/2);
+    switch(gameState){
+    case Loading:
+        break;
+    case Gaming:
+        if(isEdit){
+            if(temp){
+                temp->moveRect(event->pos().x()-temp->width()/2,event->pos().y()-temp->height()/2);
+            }
         }
+        break;
+    default:
+        break;
     }
     QWidget::mouseMoveEvent(event);
 }
@@ -174,24 +207,46 @@ void Scene::mouseMoveEvent(QMouseEvent *event)
 // 鼠标施放事件，在Edit模式下，左键表示放下部件、右键表示取消/删除
 void Scene::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(isEdit){
-        if(event->button()==Qt::RightButton){
-            if(temp){
-                delete temp;
-                temp = nullptr;
-                emit clearChooseSceneWidget(); // 发出信号，通知主窗口取消组件工具栏的选择
-            } else {
-                deleteSceneWidget(event->x(),event->y()); // 删除鼠标位置的部件
-            }
-        }
+    if(loading){
+        return;
+    }
+    switch(gameState){
+    case Loading:
         if(event->button()==Qt::LeftButton){
-            if(temp){
-                addSceneWidget(event->x(),event->y()); // 将临时指针的内容放置在地图上
-            } else {
-                moveSceneWidget(event->x(),event->y()); // 取出点击的物体
+            if(QRect(888*width()/1902,510*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+                emit chooseSceneFile();
+            }
+            if(QRect(888*width()/1902,580*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+                emit newSceneFile();
+            }
+            if(QRect(888*width()/1902,650*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+
             }
         }
-        mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
+        break;
+    case Gaming:
+        if(isEdit){
+            if(event->button()==Qt::RightButton){
+                if(temp){
+                    delete temp;
+                    temp = nullptr;
+                    emit clearChooseSceneWidget(); // 发出信号，通知主窗口取消组件工具栏的选择
+                } else {
+                    deleteSceneWidget(event->x(),event->y()); // 删除鼠标位置的部件
+                }
+            }
+            if(event->button()==Qt::LeftButton){
+                if(temp){
+                    addSceneWidget(event->x(),event->y()); // 将临时指针的内容放置在地图上
+                } else {
+                    moveSceneWidget(event->x(),event->y()); // 取出点击的物体
+                }
+            }
+            mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
+        }
+        break;
+    default:
+        break;
     }
     QWidget::mouseReleaseEvent(event);
 }
@@ -430,6 +485,7 @@ void Scene::edit(bool edit)
         isMovingThing = false;
         gameTime = clock();
     }else{
+        gameState = Gaming;
         gameReload();
     }
 }
@@ -437,6 +493,10 @@ void Scene::edit(bool edit)
 // 选择的场景组件，生成临时变量
 void Scene::chooseSceneWidget(bool isChoose, const QString & className)
 {
+    if(gameState!=Gaming){
+        return;
+    }
+
     if(!isEdit){
         return;
     }
@@ -509,15 +569,22 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     }
 }
 
+void Scene::loadOver()
+{
+    loading = false;
+}
+
 // 新建场景，调用初始化函数
 void Scene::newScene()
 {
+    gameState = Gaming;
     initialize();
 }
 
 // 加载场景
 void Scene::loadScene(const QString &scenePath)
 {
+    gameState = Gaming;
     initialize(); // 先进行初始化
     //    qDebug()<<"open";
     QFile file(scenePath);
@@ -617,6 +684,7 @@ void Scene::loadScene(const QString &scenePath)
 // 保存场景
 void Scene::saveScene(const QString &scenePath)
 {
+    gameState = Gaming;
     //    qDebug() << "save";
     QFile file(scenePath);
     file.open(QIODevice::WriteOnly);
@@ -656,6 +724,7 @@ void Scene::gameReload()
 // 游戏开始
 void Scene::gameStart()
 {
+    gameState = Gaming;
     if(!isEdit){
         gameReload();
         gameTime = clock();
@@ -688,8 +757,10 @@ void Scene::gameOver()
 }
 
 // 构造函数，初始化
-Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map_unit(50),placeAcc(25),
-    fps(16),gameTime(0),background(":/images/background/images/background/background.png"),player(nullptr),goal(nullptr), temp(nullptr),
+Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902),m_height(1002),map_unit(50),placeAcc(25),
+    fps(16),loading(true), gameTime(0),background(":/images/background/images/background/background.gif"),
+    loader(":/images/background/images/background/loader.gif",true),
+    player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
     isEdit(false), isShowChooseWidget(false),isMovingThing(false)
 {
@@ -697,7 +768,7 @@ Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map
     setMouseTracking(true); // 鼠标追踪
     makeName2Num(); // 初始化映射
     makeConnection(); // 初始化连接
-//    loadScene("./scene/test.scene");
+    // loadScene("./scene/test.scene");
 }
 
 // 析构函数，释放空间

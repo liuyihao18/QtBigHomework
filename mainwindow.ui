@@ -75,6 +75,9 @@
    </property>
   </widget>
   <widget class="QToolBar" name="action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle">
     <string>Buttons</string>
    </property>

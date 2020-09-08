@@ -154,8 +154,8 @@ FlyingProp *Player::launchFlyingProp()
     launch();
     launchTimer.setInterval(launchInteval);
     launchTimer.start();
-    int flyingPropWidth = 20;
-    int flyingPropHeight = 20;
+    int flyingPropWidth = 0.4*width();
+    int flyingPropHeight = 0.4*height();
     int posX = 0;
     int posY = 0;
     switch(direction){

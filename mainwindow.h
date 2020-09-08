@@ -39,6 +39,7 @@ signals:
     void gameStart(); // 开始游戏
 
 private slots:
+    void loadOver(); // 加载结束
     void on_actEdit_triggered(bool checked); // Edit按钮触发
     void on_actNew_triggered(); // 新建按钮触发
     void on_actOpen_triggered(); // 打开按钮触发
@@ -49,7 +50,8 @@ private slots:
 private:
     Ui::MainWindow *ui; // ui指针
     QTimer timer; // 主计时器
-    QTimer stateTimer; // 状态栏
+    QTimer stateTimer; // 状态栏计时器
+    QTimer loaderTimer; // 加载计时器
     QSet<int> pressedKeys; // 键盘按下的按键
     int fps; // 帧率
     QString sceneFileName; // 打开的场景文件

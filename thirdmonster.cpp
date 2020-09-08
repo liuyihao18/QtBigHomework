@@ -59,8 +59,8 @@ FlyingProp *ThirdMonster::launchFlyingProp()
     launch();
     launchTimer.setInterval(launchInteval);
     launchTimer.start();
-    int flyingPropWidth = 30;
-    int flyingPropHeight = 30;
+    int flyingPropWidth = 0.6*width();
+    int flyingPropHeight = 0.6*width();
     int posX = 0;
     int posY = 0;
     switch(direction){

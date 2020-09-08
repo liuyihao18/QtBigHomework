@@ -6,15 +6,18 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), timer(this), stateTimer(this), fps(0)
+    , ui(new Ui::MainWindow), timer(this), stateTimer(this), loaderTimer(this), fps(0)
 {
     ui->setupUi(this);
     fps = ui->scene->getFPS();
     timer.setInterval(fps); // 设定帧率为16ms
     timer.start(); // 开始定时器
     stateTimer.setInterval(1000); // 提示时间1s
+//    loaderTimer.setInterval(4750); // 加载时间5s
+    loaderTimer.setInterval(100);
     makeConnection(); // 建立连接
     showFullScreen(); // 全屏显示
+    loaderTimer.start(); // 开始加载计时
 }
 
 MainWindow::~MainWindow()
@@ -26,19 +29,6 @@ MainWindow::~MainWindow()
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     pressedKeys.insert(event->key());
-    // 保证方向键互斥
-//    if(event->key()==Qt::Key_A){
-//        pressedKeys.remove(Qt::Key_D);
-//    }
-//    else if(event->key()==Qt::Key_D){
-//        pressedKeys.remove(Qt::Key_A);
-//    }
-//    else if(event->key()==Qt::Key_W){
-//        pressedKeys.remove(Qt::Key_S);
-//    }
-//    else if(event->key()==Qt::Key_S){
-//        pressedKeys.remove(Qt::Key_W);
-//    }
     // 全屏显示
     if(event->key()==Qt::Key_F11){
         if(isFullScreen()){
@@ -105,6 +95,14 @@ void MainWindow::clearKeyPressed()
     pressedKeys.clear();
 }
 
+
+// 加载结束
+void MainWindow::loadOver()
+{
+    ui->action->setEnabled(true);
+    loaderTimer.stop();
+}
+
 // 新建按钮
 void MainWindow::on_actNew_triggered()
 {
@@ -159,6 +157,11 @@ void MainWindow::on_actSaveAs_triggered()
     // 另存为按钮，向场景发出保存的信号
     QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Scene"),"./scene/",tr("Scene Files(*.scene)"));
     if(!saveFile.isEmpty()){
+        if(sceneFileName.isEmpty()){
+            emit newScene();
+            ui->actEdit->setChecked(true);
+            emit ui->actEdit->triggered(true);
+        }
         sceneFileName = saveFile; // 另存为会改变打开的文件名
         emit saveScene(sceneFileName);
         ui->stateLabel->setText("保存成功");
@@ -177,6 +180,9 @@ void MainWindow::on_actRestart_triggered()
 // 建立连接
 void MainWindow::makeConnection()
 {
+    // 加载计时
+    connect(&loaderTimer,SIGNAL(timeout()),this,SLOT(loadOver()));
+    connect(&loaderTimer,SIGNAL(timeout()),ui->scene,SLOT(loadOver()));
     // 主定时器的timeout()与主窗口的timeout()连接
     connect(&timer,SIGNAL(timeout()),this,SLOT(timeout()));
     // 主窗口发出携带键盘信息的信号给地图，使地图更新画面
@@ -189,8 +195,10 @@ void MainWindow::makeConnection()
     // 清空选择的组件
     connect(ui->scene,SIGNAL(clearChooseSceneWidget()),this,SLOT(clearChooseSceneWidget()));
     // 新建场景
+    connect(ui->scene,SIGNAL(newSceneFile()),this,SLOT(on_actNew_triggered()));
     connect(this,SIGNAL(newScene()),ui->scene,SLOT(newScene()));
     // 打开场景
+    connect(ui->scene,SIGNAL(chooseSceneFile()),this,SLOT(on_actOpen_triggered()));
     connect(this,SIGNAL(loadScene(const QString&)),ui->scene,SLOT(loadScene(const QString&)));
     // 保存场景
     connect(this,SIGNAL(saveScene(const QString&)),ui->scene,SLOT(saveScene(const QString&)));

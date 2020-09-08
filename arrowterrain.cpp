@@ -19,8 +19,8 @@ FlyingProp *ArrowTerrain::launchFlyingProp()
     launch();
     launchTimer.setInterval(launchInteval);
     launchTimer.start();
-    int flyingPropWidth = 50;
-    int flyingPropHeight = 20;
+    int flyingPropWidth = width();
+    int flyingPropHeight = 0.2*height();
     return new Arrow(x()-flyingPropWidth,y()+height()/2-flyingPropHeight/2,flyingPropWidth,flyingPropHeight,Left,this);
 }
 

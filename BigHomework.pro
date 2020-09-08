@@ -29,6 +29,7 @@ SOURCES += \
     flowerbuff.cpp \
     flyingbrick.cpp \
     flyingprop.cpp \
+    gif.cpp \
     goal.cpp \
     gold.cpp \
     ground.cpp \
@@ -69,6 +70,7 @@ HEADERS += \
     flowerbuff.h \
     flyingbrick.h \
     flyingprop.h \
+    gif.h \
     goal.h \
     gold.h \
     ground.h \

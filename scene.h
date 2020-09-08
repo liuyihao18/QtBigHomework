@@ -1,12 +1,14 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "gif.h"
 #include "sceneinfo.h"
 #include "classname.h"
 #include "collisioninspector.h"
 #include "updater.h"
 #include <QWidget>
 #include <QSet>
+#include <QMovie>
 #include <QPainter>
 #include <QSet>
 #include <QMap>
@@ -16,11 +18,21 @@ class Scene : public QWidget
 {
     Q_OBJECT
 private:
+    enum SceneState {
+        Loading = 0,
+        Gaming = 1,
+        Success = 2,
+        GameOver = 3,
+        Rank = 4
+    };
+    int gameState; // 游戏状态
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
+    bool loading;
     clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
-    QImage background; // 背景图片
+    Gif background; // 背景图片
+    Gif loader; // 加载图片
     Player* player; // 玩家
     Goal* goal; // 终点
     QSet<BaseObject*> allWidgets; // 保存所有的指针
@@ -56,6 +68,7 @@ protected slots:
     void updateScene(const QSet<int>&); // 更新场景
     void edit(bool); // 编辑模式
     void chooseSceneWidget(bool, const QString&); // 选择的组件
+    void loadOver(); // 加载完成
     void newScene(); // 新建场景
     void loadScene(const QString& scenePath); // 加载场景
     void saveScene(const QString& scenePath); // 保存场景
@@ -73,6 +86,8 @@ public:
 signals:
     void clearChooseSceneWidget(); // 右击清除已选择，返回信号给主窗口
     void clearKeyPressed(); // 清楚键盘状态
+    void chooseSceneFile(); // 选择场景文件
+    void newSceneFile(); // 新建场景文件
 };
 
 #endif // MAP_H

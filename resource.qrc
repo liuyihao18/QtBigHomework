@@ -25,6 +25,8 @@
         <file>images/background/Kiminona.jpg</file>
         <file>images/background/SAO.jpg</file>
         <file>images/background/background.png</file>
+        <file>images/background/background.gif</file>
+        <file>images/background/loader.gif</file>
     </qresource>
     <qresource prefix="/images/player">
         <file>images/player/plane.png</file>
