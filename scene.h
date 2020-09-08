@@ -12,7 +12,7 @@
 #include <QPainter>
 #include <QSet>
 #include <QMap>
-
+#include <QDateTime>
 
 class Scene : public QWidget
 {
@@ -31,6 +31,7 @@ private:
     bool loading;
     clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
+    QString sceneFileName; // 场景文件的名字
     Gif background; // 背景图片
     Gif loader; // 加载图片
     Player* player; // 玩家

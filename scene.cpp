@@ -456,15 +456,17 @@ void Scene::moveSceneWidget(int x, int y)
 // 更新场景事件，使用Updater类
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
-    // 鼠标是否显示
-    if(temp){
-        setCursor(Qt::BlankCursor);
-    }else{
-        setCursor(Qt::ArrowCursor);
-    }
-    // 非编辑模式下，会移动的物体移动
-    if(!isEdit){
-        updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
+    if(gameState==Gaming){
+        // 鼠标是否显示
+        if(temp){
+            setCursor(Qt::BlankCursor);
+        }else{
+            setCursor(Qt::ArrowCursor);
+        }
+        // 非编辑模式下，会移动的物体移动
+        if(!isEdit){
+            updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
+        }
     }
     update();
 }
@@ -577,6 +579,7 @@ void Scene::loadOver()
 // 新建场景，调用初始化函数
 void Scene::newScene()
 {
+    sceneFileName = "";
     gameState = Gaming;
     initialize();
 }
@@ -584,6 +587,7 @@ void Scene::newScene()
 // 加载场景
 void Scene::loadScene(const QString &scenePath)
 {
+    sceneFileName = scenePath;
     gameState = Gaming;
     initialize(); // 先进行初始化
     //    qDebug()<<"open";
@@ -684,6 +688,7 @@ void Scene::loadScene(const QString &scenePath)
 // 保存场景
 void Scene::saveScene(const QString &scenePath)
 {
+    sceneFileName = scenePath;
     gameState = Gaming;
     //    qDebug() << "save";
     QFile file(scenePath);
@@ -697,6 +702,7 @@ void Scene::saveScene(const QString &scenePath)
     file.close();
 }
 
+// 重载游戏
 void Scene::gameReload()
 {
     // 人物初始化
@@ -743,6 +749,14 @@ void Scene::gameStart()
 // SLOT，过关
 void Scene::gameSuccess()
 {
+    QFile file("./rank/rank.rank");
+    if(file.open(QIODevice::Append)){
+        QTextStream out(&file);
+        if(player){
+            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<endl;
+        }
+        file.close();
+    }
     QMessageBox::information(this,"Congratulation","恭喜过关！");
     gameStart();
     emit clearKeyPressed();
@@ -757,7 +771,7 @@ void Scene::gameOver()
 }
 
 // 构造函数，初始化
-Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902),m_height(1002),map_unit(50),placeAcc(25),
+Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902),m_height(1002),map_unit(50),placeAcc(0.5*map_unit),
     fps(16),loading(true), gameTime(0),background(":/images/background/images/background/background.gif"),
     loader(":/images/background/images/background/loader.gif",true),
     player(nullptr),goal(nullptr), temp(nullptr),
