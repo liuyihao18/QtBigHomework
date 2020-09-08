@@ -3,7 +3,6 @@
 
 #include "baseobject.h"
 #include "movething.h"
-#include "direction.h"
 #include <QTimer>
 
 class Role : public BaseObject, public MoveThing
@@ -19,14 +18,11 @@ public:
     int getHP() const;
     void addHP(int x);
     void reduceHP(int x);
-    int getDirection() const;
     void setDirection(int direction);
 
 protected:
     int HP;
     int originHP;
-    int direction;
-    int originDirection;
     bool invincible;
     QTimer invincibleTimer;
 

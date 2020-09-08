@@ -17,11 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     activetrap.cpp \
+    arrow.cpp \
     arrowterrain.cpp \
     baseobject.cpp \
     buff.cpp \
     collisioninspector.cpp \
     destructiblebrick.cpp \
+    fireball.cpp \
     firstmonster.cpp \
     floorgrass.cpp \
     flowerbuff.cpp \
@@ -32,6 +34,7 @@ SOURCES += \
     ground.cpp \
     hpreducer.cpp \
     launcher.cpp \
+    magicbullet.cpp \
     main.cpp \
     mainwindow.cpp \
     monster.cpp \
@@ -52,6 +55,7 @@ SOURCES += \
 
 HEADERS += \
     activetrap.h \
+    arrow.h \
     arrowterrain.h \
     baseobject.h \
     buff.h \
@@ -59,6 +63,7 @@ HEADERS += \
     collisioninspector.h \
     destructiblebrick.h \
     direction.h \
+    fireball.h \
     firstmonster.h \
     floorgrass.h \
     flowerbuff.h \
@@ -69,6 +74,7 @@ HEADERS += \
     ground.h \
     hpreducer.h \
     launcher.h \
+    magicbullet.h \
     mainwindow.h \
     monster.h \
     movething.h \

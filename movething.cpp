@@ -5,8 +5,8 @@ MoveThing::MoveThing()
 
 }
 
-MoveThing::MoveThing(int x,int y, int width, int height, int moveSpeed)
-    :move_speed(moveSpeed),tempPos(x,y,width,height)
+MoveThing::MoveThing(int x,int y, int width, int height, int direction, int moveSpeed)
+    :direction(direction),originDirection(direction), move_speed(moveSpeed),tempPos(x,y,width,height)
 {
 
 }
@@ -14,7 +14,7 @@ MoveThing::MoveThing(int x,int y, int width, int height, int moveSpeed)
 
 void MoveThing::initialize()
 {
-
+    direction = originDirection;
 }
 
 void MoveThing::returnOriginPos()
@@ -45,6 +45,11 @@ void MoveThing::needToChangeMove()
 const QRect &MoveThing::getTempPos()
 {
     return tempPos;
+}
+
+int MoveThing::getDirection() const
+{
+    return direction;
 }
 
 int MoveThing::getMoveSpeed() const

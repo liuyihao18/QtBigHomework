@@ -60,4 +60,9 @@
     <qresource prefix="/images/goal">
         <file>images/goal/goal.jpg</file>
     </qresource>
+    <qresource prefix="/images/flyingprop">
+        <file>images/flyingprop/arrow.png</file>
+        <file>images/flyingprop/fireball.png</file>
+        <file>images/flyingprop/magicbullet.png</file>
+    </qresource>
 </RCC>

@@ -3,6 +3,7 @@
 
 #include "terrain.h"
 #include "movething.h"
+#include "direction.h"
 
 // 飞行砖块
 class FlyingBrick : public Terrain, public MoveThing
