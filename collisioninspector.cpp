@@ -323,6 +323,7 @@ bool CollisionInspector::dealWithActiveTrap() const
     return dealt;
 }
 
+// 处理飞行物的碰撞问题
 bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp) const
 {
     bool dealt = false;

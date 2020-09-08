@@ -17,6 +17,7 @@
         <file>icon/saveAs.png</file>
         <file>icon/new.png</file>
         <file>icon/restart.png</file>
+        <file>icon/home.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>qss/main.qss</file>
@@ -24,7 +25,6 @@
     <qresource prefix="/images/background">
         <file>images/background/Kiminona.jpg</file>
         <file>images/background/SAO.jpg</file>
-        <file>images/background/background.png</file>
         <file>images/background/background.gif</file>
         <file>images/background/loader.gif</file>
     </qresource>

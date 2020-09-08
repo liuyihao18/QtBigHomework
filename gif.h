@@ -7,7 +7,7 @@ class Gif
 {
 public:
     Gif(const QString& imgPath,bool once = false);
-    const QImage& getImage();
+    const QImage& getImage(bool paused = false,bool returnOrigin = false);
 
 protected:
     QMovie gifImg;

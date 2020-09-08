@@ -90,6 +90,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actHome"/>
    <addaction name="actNew"/>
    <addaction name="actOpen"/>
    <addaction name="actSave"/>
@@ -591,6 +592,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actHome">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/home.png</normaloff>:/icons/icon/home.png</iconset>
+   </property>
+   <property name="text">
+    <string>主页</string>
+   </property>
+   <property name="toolTip">
+    <string>回到开始界面</string>
    </property>
   </action>
  </widget>

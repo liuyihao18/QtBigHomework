@@ -75,7 +75,7 @@ void Scene::paintEvent(QPaintEvent *)
     QFont font("华文新魏",32,QFont::Bold,false);
     p.setFont(font);
     // 绘制背景
-    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage()));
+    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage(isEdit)));
     switch (gameState) {
     case Loading:
         p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loader.getImage()));
@@ -144,6 +144,24 @@ void Scene::paintEvent(QPaintEvent *)
         // 绘制游戏时间
         if(!isEdit){
             p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
+        }
+        break;
+    case Success:
+        break;
+    case GameOver:
+        break;
+    case Rank:
+        font.setPointSize(20);
+        p.setFont(font);
+        p.drawText(QRect(width()/2-300,250-60,200,60),"日期");
+        p.drawText(QRect(width()/2-100,250-60,150,60),"时间");
+        p.drawText(QRect(width()/2+50,250-60,50,60),"分数");
+        p.drawText(QRect(width()/2+100,250-60,100,60),"通关时间");
+        for(int i = 0;i<(10>rankinfos.size()?rankinfos.size():10);i++){
+            p.drawText(QRect(width()/2-300,250+60*i,200,60),rankinfos[i].date);
+            p.drawText(QRect(width()/2-100,250+60*i,150,60),rankinfos[i].time);
+            p.drawText(QRect(width()/2+50,250+60*i,50,60),rankinfos[i].point);
+            p.drawText(QRect(width()/2+100,250+60*i,100,60),rankinfos[i].passTime);
         }
         break;
     default:
@@ -220,7 +238,8 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
                 emit newSceneFile();
             }
             if(QRect(888*width()/1902,650*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
-
+                gameState = Rank;
+                readRankFile();
             }
         }
         break;
@@ -453,6 +472,37 @@ void Scene::moveSceneWidget(int x, int y)
     }
 }
 
+// 读取排名
+void Scene::readRankFile()
+{
+    rankinfos.clear();
+    QFile file(rankFile);
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream in(&file);
+        QString date,time,point,passTime;
+        while(!in.atEnd()){
+            in>>date>>time>>point>>passTime;
+            if(!date.isEmpty()&&!time.isEmpty()&&!point.isEmpty()&&!passTime.isEmpty()){
+                rankinfos.append(RankInfo(date,time,point,passTime));
+            }
+        }
+        file.close();
+    }
+}
+
+// 写入排名
+void Scene::writeRankFile()
+{
+    QFile file(rankFile);
+    if(file.open(QIODevice::Append)){
+        QTextStream out(&file);
+        if(player){
+            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<" "<<QString::number(clock()-gameTime)+"ms"<<endl;
+        }
+        file.close();
+    }
+}
+
 // 更新场景事件，使用Updater类
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
@@ -485,7 +535,7 @@ void Scene::edit(bool edit)
         // 与编辑模式有关的变量初始化
         isShowChooseWidget = false;
         isMovingThing = false;
-        gameTime = clock();
+        gameStart();
     }else{
         gameState = Gaming;
         gameReload();
@@ -571,6 +621,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     }
 }
 
+// 加载结束
 void Scene::loadOver()
 {
     loading = false;
@@ -580,14 +631,12 @@ void Scene::loadOver()
 void Scene::newScene()
 {
     sceneFileName = "";
-    gameState = Gaming;
     initialize();
 }
 
 // 加载场景
 void Scene::loadScene(const QString &scenePath)
 {
-    sceneFileName = scenePath;
     gameState = Gaming;
     initialize(); // 先进行初始化
     //    qDebug()<<"open";
@@ -682,14 +731,15 @@ void Scene::loadScene(const QString &scenePath)
         }
     }
     file.close();
-    gameStart();
+    if(!isEdit){
+        gameStart();
+    }
 }
 
 // 保存场景
 void Scene::saveScene(const QString &scenePath)
 {
     sceneFileName = scenePath;
-    gameState = Gaming;
     //    qDebug() << "save";
     QFile file(scenePath);
     file.open(QIODevice::WriteOnly);
@@ -731,32 +781,31 @@ void Scene::gameReload()
 void Scene::gameStart()
 {
     gameState = Gaming;
+    gameReload();
+    gameTime = clock();
+    // 小提示
+    if(player==nullptr&&goal==nullptr){
+        QMessageBox::information(this,"Info","请放置你的人物和目的地哟~");
+    }
+    else if(player==nullptr){
+        QMessageBox::information(this,"Info","请放置你的人物哟~");
+    } else if(goal==nullptr){
+        QMessageBox::information(this,"Info","请放置你的目的地哟~");
+    }
+}
+
+// 游戏重新开始
+void Scene::gameRestart()
+{
     if(!isEdit){
-        gameReload();
-        gameTime = clock();
-        // 小提示
-        if(player==nullptr&&goal==nullptr){
-            QMessageBox::information(this,"Info","请放置你的人物和目的地哟~");
-        }
-        else if(player==nullptr){
-            QMessageBox::information(this,"Info","请放置你的人物哟~");
-        } else if(goal==nullptr){
-            QMessageBox::information(this,"Info","请放置你的目的地哟~");
-        }
+        gameStart();
     }
 }
 
 // SLOT，过关
 void Scene::gameSuccess()
 {
-    QFile file("./rank/rank.rank");
-    if(file.open(QIODevice::Append)){
-        QTextStream out(&file);
-        if(player){
-            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<endl;
-        }
-        file.close();
-    }
+    writeRankFile();
     QMessageBox::information(this,"Congratulation","恭喜过关！");
     gameStart();
     emit clearKeyPressed();
@@ -776,6 +825,7 @@ Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902)
     loader(":/images/background/images/background/loader.gif",true),
     player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
+    rankFile("./rank/rank.rank"),
     isEdit(false), isShowChooseWidget(false),isMovingThing(false)
 {
     resize(m_width,m_height); // 重构大小
@@ -788,6 +838,7 @@ Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902)
 // 析构函数，释放空间
 Scene::~Scene()
 {
+    saveScene("./scene/temp.scene");
     for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
         delete *iter;
     }
@@ -797,5 +848,27 @@ Scene::~Scene()
 int Scene::getFPS() const
 {
     return fps;
+}
+
+// 返回游戏状态
+int Scene::getGameState() const
+{
+    return gameState;
+}
+
+// 设置游戏状态
+void Scene::setGameState(int gameState)
+{
+    this->gameState = gameState;
+    switch (gameState) {
+    case Loading:
+        initialize();
+        isEdit = false;
+        isShowChooseWidget = false;
+        isMovingThing = false;
+        break;
+    default:
+        break;
+    }
 }
 

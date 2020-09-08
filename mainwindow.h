@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "scenestate.h"
 #include <QMainWindow>
 #include <QTimer>
 #include <QSet>
@@ -36,10 +37,11 @@ signals:
     void saveScene(const QString&); // 发送保存的场景文件
     void edit(bool); // 发送是否处于编辑状态
     void chooseSceneWidget(bool, const QString&); // 发送选择的场景组件
-    void gameStart(); // 开始游戏
+    void gameRestart(); // 开始游戏
 
 private slots:
     void loadOver(); // 加载结束
+    void on_actHome_triggered(); // 返回主页
     void on_actEdit_triggered(bool checked); // Edit按钮触发
     void on_actNew_triggered(); // 新建按钮触发
     void on_actOpen_triggered(); // 打开按钮触发

@@ -83,10 +83,12 @@ HEADERS += \
     mushroombuff.h \
     passivetrap.h \
     player.h \
+    rankinfo.h \
     rock.h \
     role.h \
     scene.h \
     sceneinfo.h \
+    scenestate.h \
     scenewidgets.h \
     secondmonster.h \
     spring.h \

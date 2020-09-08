@@ -103,6 +103,15 @@ void MainWindow::loadOver()
     loaderTimer.stop();
 }
 
+// 返回主页
+void MainWindow::on_actHome_triggered()
+{
+    sceneFileName = "";
+    ui->scene->setGameState(Loading);
+    ui->actEdit->setChecked(false);
+    ui->sceneWidgets->setEnabled(false);
+}
+
 // 新建按钮
 void MainWindow::on_actNew_triggered()
 {
@@ -157,11 +166,6 @@ void MainWindow::on_actSaveAs_triggered()
     // 另存为按钮，向场景发出保存的信号
     QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Scene"),"./scene/",tr("Scene Files(*.scene)"));
     if(!saveFile.isEmpty()){
-        if(sceneFileName.isEmpty()){
-            emit newScene();
-            ui->actEdit->setChecked(true);
-            emit ui->actEdit->triggered(true);
-        }
         sceneFileName = saveFile; // 另存为会改变打开的文件名
         emit saveScene(sceneFileName);
         ui->stateLabel->setText("保存成功");
@@ -174,7 +178,7 @@ void MainWindow::on_actSaveAs_triggered()
 // 重启游戏
 void MainWindow::on_actRestart_triggered()
 {
-    emit gameStart();
+    emit gameRestart();
 }
 
 // 建立连接
@@ -207,8 +211,9 @@ void MainWindow::makeConnection()
     connect(this,SIGNAL(edit(bool)),this,SLOT(clearStateLabel()));
     // 游戏过关或者结束清楚键盘状态
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
-    // 游戏开始
-    connect(this,SIGNAL(gameStart()),ui->scene,SLOT(gameStart()));
+    // 游戏重新开始
+    connect(this,SIGNAL(gameRestart()),ui->scene,SLOT(gameRestart()));
 }
+
 
 

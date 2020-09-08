@@ -2,7 +2,9 @@
 #define MAP_H
 
 #include "gif.h"
+#include "scenestate.h"
 #include "sceneinfo.h"
+#include "rankinfo.h"
 #include "classname.h"
 #include "collisioninspector.h"
 #include "updater.h"
@@ -18,13 +20,6 @@ class Scene : public QWidget
 {
     Q_OBJECT
 private:
-    enum SceneState {
-        Loading = 0,
-        Gaming = 1,
-        Success = 2,
-        GameOver = 3,
-        Rank = 4
-    };
     int gameState; // 游戏状态
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
@@ -48,6 +43,8 @@ private:
     BaseObject* temp; // 保存临时指针，在放置物体的时候显示
     CollisionInspector ci; // 碰撞检测类
     Updater updater; // 更新场景的类
+    QString rankFile; // 排名文件
+    QVector<RankInfo> rankinfos; // 排名
     bool isEdit,isShowChooseWidget,isMovingThing; // 与编辑模式时的显示有关
     void makeName2Num(); // 构造映射
     void makeConnection(); // 构造连接
@@ -64,6 +61,8 @@ protected:
     void eraseSceneWidget(BaseObject* object); // 擦除组件
     void deleteSceneWidget(int x, int y); // 删除组件
     void moveSceneWidget(int x, int y); // 移动组件
+    void readRankFile(); // 读取排名文件
+    void writeRankFile(); // 写入排名
 
 protected slots:
     void updateScene(const QSet<int>&); // 更新场景
@@ -75,6 +74,7 @@ protected slots:
     void saveScene(const QString& scenePath); // 保存场景
     void gameReload(); // 游戏恢复
     void gameStart(); // 游戏开始
+    void gameRestart(); // 游戏重新开始
     void gameSuccess(); // 游戏通关
     void gameOver(); // 游戏结束
 
@@ -83,6 +83,8 @@ public:
     explicit Scene(QWidget *parent = nullptr);
     ~Scene();
     int getFPS() const; // 返回帧率
+    int getGameState() const; // 返回游戏状态
+    void setGameState(int gameState); // 设置游戏状态
 
 signals:
     void clearChooseSceneWidget(); // 右击清除已选择，返回信号给主窗口
