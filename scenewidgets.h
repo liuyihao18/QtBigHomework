@@ -9,7 +9,7 @@
 #include "destructiblebrick.h"
 #include "activetrap.h"
 #include "passivetrap.h"
-#include "arrowtrap.h"
+#include "arrowterrain.h"
 #include "firstmonster.h"
 #include "secondmonster.h"
 #include "thirdmonster.h"

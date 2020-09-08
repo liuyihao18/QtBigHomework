@@ -3,6 +3,7 @@
 
 #include "baseobject.h"
 #include "movething.h"
+#include "direction.h"
 #include <QTimer>
 
 class Role : public BaseObject, public MoveThing
@@ -10,8 +11,7 @@ class Role : public BaseObject, public MoveThing
     Q_OBJECT
 public:
     Role(QObject* parent = nullptr);
-    Role(int x,int y, int width, int height, const QString& imgPath, int speed, int HP, QObject* parent=nullptr);
-    void updatePos(int judge_unit) override;
+    Role(int x,int y, int width, int height, const QString& imgPath, int speed, int HP, int direction, QObject* parent=nullptr);
     void initialize() override;
     void returnOriginPos() override;
     void confirmPos() override;
@@ -19,10 +19,14 @@ public:
     int getHP() const;
     void addHP(int x);
     void reduceHP(int x);
+    int getDirection() const;
+    void setDirection(int direction);
 
 protected:
     int HP;
     int originHP;
+    int direction;
+    int originDirection;
     bool invincible;
     QTimer invincibleTimer;
 

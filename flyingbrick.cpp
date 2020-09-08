@@ -12,6 +12,11 @@ FlyingBrick::FlyingBrick(int x, int y, int width,int height, QObject *parent)
 
 }
 
+bool FlyingBrick::isReverse() const
+{
+    return reverse;
+}
+
 void FlyingBrick::updatePos(int judge_unit)
 {
     if(!reverse){

@@ -10,6 +10,11 @@ class FirstMonster : public Monster
 public:
     FirstMonster(QObject *parent=nullptr);
     FirstMonster(int x,int y, int width,int height, QObject* parent=nullptr);
+    void updatePos(int judge_unit) override;
+    void needToChangeMove() override;
+
+protected:
+    bool reverse;
 };
 
 #endif // FIRSTMONSTER_H

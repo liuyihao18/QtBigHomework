@@ -29,8 +29,9 @@ private:
     QSet<Monster*> monsters; // 保存怪物指针的基类数组
     QSet<Buff*> buffs; // 保存Buff指针的基类数组
     QSet<Values*> values; // 保存有分数物体的基类数组
-    QSet<MoveThing*> moveThings; // 保存会动的物体的指针
     QSet<FlyingProp*> flyingProps; // 保存飞行物的指针
+    QSet<MoveThing*> moveThings; // 保存会动的物体的指针
+    QSet<Launcher*> launchers; // 保存会发射物体的物体的指针
     BaseObject* temp; // 保存临时指针，在放置物体的时候显示
     CollisionInspector ci; // 碰撞检测类
     Updater updater; // 更新场景的类
@@ -66,7 +67,7 @@ protected slots:
 public:
     explicit Scene(QWidget *parent = nullptr);
     ~Scene();
-    int getFPS() const;
+    int getFPS() const; // 返回帧率
 
 signals:
     void clearChooseSceneWidget(); // 右击清除已选择，返回信号给主窗口

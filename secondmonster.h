@@ -9,6 +9,15 @@ class SecondMonster : public Monster
 public:
     SecondMonster(QObject*parent=nullptr);
     SecondMonster(int x, int y, int width,int height, QObject* parent = nullptr);
+    bool isUpToMaxUpHeight() const;
+    void updatePos(int judge_unit) override;
+    void needToChangeMove() override;
+
+protected:
+    bool reverse;
+    int upHeight;
+    int maxUpHeight;
+
 };
 
 #endif // SECONDMONSTER_H

@@ -13,9 +13,9 @@ void Scene::makeName2Num()
     name2num["Spring"] = ClassName::Spring; // 弹簧
     name2num["FlyingBrick"] = ClassName::FlyingBrick; // 飞行砖块
     name2num["DestructibleBrick"] = ClassName::DestructibleBrick; // 可被破坏的岩石
+    name2num["ArrowTerrain"] = ClassName::ArrowTerrain; // 弓箭陷阱
     name2num["ActiveTrap"] = ClassName::ActiveTrap; // 主动触发式陷阱
     name2num["PassiveTrap"] = ClassName::PassiveTrap; // 被动触发式陷阱
-    name2num["ArrowTrap"] = ClassName::ArrowTrap; // 弓箭陷阱
     name2num["FirstMonster"] = ClassName::FirstMonster; // 第一种怪物
     name2num["SecondMonster"] = ClassName::SecondMonster; // 第二种怪物
     name2num["ThirdMonster"] = ClassName::ThirdMonster; // 第三种怪物
@@ -61,8 +61,8 @@ void Scene::initialize()
     monsters.clear();
     buffs.clear();
     values.clear();
-    moveThings.clear();
     flyingProps.clear();
+    moveThings.clear();
 }
 
 // 绘图事件，绘制场景的各种东西
@@ -209,7 +209,7 @@ void Scene::addSceneWidget(int x, int y)
         return;
     }
 
-    temp->moveRect(temp->x()/placeAcc*placeAcc,(temp->y()+10)/placeAcc*placeAcc);
+    temp->moveRect(temp->x()/placeAcc*placeAcc,(temp->y()+placeAcc/2)/placeAcc*placeAcc);
     // 如果这个释放的位置没有东西，则加入，并且再次新建，保证创建的连续性
     if(ci.canAddInScene(temp->getRect())){
         // qDebug()<<"("<<x/map_unit<<", "<<y/map_unit<<")插入"<<temp->metaObject()->className();
@@ -247,19 +247,17 @@ void Scene::addSceneWidget(int x, int y)
             terrains.insert(static_cast<DestructibleBrick*>(temp));
             temp = new DestructibleBrick(x,y,map_unit,map_unit,this);
             break;
+        case ClassName::ArrowTerrain:
+            terrains.insert(static_cast<ArrowTerrain*>(temp));
+            temp = new ArrowTerrain(x,y,map_unit,map_unit,this);
+            break;
         case ClassName::ActiveTrap:
             traps.insert(static_cast<ActiveTrap*>(temp));
-            moveThings.insert(static_cast<ActiveTrap*>(temp));
             temp = new ActiveTrap(x,y,map_unit,map_unit,this);
             break;
         case ClassName::PassiveTrap:
             traps.insert(static_cast<PassiveTrap*>(temp));
             temp = new PassiveTrap(x,y,map_unit,map_unit,this);
-            break;
-        case ClassName::ArrowTrap:
-            traps.insert(static_cast<ArrowTrap*>(temp));
-            moveThings.insert(static_cast<ArrowTrap*>(temp));
-            temp = new ArrowTrap(x,y,map_unit,map_unit,this);
             break;
         case ClassName::FirstMonster:
             monsters.insert(static_cast<FirstMonster*>(temp));
@@ -289,6 +287,7 @@ void Scene::addSceneWidget(int x, int y)
             temp = new Gold(x,y,map_unit,map_unit,this);
             break;
         case ClassName::Goal:
+            // 如果有终点，则删除
             if(goal){
                 allWidgets.remove(goal);
                 delete goal;
@@ -309,6 +308,7 @@ void Scene::addSceneWidget(int x, int y)
 // 擦除地图组件
 void Scene::eraseSceneWidget(BaseObject* object)
 {
+    // 将组件从组件库中去除
     switch(name2num[object->metaObject()->className()]){
     case ClassName::None:break;
     case ClassName::Player:
@@ -318,6 +318,7 @@ void Scene::eraseSceneWidget(BaseObject* object)
     case ClassName::FloorGrass:
     case ClassName::Spring:
     case ClassName::DestructibleBrick:
+    case ClassName::ArrowTerrain:
         terrains.remove(static_cast<Terrain*>(object));
         break;
     case ClassName::FlyingBrick:
@@ -326,14 +327,9 @@ void Scene::eraseSceneWidget(BaseObject* object)
         break;
     case ClassName::ActiveTrap:
         traps.remove(static_cast<ActiveTrap*>(object));
-        moveThings.remove(static_cast<ActiveTrap*>(object));
         break;
     case ClassName::PassiveTrap:
         traps.remove(static_cast<PassiveTrap*>(object));
-        break;
-    case ClassName::ArrowTrap:
-        traps.remove(static_cast<ArrowTrap*>(object));
-        moveThings.remove(static_cast<ArrowTrap*>(object));
         break;
     case ClassName::FirstMonster:
     case ClassName::SecondMonster:
@@ -455,14 +451,14 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
         case ClassName::DestructibleBrick:
             temp = new DestructibleBrick(0,0,map_unit,map_unit,this);
             break;
+        case ClassName::ArrowTerrain:
+            temp = new ArrowTerrain(0,0,map_unit,map_unit,this);
+            break;
         case ClassName::ActiveTrap:
             temp = new ActiveTrap(0,0,map_unit,map_unit,this);
             break;
         case ClassName::PassiveTrap:
             temp = new PassiveTrap(0,0,map_unit,map_unit,this);
-            break;
-        case ClassName::ArrowTrap:
-            temp = new ArrowTrap(0,0,map_unit,map_unit,this);
             break;
         case ClassName::FirstMonster:
             temp = new FirstMonster(0,0,map_unit,map_unit,this);
@@ -501,6 +497,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     }
 }
 
+// 新建场景，调用初始化函数
 void Scene::newScene()
 {
     initialize();
@@ -548,19 +545,17 @@ void Scene::loadScene(const QString &scenePath)
                 newObject = new DestructibleBrick(x,y,width,height,this);
                 terrains.insert(static_cast<DestructibleBrick*>(newObject));
                 break;
+            case ClassName::ArrowTerrain:
+                newObject = new ArrowTerrain(x,y,width,height,this);
+                terrains.insert(static_cast<ArrowTerrain*>(newObject));
+                break;
             case ClassName::ActiveTrap:
                 newObject = new ActiveTrap(x,y,width,height,this);
                 traps.insert(static_cast<ActiveTrap*>(newObject));
-                moveThings.insert(static_cast<ActiveTrap*>(newObject));
                 break;
             case ClassName::PassiveTrap:
                 newObject = new PassiveTrap(x,y,width,height,this);
                 traps.insert(static_cast<PassiveTrap*>(newObject));
-                break;
-            case ClassName::ArrowTrap:
-                newObject = new ArrowTrap(x,y,width,height,this);
-                traps.insert(static_cast<ArrowTrap*>(newObject));
-                moveThings.insert(static_cast<ArrowTrap*>(newObject));
                 break;
             case ClassName::FirstMonster:
                 newObject = new FirstMonster(x,y,width,height,this);
@@ -596,7 +591,9 @@ void Scene::loadScene(const QString &scenePath)
             default:
                 QMessageBox::warning(this,"Warning","场景文件有奇怪的东西！");
             }
-            allWidgets.insert(newObject); // 保存到指针数组中
+            if(newObject){
+                allWidgets.insert(newObject); // 保存到指针数组中
+            }
         }
     }
     file.close();
@@ -629,12 +626,12 @@ void Scene::saveScene(const QString &scenePath)
 
 void Scene::gameReload()
 {
-    // 人物回到原位
+    // 人物初始化
     if(player){
         player->initialize();
     }
 
-    // 移动物体回到原位
+    // 移动物体初始化
     for(auto iter=moveThings.begin();iter!=moveThings.end();++iter){
         (*iter)->initialize();
     }
@@ -683,6 +680,7 @@ Scene::~Scene()
     }
 }
 
+// 返回帧率
 int Scene::getFPS() const
 {
     return fps;

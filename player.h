@@ -2,8 +2,9 @@
 #define PLAYER_H
 
 #include "role.h"
+#include "launcher.h"
 
-class Player : public Role
+class Player : public Role, public Launcher
 {
     Q_OBJECT
 public:
@@ -17,9 +18,10 @@ public:
     int getJumpTime() const;
     int getDownSpeed() const;
     int getUpSpeed() const;
-    void jump(int springJumpTime = 0);
+    void jump(bool springJump = false);
     void updatePos(int judge_unit) override;
     void initialize() override;
+    FlyingProp* emitFlyingProp() override;
 
 protected:
     int points;
@@ -31,7 +33,7 @@ protected:
     bool jumping;
     QTimer jumpTimer;
 
-protected slots:
+public slots:
     void jumpOver();
 };
 

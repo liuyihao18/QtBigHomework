@@ -11,6 +11,7 @@ class FlyingBrick : public Terrain, public MoveThing
 public:
     FlyingBrick(QObject* parent = nullptr);
     FlyingBrick(int x,int y,int width, int height, QObject* parent = nullptr);
+    bool isReverse() const;
     void updatePos(int judge_unit) override;
     void confirmPos() override;
     void cancelPos() override;

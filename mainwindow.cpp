@@ -22,9 +22,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// 保存按下的键
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    // 保存按下的键
     pressedKeys.insert(event->key());
     // 全屏显示
     if(event->key()==Qt::Key_F11){
@@ -43,22 +43,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     QMainWindow::keyPressEvent(event);
 }
 
+// 删除按下的键
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
-    // 删除按下的键
     pressedKeys.remove(event->key());
     QMainWindow::keyReleaseEvent(event);
 }
 
+// 当定时器timeout()之后，发射带有键盘信息的信号，更新地图画面
 void MainWindow::timeout()
 {
-    // 当定时器timeout()之后，发射带有键盘信息的信号，更新地图画面
     emit updateScene(pressedKeys);
 }
 
+// 工具栏触发事件，确定选择组件的类型，发出信号
 void MainWindow::triggerSceneWidgets(QAction* action)
 {
-    // 工具栏触发事件，确定选择组件的类型，发出信号
     bool isChecked = action->isChecked();
     clearChooseSceneWidget(); // 清楚之前选择的
     action->setChecked(isChecked); // 设置当前选择的有效
@@ -66,9 +66,9 @@ void MainWindow::triggerSceneWidgets(QAction* action)
     ui->stateLabel->setText(action->text());
 }
 
+// 清楚其他所有按下的SceneWidget，保证互斥
 void MainWindow::clearChooseSceneWidget()
 {
-    // 清楚其他所有按下的SceneWidget，保证互斥
     QVector<QAction*> actions = {ui->srcPlayer, ui->srcRock,ui->srcFloorGrass, ui->srcSpring,
                                 ui->srcFlyingBrick, ui->srcDestructibleBrick,ui->srcActiveTrap,
                                 ui->srcPassiveTrap,ui->srcArrowTrap, ui->srcFirstMonster,
@@ -92,7 +92,7 @@ void MainWindow::clearKeyPressed()
     pressedKeys.clear();
 }
 
-
+// 新建按钮
 void MainWindow::on_actNew_triggered()
 {
     sceneFileName = "";
@@ -103,6 +103,7 @@ void MainWindow::on_actNew_triggered()
     stateTimer.start();
 }
 
+// 编辑按钮
 void MainWindow::on_actEdit_triggered(bool checked)
 {
     // 进入编辑模式，向场景类发送进入编辑模式的信号
@@ -111,6 +112,7 @@ void MainWindow::on_actEdit_triggered(bool checked)
     emit edit(checked);
 }
 
+// 打开按钮
 void MainWindow::on_actOpen_triggered()
 {
     // 打开场景，向场景发出打开的信号
@@ -125,6 +127,7 @@ void MainWindow::on_actOpen_triggered()
     stateTimer.start();
 }
 
+// 保存按钮
 void MainWindow::on_actSave_triggered()
 {
     // 保存，向场景发出保存的信号
@@ -137,6 +140,7 @@ void MainWindow::on_actSave_triggered()
     }
 }
 
+// 另存为按钮
 void MainWindow::on_actSaveAs_triggered()
 {
     // 另存为按钮，向场景发出保存的信号
@@ -151,12 +155,13 @@ void MainWindow::on_actSaveAs_triggered()
     stateTimer.start();
 }
 
+// 重启游戏
 void MainWindow::on_actRestart_triggered()
 {
     emit gameStart();
 }
 
-
+// 建立连接
 void MainWindow::makeConnection()
 {
     // 主定时器的timeout()与主窗口的timeout()连接

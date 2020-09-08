@@ -1,4 +1,5 @@
 #include "collisioninspector.h"
+#include <cmath>
 #include <QDebug>
 
 CollisionInspector::CollisionInspector(QObject *parent) : QObject(parent)
@@ -6,6 +7,7 @@ CollisionInspector::CollisionInspector(QObject *parent) : QObject(parent)
 
 }
 
+// 构造函数，加入sceneinfo结构体
 CollisionInspector::CollisionInspector(const SceneInfo& sceneinfo, QObject* parent)
     :QObject(parent), sceneinfo(sceneinfo)
 {
@@ -39,9 +41,11 @@ void CollisionInspector::setHeight(int height)
 // 是否可以被放置
 bool CollisionInspector::canAddInScene(const QRect &rect) const
 {
+    // 判断在窗口内部
     if(!QRect(0,0,width(),height()).contains(rect)){
         return false;
     }
+    // 判断不会和其他组件碰撞
     for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
         if((*iter)->getRect().intersects(rect)){
             return false;
@@ -50,7 +54,7 @@ bool CollisionInspector::canAddInScene(const QRect &rect) const
     return true;
 }
 
-// 返回是否在场景中
+// 返回是否在场景中（弱判断）
 bool CollisionInspector::isInScene(const QRect &rect) const
 {
     if(rect.x()<0||rect.x()+rect.width()>width()){
@@ -62,18 +66,13 @@ bool CollisionInspector::isInScene(const QRect &rect) const
     return true;
 }
 
+// 返回是否在场景中（强判断）
 bool CollisionInspector::isStrictInScene(const QRect &rect) const
 {
-    if(rect.x()<0||rect.x()+rect.width()>width()){
-        return false;
-    }
-    if(rect.y()>height()||rect.y()+rect.height()>height()){
-        return false;
-    }
-    return true;
+    return QRect(0,0,width(),height()).contains(rect);
 }
 
-// 返回是否发生碰撞
+// 返回是否与地形发生碰撞
 bool CollisionInspector::isCollideTerrain(const QRect &rect) const
 {
     for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
@@ -86,7 +85,7 @@ bool CollisionInspector::isCollideTerrain(const QRect &rect) const
     return false;
 }
 
-// 返回是否和除了某个东西之外的东西碰撞
+// 返回是否和除了某个指定物体之外的东西碰撞
 bool CollisionInspector::isCollideExcept(const QRect &rect, BaseObject* object) const
 {
     for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
@@ -105,7 +104,7 @@ bool CollisionInspector::isInSky(const QRect &rect) const
     return !isOnGround(rect);
 }
 
-// 返回是否在地上
+// 返回是否在地上(弱判断）
 bool CollisionInspector::isOnGround(const QRect &rect) const
 {
     for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
@@ -120,28 +119,76 @@ bool CollisionInspector::isOnGround(const QRect &rect) const
     return false;
 }
 
-bool CollisionInspector::dealWithPlayerCollision(Player* player)
+// 返回是否在地上(强判断）
+bool CollisionInspector::isStrictOnGround(const QRect &rect) const
 {
-    bool collision = false;
+    // 偏移1像素判断
+    QPoint bottomLeft = QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1);
+    QPoint bottomRight = QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1);
+    bool bottomLeftIn = false;
+    bool bottomRightIn = false;
+    for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
+        if((*iter)->isShow()){
+            if((*iter)->getRect().contains(bottomLeft)){
+                bottomLeftIn = true;
+            }
+            if((*iter)->getRect().contains(bottomRight)){
+                bottomRightIn = true;
+            }
+        }
+        if(bottomLeftIn && bottomRightIn){
+            return true;
+        }
+    }
+    return bottomLeftIn && bottomRightIn;
+}
+
+// 返回玩家是否处于飞行砖块上
+bool CollisionInspector::isPlayerOnFlyingBrick(Player *player, FlyingBrick *flyingBrick) const
+{
+    QRect rect = player->getRect();
+    if(flyingBrick->getRect().contains(QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1))
+            || flyingBrick->getRect().contains(QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1))){
+        return true;
+    }
+    return false;
+}
+
+// 处理玩家有关的碰撞
+void CollisionInspector::dealWithPlayerCollision(Player* player)
+{
     if(player){
+        // 是否达到终点
         if(*(sceneinfo.goal)){
+            // 判断终点进行体积缩小判定
             QRect goalRect = (*(sceneinfo.goal))->getRect();
             goalRect.setWidth(goalRect.width()*0.5);
             goalRect.setHeight(goalRect.height()*0.5);
             goalRect.moveTo(goalRect.x()+goalRect.width()*0.5,goalRect.y()+goalRect.height()*0.5);
             if(goalRect.intersects(player->getRect())){
                 emit gameSuccess();
-                return true;
+                return;
             }
         }
+        // 判断地形，弹簧和可破坏砖块
         for(auto iter=sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
-            if((*iter)->metaObject()->className()==QString("Spring")){
-                if((*iter)->getRect().contains(QPoint(player->getRect().bottomLeft().x(),player->getRect().bottomLeft().y()+1))
-                        ||(*iter)->getRect().contains(QPoint(player->getRect().bottomRight().x(),player->getRect().bottomRight().y()+1))){
-                    player->jump(600);
+            if((*iter)->isShow()){
+                if((*iter)->metaObject()->className()==QString("Spring")){
+                    if((*iter)->getRect().contains(QPoint(player->getRect().bottomLeft().x(),player->getRect().bottomLeft().y()+1))
+                            ||(*iter)->getRect().contains(QPoint(player->getRect().bottomRight().x(),player->getRect().bottomRight().y()+1))){
+                        player->jump(true);
+                    }
+                }
+                if((*iter)->metaObject()->className()==QString("DestructibleBrick")){
+                    if((*iter)->getRect().contains(QPoint(player->getRect().x()+player->width()/2,player->getRect().y()-1))){
+                        static_cast<DestructibleBrick*>(*iter)->collide();
+                        player->jumpOver();
+                        player->addPoins(static_cast<DestructibleBrick*>(*iter)->getPoints());
+                    }
                 }
             }
         }
+        // 陷阱扣血
         for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
@@ -149,6 +196,7 @@ bool CollisionInspector::dealWithPlayerCollision(Player* player)
                 }
             }
         }
+        // 怪物扣血
         for(auto iter=sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
@@ -156,6 +204,7 @@ bool CollisionInspector::dealWithPlayerCollision(Player* player)
                 }
             }
         }
+        // 加Buff
         for(auto iter=sceneinfo.buffs->begin();iter!=sceneinfo.buffs->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
@@ -164,6 +213,7 @@ bool CollisionInspector::dealWithPlayerCollision(Player* player)
                 }
             }
         }
+        // 加分数
         for(auto iter=sceneinfo.values->begin();iter!=sceneinfo.values->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
@@ -173,9 +223,23 @@ bool CollisionInspector::dealWithPlayerCollision(Player* player)
             }
         }
     }
-    return collision;
 }
 
+// 主动陷阱在靠近人物的时候触发
+void CollisionInspector::dealWithActiveTrap(Player *player)
+{
+    for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
+        if(dynamic_cast<ActiveTrap*>(*iter)){
+            if(distance((*iter)->getRect(),player->getRect())<200){
+                (*iter)->show();
+            }else{
+                (*iter)->hide();
+            }
+        }
+    }
+}
+
+// 根据位置获得物体的指针
 BaseObject *CollisionInspector::getWidgetFromPos(int x, int y)
 {
     for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
@@ -184,4 +248,10 @@ BaseObject *CollisionInspector::getWidgetFromPos(int x, int y)
         }
     }
     return nullptr;
+}
+
+// 返回两个矩形的距离
+int CollisionInspector::distance(const QRect &rect1, const QRect &rect2) const
+{
+    return sqrt((rect1.x()-rect2.x())*(rect1.x()-rect2.x())+(rect1.y()-rect2.y())*(rect1.y()-rect2.y()));
 }

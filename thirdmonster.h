@@ -9,6 +9,11 @@ class ThirdMonster : public Monster
 public:
     ThirdMonster(QObject* parent=nullptr);
     ThirdMonster(int x,int y, int width, int height, QObject* parent=nullptr);
+    void updatePos(int judge_unit) override;
+
+protected:
+    int m_num;
+    static int num;
 };
 
 #endif // THIRDMONSTER_H

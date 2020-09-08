@@ -5,7 +5,7 @@
 #include "movething.h"
 
 // 主动触发式陷阱
-class ActiveTrap : public Trap, public MoveThing
+class ActiveTrap : public Trap
 {
     Q_OBJECT
 public:
