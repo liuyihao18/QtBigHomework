@@ -8,7 +8,7 @@ class FireBall: public FlyingProp
     Q_OBJECT
 public:
     FireBall(QObject* parent = nullptr);
-    FireBall(int x,int y,int width,int height,QObject* parent = nullptr);
+    FireBall(int x,int y,int width,int height,int direction,QObject* parent = nullptr);
 };
 
 #endif // FIREBALL_H

@@ -8,7 +8,7 @@ class MagicBullet : public FlyingProp
     Q_OBJECT
 public:
     MagicBullet(QObject* parent=nullptr);
-    MagicBullet(int x,int y,int width,int height,QObject* parent=nullptr);
+    MagicBullet(int x,int y,int width,int height,int direction, QObject* parent=nullptr);
 };
 
 #endif // MAGICBULLET_H

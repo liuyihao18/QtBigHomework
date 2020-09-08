@@ -6,8 +6,16 @@
 class Launcher
 {
 public:
-    Launcher();
+    Launcher(int launchInteval = 100);
     virtual FlyingProp* emitFlyingProp() = 0;
+    bool canLaunch() const;
+    void launch();
+    void ready();
+
+protected:
+    int launchInteval;
+    bool launched;
+
 };
 
 #endif // LAUNCHER_H

@@ -3,6 +3,7 @@
 
 #include "role.h"
 #include "launcher.h"
+#include "magicbullet.h"
 
 class Player : public Role, public Launcher
 {
@@ -19,6 +20,8 @@ public:
     int getDownSpeed() const;
     int getUpSpeed() const;
     void jump(bool springJump = false);
+    bool ifCanAttack() const;
+    int getMoveSpeed() const;
     void updatePos(int judge_unit) override;
     void initialize() override;
     FlyingProp* emitFlyingProp() override;
@@ -32,9 +35,11 @@ protected:
     bool canAttack;
     bool jumping;
     QTimer jumpTimer;
+    QTimer launchTimer;
 
 public slots:
     void jumpOver();
+    void launchOver();
 };
 
 #endif // PLAYER_H

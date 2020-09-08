@@ -13,17 +13,17 @@ Updater::Updater(int fps, QObject *parent)
 }
 
 // 收集需要的信息进行更新
-void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, const QSet<FlyingProp *> &flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
+void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, QSet<FlyingProp *> &flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
     updateMoveThings(player,movethings,ci);
-    updateFlyingProps(flyingProps,ci);
     if(player){
-        updatePlayer(player,ci,pressedKeys);
+        updatePlayer(player,flyingProps,ci,pressedKeys);
     }
+    updateFlyingProps(flyingProps,ci);
 }
 
 // 更新玩家的信息
-void Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<int> &pressedKeys)
+void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
     // 玩家的大小
     int width = player->width();
@@ -34,7 +34,7 @@ void Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<in
     //    qDebug() << player->getRect().topLeft() << player->getRect().bottomRight();
 
     // 跳跃
-    if(pressedKeys.contains(Qt::Key_K)||pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up)){
+    if(pressedKeys.contains(Qt::Key_K)){
         // 禁止多次跳跃与空中跳跃
         if(ci.isOnGround(player->getRect())){
             player->jump();
@@ -55,25 +55,64 @@ void Updater::updatePlayer(Player *player, CollisionInspector &ci, const QSet<in
             player->cancelPos();
         }
 
-        // 键盘控制左右运动
+        // 键盘调整任务朝向
         int new_x = player->x();
         int new_y = player->y();
-        if((pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left))){
+        if((pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up))
+                &&(pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right))){
+            player->setDirection(UpRight);
+        }
+        else if((pressedKeys.contains(Qt::Key_S)||pressedKeys.contains(Qt::Key_Down))
+                &&(pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right))){
+            player->setDirection(DownRight);
+        }
+        else if((pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up))
+                &&(pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left))){
+            player->setDirection(UpLeft);
+        }
+        else if((pressedKeys.contains(Qt::Key_S)||pressedKeys.contains(Qt::Key_Down))
+                &&(pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left))){
+            player->setDirection(DownLeft);
+        }
+        else if(pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right)){
+            player->setDirection(Right);
+        }
+        else if(pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left)){
+            player->setDirection(Left);
+        }
+        else if(pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up)){
+            player->setDirection(Up);
+        }
+        else if(pressedKeys.contains(Qt::Key_S)||pressedKeys.contains(Qt::Key_Down)){
+            player->setDirection(Down);
+        }
+
+        // 键盘控制左右运动
+        if(pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left)){
             if(ci.isInScene(QRect(new_x-judge_unit,new_y,width,height))
                     &&!ci.isCollideTerrain(QRect(new_x-judge_unit,new_y,width,height))){
                 new_x -= judge_unit;
                 player->moveRect(new_x, new_y);
             }
         }
-        if((pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right))){
-            if(ci.isInScene(QRect(new_x+judge_unit,new_y,width,height))
+        if(pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right)){
+             if(ci.isInScene(QRect(new_x+judge_unit,new_y,width,height))
                     &&!ci.isCollideTerrain(QRect(new_x+judge_unit,new_y,width,height))){
                 new_x += judge_unit;
                 player->moveRect(new_x, new_y);
             }
         }
-        ci.dealWithPlayerCollision(player);
-        ci.dealWithActiveTrap(player);
+
+        // 发射子弹
+        if(player->ifCanAttack()&&pressedKeys.contains(Qt::Key_J)){
+            FlyingProp* flyingprop = player->emitFlyingProp();
+            if(flyingprop){
+                flyingProps.insert(flyingprop);
+            }
+        }
+        // 处理事件
+        ci.dealWithPlayerCollision();
+        ci.dealWithActiveTrap();
     }
 }
 
@@ -94,14 +133,14 @@ void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethin
             // 飞行砖块的判断
             if(dynamic_cast<FlyingBrick*>((*iter))){
                 FlyingBrick* flyingBrick = dynamic_cast<FlyingBrick*>((*iter));
-                if(ci.isCollideExcept((*iter)->getTempPos(),flyingBrick)){
+                if(!ci.canFlyingBrickMove(flyingBrick)){
                     flyingBrick->cancelPos();
                     flyingBrick->needToChangeMove();
                     continue;
                 }else{
                     flyingBrick->confirmPos();
                     // 人随砖走
-                    if(ci.isPlayerOnFlyingBrick(player,flyingBrick)){
+                    if(ci.isPlayerOnFlyingBrick(flyingBrick)){
                         int new_x = player->x();
                         int new_y = player->y();
                         new_x = flyingBrick->isReverse()?new_x-judge_unit:new_x+judge_unit;
@@ -147,7 +186,24 @@ void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethin
 }
 
 // 更新飞行物
-void Updater::updateFlyingProps(const QSet<FlyingProp *> &flyingProps, CollisionInspector &ci)
+void Updater::updateFlyingProps(QSet<FlyingProp *> &flyingProps, CollisionInspector &ci)
 {
-
+    for(auto iter = flyingProps.begin();iter!=flyingProps.end();++iter){
+        int unit_speed = (*iter)->getMoveSpeed() * fps / 1000;
+        for(int i = 1;i<=unit_speed;i+=judge_unit){
+            (*iter)->updatePos(judge_unit);
+            if(!ci.isStrictInScene((*iter)->getTempPos())||ci.isCollideTerrain((*iter)->getTempPos())){
+                delete (*iter);
+                flyingProps.erase(iter);
+                break;
+            }else{
+                (*iter)->confirmPos();
+            }
+            if(ci.dealWithFlyingProp(*iter)){
+                delete (*iter);
+                flyingProps.erase(iter);
+                break;
+            }
+        }
+    }
 }

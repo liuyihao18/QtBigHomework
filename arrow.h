@@ -8,7 +8,7 @@ class Arrow : public FlyingProp
     Q_OBJECT
 public:
     Arrow(QObject* parent = nullptr);
-    Arrow(int x,int y,int width,int height,QObject* parent = nullptr);
+    Arrow(int x,int y,int width,int height,int direction,QObject* parent = nullptr);
 };
 
 #endif // ARROW_H

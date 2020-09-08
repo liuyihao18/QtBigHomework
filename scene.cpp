@@ -63,6 +63,7 @@ void Scene::initialize()
     values.clear();
     flyingProps.clear();
     moveThings.clear();
+    launchers.clear();
 }
 
 // 绘图事件，绘制场景的各种东西
@@ -71,6 +72,10 @@ void Scene::paintEvent(QPaintEvent *)
     QPainter p(this);
     // 绘制背景
     p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background));
+    // 绘制终点
+    if(goal&&goal->isShow()){
+        p.drawPixmap(goal->getRect(),QPixmap::fromImage(goal->getImage()));
+    }
     // 绘制地形
     for(auto iter=terrains.begin();iter!=terrains.end();++iter){
         if((*iter)->isShow()){
@@ -100,10 +105,6 @@ void Scene::paintEvent(QPaintEvent *)
         if((*iter)->isShow()){
             p.drawPixmap((*iter)->getRect(),QPixmap::fromImage((*iter)->getImage()));
         }
-    }
-    // 绘制终点
-    if(goal&&goal->isShow()){
-        p.drawPixmap(goal->getRect(),QPixmap::fromImage(goal->getImage()));
     }
     // 绘制角色
     if(player&&player->isShow()){
@@ -249,6 +250,7 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::ArrowTerrain:
             terrains.insert(static_cast<ArrowTerrain*>(temp));
+            launchers.insert(static_cast<ArrowTerrain*>(temp));
             temp = new ArrowTerrain(x,y,map_unit,map_unit,this);
             break;
         case ClassName::ActiveTrap:
@@ -640,6 +642,12 @@ void Scene::gameReload()
     for(auto iter=allWidgets.begin();iter!=allWidgets.end();++iter){
         (*iter)->show();
     }
+
+    // 删除飞行道具
+    for(auto iter=flyingProps.begin();iter!=flyingProps.end();++iter){
+        delete *iter;
+    }
+    flyingProps.clear();
 }
 
 // 游戏开始

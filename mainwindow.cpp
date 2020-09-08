@@ -26,6 +26,19 @@ MainWindow::~MainWindow()
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     pressedKeys.insert(event->key());
+    // 保证方向键互斥
+//    if(event->key()==Qt::Key_A){
+//        pressedKeys.remove(Qt::Key_D);
+//    }
+//    else if(event->key()==Qt::Key_D){
+//        pressedKeys.remove(Qt::Key_A);
+//    }
+//    else if(event->key()==Qt::Key_W){
+//        pressedKeys.remove(Qt::Key_S);
+//    }
+//    else if(event->key()==Qt::Key_S){
+//        pressedKeys.remove(Qt::Key_W);
+//    }
     // 全屏显示
     if(event->key()==Qt::Key_F11){
         if(isFullScreen()){

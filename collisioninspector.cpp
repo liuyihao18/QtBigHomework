@@ -85,15 +85,71 @@ bool CollisionInspector::isCollideTerrain(const QRect &rect) const
     return false;
 }
 
-// 返回是否和除了某个指定物体之外的东西碰撞
-bool CollisionInspector::isCollideExcept(const QRect &rect, BaseObject* object) const
+// 返回是否与陷阱发生碰撞
+bool CollisionInspector::isCollideTrap(const QRect &rect) const
 {
-    for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
-        if((*iter)!=object &&(*iter)->isShow()){
+    for(auto iter = sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
+        if((*iter)->isShow()){
             if((*iter)->getRect().intersects(rect)){
                 return true;
             }
         }
+    }
+    return false;
+}
+
+// 返回是否与怪物发生碰撞
+bool CollisionInspector::isCollideMonster(const QRect &rect) const
+{
+    for(auto iter = sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
+        if((*iter)->isShow()){
+            if((*iter)->getRect().intersects(rect)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// 返回是否和Buff发生碰撞
+bool CollisionInspector::isCollideBuffs(const QRect &rect) const
+{
+    for(auto iter = sceneinfo.buffs->begin();iter!=sceneinfo.buffs->end();++iter){
+        if((*iter)->isShow()){
+            if((*iter)->getRect().intersects(rect)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// 返回是否和分数物体发生碰撞
+bool CollisionInspector::isCollideValues(const QRect &rect) const
+{
+    for(auto iter = sceneinfo.values->begin();iter!=sceneinfo.values->end();++iter){
+        if((*iter)->isShow()){
+            if((*iter)->getRect().intersects(rect)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// 返回是否和除了某个指定物体之外的东西碰撞
+bool CollisionInspector::canFlyingBrickMove(BaseObject* object) const
+{
+    FlyingBrick* flyingBrick = dynamic_cast<FlyingBrick*>(object);
+    if(flyingBrick){
+        for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
+            if((*iter)!=object &&(*iter)->isShow()){
+                if((*iter)->getRect().intersects(flyingBrick->getTempPos())){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     return false;
 }
@@ -144,8 +200,9 @@ bool CollisionInspector::isStrictOnGround(const QRect &rect) const
 }
 
 // 返回玩家是否处于飞行砖块上
-bool CollisionInspector::isPlayerOnFlyingBrick(Player *player, FlyingBrick *flyingBrick) const
+bool CollisionInspector::isPlayerOnFlyingBrick(FlyingBrick *flyingBrick) const
 {
+    Player* player = (*sceneinfo.player);
     QRect rect = player->getRect();
     if(flyingBrick->getRect().contains(QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1))
             || flyingBrick->getRect().contains(QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1))){
@@ -155,8 +212,10 @@ bool CollisionInspector::isPlayerOnFlyingBrick(Player *player, FlyingBrick *flyi
 }
 
 // 处理玩家有关的碰撞
-void CollisionInspector::dealWithPlayerCollision(Player* player)
+bool CollisionInspector::dealWithPlayerCollision()
 {
+    bool dealt = false;
+    Player* player = (*sceneinfo.player);
     if(player){
         // 是否达到终点
         if(*(sceneinfo.goal)){
@@ -167,7 +226,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
             goalRect.moveTo(goalRect.x()+goalRect.width()*0.5,goalRect.y()+goalRect.height()*0.5);
             if(goalRect.intersects(player->getRect())){
                 emit gameSuccess();
-                return;
+                return true;
             }
         }
         // 判断地形，弹簧和可破坏砖块
@@ -177,6 +236,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
                     if((*iter)->getRect().contains(QPoint(player->getRect().bottomLeft().x(),player->getRect().bottomLeft().y()+1))
                             ||(*iter)->getRect().contains(QPoint(player->getRect().bottomRight().x(),player->getRect().bottomRight().y()+1))){
                         player->jump(true);
+                        dealt = true;
                     }
                 }
                 if((*iter)->metaObject()->className()==QString("DestructibleBrick")){
@@ -184,6 +244,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
                         static_cast<DestructibleBrick*>(*iter)->collide();
                         player->jumpOver();
                         player->addPoins(static_cast<DestructibleBrick*>(*iter)->getPoints());
+                        dealt = true;
                     }
                 }
             }
@@ -193,6 +254,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
                     player->reduceHP((*iter)->getHPReduce());
+                    dealt = true;
                 }
             }
         }
@@ -201,6 +263,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
             if((*iter)->isShow()){
                 if((*iter)->getRect().intersects(player->getRect())){
                     player->reduceHP((*iter)->getHPReduce());
+                    dealt = true;
                 }
             }
         }
@@ -210,6 +273,7 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
                 if((*iter)->getRect().intersects(player->getRect())){
                     (*iter)->hide();
                     player->addBuff((*iter)->metaObject()->className());
+                    dealt = true;
                 }
             }
         }
@@ -219,24 +283,47 @@ void CollisionInspector::dealWithPlayerCollision(Player* player)
                 if((*iter)->getRect().intersects(player->getRect())){
                     (*iter)->hide();
                     player->addPoins((*iter)->getValue());
+                    dealt = true;
                 }
             }
         }
     }
+    return dealt;
 }
 
 // 主动陷阱在靠近人物的时候触发
-void CollisionInspector::dealWithActiveTrap(Player *player)
+bool CollisionInspector::dealWithActiveTrap()
 {
+    bool dealt = false;
+    Player* player = (*sceneinfo.player);
     for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
         if(dynamic_cast<ActiveTrap*>(*iter)){
             if(distance((*iter)->getRect(),player->getRect())<200){
                 (*iter)->show();
+                dealt = true;
             }else{
                 (*iter)->hide();
             }
         }
     }
+    return dealt;
+}
+
+bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp)
+{
+    bool dealt = false;
+    for(auto iter = sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
+        if((*iter)->isShow()){
+            if((*iter)->getRect().intersects(flyingProp->getRect())){
+                (*iter)->reduceHP(flyingProp->getHPReduce());
+                if((*iter)->getHP()==0){
+                    (*sceneinfo.player)->addPoins(20);
+                }
+                dealt = true;
+            }
+        }
+    }
+    return dealt;
 }
 
 // 根据位置获得物体的指针

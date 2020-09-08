@@ -13,6 +13,7 @@ public:
 
 protected:
     int m_num;
+    int originMoveSpeed;
     static int num;
 };
 

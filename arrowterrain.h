@@ -2,13 +2,23 @@
 #define ARROWTRAP_H
 
 #include "terrain.h"
+#include "launcher.h"
+#include <QTimer>
 
-class ArrowTerrain : public Terrain
+class ArrowTerrain : public Terrain, public Launcher
 {
     Q_OBJECT
 public:
     ArrowTerrain(QObject* parent = nullptr);
     ArrowTerrain(int x,int y,int width,int height,QObject* parent = nullptr);
+    FlyingProp * emitFlyingProp() override;
+
+protected:
+    QTimer launchTimer;
+
+protected slots:
+    void launchOver();
+
 };
 
 #endif // ARROWTRAP_H

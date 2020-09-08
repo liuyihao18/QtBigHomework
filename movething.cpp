@@ -54,5 +54,18 @@ int MoveThing::getDirection() const
 
 int MoveThing::getMoveSpeed() const
 {
-    return move_speed;
+    switch (direction) {
+    case Up:
+    case Right:
+    case Down:
+    case Left:
+        return move_speed;
+    case UpRight:
+    case DownRight:
+    case DownLeft:
+    case UpLeft:
+        return move_speed/1.414;
+    default:
+        return move_speed;
+    }
 }

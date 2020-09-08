@@ -10,7 +10,7 @@ ThirdMonster::ThirdMonster(QObject* parent):Monster(parent)
 }
 
 ThirdMonster::ThirdMonster(int x, int y, int width,int height, QObject *parent)
-    :Monster(x,y,width,height,":/images/monster/images/monster/monster3.jpg",1,Up,1,parent),m_num(num++)
+    :Monster(x,y,width,height,":/images/monster/images/monster/monster3.jpg",1,Up,1,parent),m_num(num++),originMoveSpeed(move_speed)
 {
 
 }
@@ -19,6 +19,7 @@ void ThirdMonster::updatePos(int judge_unit)
 {
     srand(time(nullptr)+m_num);
     direction = rand()%8;
+    move_speed = originMoveSpeed-75+rand()%150;
     switch (direction) {
     case Up:
         tempPos.moveTo(x(),y()-judge_unit);
