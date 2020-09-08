@@ -7,7 +7,7 @@ class Launcher
 {
 public:
     Launcher(int launchInteval = 100);
-    virtual FlyingProp* emitFlyingProp() = 0;
+    virtual FlyingProp* launchFlyingProp() = 0;
     bool canLaunch() const;
     void launch();
     void ready();

@@ -211,24 +211,38 @@ bool CollisionInspector::isPlayerOnFlyingBrick(FlyingBrick *flyingBrick) const
     return false;
 }
 
+// 返回是否游戏过关
+bool CollisionInspector::isGameSuccess() const
+{
+    // 是否达到终点
+    if((*sceneinfo.player)&&(*sceneinfo.goal)){
+        // 判断终点进行体积缩小判定
+        QRect goalRect = (*(sceneinfo.goal))->getRect();
+        goalRect.setWidth(goalRect.width()*0.5);
+        goalRect.setHeight(goalRect.height()*0.5);
+        goalRect.moveTo(goalRect.x()+goalRect.width()*0.5,goalRect.y()+goalRect.height()*0.5);
+        if(goalRect.intersects((*sceneinfo.player)->getRect())){
+            return true;
+        }
+    }
+    return false;
+}
+
+// 返回是否游戏结束
+bool CollisionInspector::isGmaeOver() const
+{
+    if((*sceneinfo.player)&&(*sceneinfo.player)->getHP()<=0){
+        return true;
+    }
+    return false;
+}
+
 // 处理玩家有关的碰撞
-bool CollisionInspector::dealWithPlayerCollision()
+bool CollisionInspector::dealWithPlayerCollision() const
 {
     bool dealt = false;
     Player* player = (*sceneinfo.player);
-    if(player){
-        // 是否达到终点
-        if(*(sceneinfo.goal)){
-            // 判断终点进行体积缩小判定
-            QRect goalRect = (*(sceneinfo.goal))->getRect();
-            goalRect.setWidth(goalRect.width()*0.5);
-            goalRect.setHeight(goalRect.height()*0.5);
-            goalRect.moveTo(goalRect.x()+goalRect.width()*0.5,goalRect.y()+goalRect.height()*0.5);
-            if(goalRect.intersects(player->getRect())){
-                emit gameSuccess();
-                return true;
-            }
-        }
+    if(player&&player->isShow()){
         // 判断地形，弹簧和可破坏砖块
         for(auto iter=sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
             if((*iter)->isShow()){
@@ -292,7 +306,7 @@ bool CollisionInspector::dealWithPlayerCollision()
 }
 
 // 主动陷阱在靠近人物的时候触发
-bool CollisionInspector::dealWithActiveTrap()
+bool CollisionInspector::dealWithActiveTrap() const
 {
     bool dealt = false;
     Player* player = (*sceneinfo.player);
@@ -309,25 +323,33 @@ bool CollisionInspector::dealWithActiveTrap()
     return dealt;
 }
 
-bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp)
+bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp) const
 {
     bool dealt = false;
-    for(auto iter = sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
-        if((*iter)->isShow()){
-            if((*iter)->getRect().intersects(flyingProp->getRect())){
-                (*iter)->reduceHP(flyingProp->getHPReduce());
-                if((*iter)->getHP()==0){
-                    (*sceneinfo.player)->addPoins(20);
+    if(dynamic_cast<MagicBullet*>(flyingProp)){
+        for(auto iter = sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
+            if((*iter)->isShow()){
+                if((*iter)->getRect().intersects(flyingProp->getRect())){
+                    (*iter)->reduceHP(flyingProp->getHPReduce());
+                    if((*iter)->getHP()==0){
+                        (*sceneinfo.player)->addPoins(20);
+                    }
+                    dealt = true;
                 }
-                dealt = true;
             }
+        }
+    }
+    else if(*sceneinfo.player&&(dynamic_cast<Arrow*>(flyingProp)||dynamic_cast<FireBall*>(flyingProp))){
+        if((*sceneinfo.player)->getRect().intersects(flyingProp->getRect())){
+            (*sceneinfo.player)->reduceHP(flyingProp->getHPReduce());
+            dealt = true;
         }
     }
     return dealt;
 }
 
 // 根据位置获得物体的指针
-BaseObject *CollisionInspector::getWidgetFromPos(int x, int y)
+BaseObject *CollisionInspector::getWidgetFromPos(int x, int y) const
 {
     for(auto iter = sceneinfo.allWidgets->begin();iter!=sceneinfo.allWidgets->end();++iter){
         if((*iter)->getRect().contains(QPoint(x,y))){

@@ -29,7 +29,9 @@ void Scene::makeName2Num()
 void Scene::makeConnection()
 {
     // 通关连接
-    connect(&ci,SIGNAL(gameSuccess()),this,SLOT(gameSuccess()));
+    connect(&updater,SIGNAL(gameSuccess()),this,SLOT(gameSuccess()));
+    // 失败连接
+    connect(&updater,SIGNAL(gameOver()),this,SLOT(gameOver()));
 }
 
 // 初始化场景
@@ -274,6 +276,7 @@ void Scene::addSceneWidget(int x, int y)
         case ClassName::ThirdMonster:
             monsters.insert(static_cast<ThirdMonster*>(temp));
             moveThings.insert(static_cast<ThirdMonster*>(temp));
+            launchers.insert(static_cast<ThirdMonster*>(temp));
             temp = new ThirdMonster(x,y,map_unit,map_unit,this);
             break;
         case ClassName::MushroomBuff:
@@ -320,12 +323,15 @@ void Scene::eraseSceneWidget(BaseObject* object)
     case ClassName::FloorGrass:
     case ClassName::Spring:
     case ClassName::DestructibleBrick:
-    case ClassName::ArrowTerrain:
         terrains.remove(static_cast<Terrain*>(object));
         break;
     case ClassName::FlyingBrick:
         terrains.remove(static_cast<Terrain*>(object));
         moveThings.remove(static_cast<FlyingBrick*>(object));
+        break;
+    case ClassName::ArrowTerrain:
+        terrains.remove(static_cast<ArrowTerrain*>(object));
+        launchers.remove(static_cast<ArrowTerrain*>(object));
         break;
     case ClassName::ActiveTrap:
         traps.remove(static_cast<ActiveTrap*>(object));
@@ -335,9 +341,13 @@ void Scene::eraseSceneWidget(BaseObject* object)
         break;
     case ClassName::FirstMonster:
     case ClassName::SecondMonster:
-    case ClassName::ThirdMonster:
         monsters.remove(static_cast<Monster*>(object));
         moveThings.remove(static_cast<Monster*>(object));
+        break;
+    case ClassName::ThirdMonster:
+        monsters.remove(static_cast<ThirdMonster*>(object));
+        moveThings.remove(static_cast<ThirdMonster*>(object));
+        launchers.remove(static_cast<ThirdMonster*>(object));
         break;
     case ClassName::MushroomBuff:
     case ClassName::FlowerBuff:
@@ -399,7 +409,7 @@ void Scene::updateScene(const QSet<int>& pressedKeys)
     }
     // 非编辑模式下，会移动的物体移动
     if(!isEdit){
-        updater.updateAll(player,moveThings,flyingProps,ci,pressedKeys);
+        updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
     }
     update();
 }
@@ -550,6 +560,7 @@ void Scene::loadScene(const QString &scenePath)
             case ClassName::ArrowTerrain:
                 newObject = new ArrowTerrain(x,y,width,height,this);
                 terrains.insert(static_cast<ArrowTerrain*>(newObject));
+                launchers.insert(static_cast<ArrowTerrain*>(newObject));
                 break;
             case ClassName::ActiveTrap:
                 newObject = new ActiveTrap(x,y,width,height,this);
@@ -573,6 +584,7 @@ void Scene::loadScene(const QString &scenePath)
                 newObject = new ThirdMonster(x,y,width,height,this);
                 monsters.insert(static_cast<ThirdMonster*>(newObject));
                 moveThings.insert(static_cast<ThirdMonster*>(newObject));
+                launchers.insert(static_cast<ThirdMonster*>(newObject));
                 break;
             case ClassName::MushroomBuff:
                 newObject = new MushroomBuff(x,y,width,height,this);
@@ -599,15 +611,6 @@ void Scene::loadScene(const QString &scenePath)
         }
     }
     file.close();
-    // 小提示
-    if(player==nullptr&&goal==nullptr){
-        QMessageBox::information(this,"Info","请放置你的人物和目的地哟~");
-    }
-    else if(player==nullptr){
-        QMessageBox::information(this,"Info","请放置你的人物哟~");
-    } else if(goal==nullptr){
-        QMessageBox::information(this,"Info","请放置你的目的地哟~");
-    }
     gameStart();
 }
 
@@ -656,6 +659,15 @@ void Scene::gameStart()
     if(!isEdit){
         gameReload();
         gameTime = clock();
+        // 小提示
+        if(player==nullptr&&goal==nullptr){
+            QMessageBox::information(this,"Info","请放置你的人物和目的地哟~");
+        }
+        else if(player==nullptr){
+            QMessageBox::information(this,"Info","请放置你的人物哟~");
+        } else if(goal==nullptr){
+            QMessageBox::information(this,"Info","请放置你的目的地哟~");
+        }
     }
 }
 
@@ -663,6 +675,14 @@ void Scene::gameStart()
 void Scene::gameSuccess()
 {
     QMessageBox::information(this,"Congratulation","恭喜过关！");
+    gameStart();
+    emit clearKeyPressed();
+}
+
+// SLOT，游戏结束
+void Scene::gameOver()
+{
+    QMessageBox::information(this,"Sorry","游戏结束！");
     gameStart();
     emit clearKeyPressed();
 }
@@ -677,7 +697,7 @@ Scene::Scene(QWidget *parent) : QWidget(parent),m_width(1902),m_height(1002),map
     setMouseTracking(true); // 鼠标追踪
     makeName2Num(); // 初始化映射
     makeConnection(); // 初始化连接
-    loadScene("./scene/test.scene");
+//    loadScene("./scene/test.scene");
 }
 
 // 析构函数，释放空间

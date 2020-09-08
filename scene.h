@@ -62,6 +62,7 @@ protected slots:
     void gameReload(); // 游戏恢复
     void gameStart(); // 游戏开始
     void gameSuccess(); // 游戏通关
+    void gameOver(); // 游戏结束
 
 
 public:

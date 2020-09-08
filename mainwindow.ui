@@ -122,7 +122,7 @@
    <addaction name="srcDestructibleBrick"/>
    <addaction name="srcActiveTrap"/>
    <addaction name="srcPassiveTrap"/>
-   <addaction name="srcArrowTrap"/>
+   <addaction name="srcArrowTerrain"/>
    <addaction name="srcFirstMonster"/>
    <addaction name="srcSecondMonster"/>
    <addaction name="srcThirdMonster"/>
@@ -503,7 +503,7 @@
     <string>T</string>
    </property>
   </action>
-  <action name="srcArrowTrap">
+  <action name="srcArrowTerrain">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -515,7 +515,7 @@
      <normaloff>:/images/trap/images/trap/arrowTrap.jpg</normaloff>:/images/trap/images/trap/arrowTrap.jpg</iconset>
    </property>
    <property name="text">
-    <string>ArrowTrap</string>
+    <string>ArrowTerrain</string>
    </property>
    <property name="toolTip">
     <string>放置弓箭陷阱</string>

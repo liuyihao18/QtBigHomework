@@ -9,7 +9,7 @@ Player::Player(QObject* parent) :Role(parent)
 
 Player::Player(int x, int y, int width,int height, QObject* parent)
     :Role(x,y,width,height,":/images/player/images/player/mario.png",400,3,Right,parent),Launcher(100),
-      points(0),downSpeed(400), upSpeed(400), jumpTime(400), fallDownHPReduce(1), canAttack(false), jumping(false),
+      points(0),downSpeed(400),originDownSpeed(downSpeed), upSpeed(400),originUpSpeed(upSpeed), jumpTime(400), fallDownHPReduce(1), canAttack(false), jumping(false),
       jumpTimer(this),launchTimer(this)
 {
     connect(&jumpTimer,SIGNAL(timeout()),this,SLOT(jumpOver()));
@@ -50,9 +50,24 @@ int Player::getFallDownHPReduce() const
     return fallDownHPReduce;
 }
 
+void Player::setFallDownHPReduce(int fallDownHPReduce)
+{
+    this->fallDownHPReduce = fallDownHPReduce;
+}
+
 int Player::getJumpTime() const
 {
     return jumpTime;
+}
+
+void Player::setJumpTime(int jumpTime)
+{
+    this->jumpTime = jumpTime;
+}
+
+void Player::refreshUpSpeed()
+{
+    upSpeed = originUpSpeed;
 }
 
 int Player::getDownSpeed() const
@@ -60,9 +75,34 @@ int Player::getDownSpeed() const
     return downSpeed;
 }
 
+int Player::getOriginDownSpeed() const
+{
+    return originDownSpeed;
+}
+
+void Player::setDownSpeed(int downSpeed)
+{
+    this->downSpeed = downSpeed;
+}
+
+void Player::refreshDownSpeed()
+{
+    downSpeed = originDownSpeed;
+}
+
 int Player::getUpSpeed() const
 {
     return upSpeed;
+}
+
+int Player::getOriginUpSpeed() const
+{
+    return originUpSpeed;
+}
+
+void Player::setUpSpeed(int upSpeed)
+{
+    this->upSpeed = upSpeed;
 }
 
 void Player::jump(bool springJump)
@@ -72,7 +112,8 @@ void Player::jump(bool springJump)
         if(!springJump){
             jumpTimer.setInterval(jumpTime);
         }else{
-            jumpTimer.setInterval(2*jumpTime);
+            upSpeed = 2*originUpSpeed;
+            jumpTimer.setInterval(jumpTime);
         }
         jumpTimer.start();
     }
@@ -105,9 +146,9 @@ void Player::initialize()
     jumping = false;
 }
 
-FlyingProp *Player::emitFlyingProp()
+FlyingProp *Player::launchFlyingProp()
 {
-    if(!canLaunch()){
+    if(!canLaunch()||!canAttack||!isShow()){
         return nullptr;
     }
     launch();
@@ -158,6 +199,7 @@ FlyingProp *Player::emitFlyingProp()
 
 void Player::jumpOver()
 {
+    upSpeed = originUpSpeed;
     jumping = false;
     jumpTimer.stop();
 }

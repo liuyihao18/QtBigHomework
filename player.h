@@ -16,20 +16,30 @@ public:
     void reducePoints(int point);
     void addBuff(const QString& buffName);
     int getFallDownHPReduce() const;
+    void setFallDownHPReduce(int fallDownHPReduce);
     int getJumpTime() const;
+    void setJumpTime(int jumpTime);
+    void refreshUpSpeed();
     int getDownSpeed() const;
+    int getOriginDownSpeed() const;
+    void setDownSpeed(int downSpeed);
+    void refreshDownSpeed();
     int getUpSpeed() const;
+    int getOriginUpSpeed() const;
+    void setUpSpeed(int upSpeed);
     void jump(bool springJump = false);
     bool ifCanAttack() const;
     int getMoveSpeed() const;
     void updatePos(int judge_unit) override;
     void initialize() override;
-    FlyingProp* emitFlyingProp() override;
+    FlyingProp* launchFlyingProp() override;
 
 protected:
     int points;
     int downSpeed;
+    int originDownSpeed;
     int upSpeed;
+    int originUpSpeed;
     int jumpTime;
     int fallDownHPReduce;
     bool canAttack;

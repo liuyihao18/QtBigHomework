@@ -3,6 +3,7 @@
 
 #include "terrain.h"
 #include "launcher.h"
+#include "arrow.h"
 #include <QTimer>
 
 class ArrowTerrain : public Terrain, public Launcher
@@ -11,7 +12,7 @@ class ArrowTerrain : public Terrain, public Launcher
 public:
     ArrowTerrain(QObject* parent = nullptr);
     ArrowTerrain(int x,int y,int width,int height,QObject* parent = nullptr);
-    FlyingProp * emitFlyingProp() override;
+    FlyingProp * launchFlyingProp() override;
 
 protected:
     QTimer launchTimer;

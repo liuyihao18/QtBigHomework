@@ -13,17 +13,24 @@ Updater::Updater(int fps, QObject *parent)
 }
 
 // 收集需要的信息进行更新
-void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, QSet<FlyingProp *> &flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
+void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, const QSet<Launcher *> &launchers, QSet<FlyingProp *> &flyingProps, const CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
     updateMoveThings(player,movethings,ci);
+    updateLaunchers(launchers,flyingProps);
     if(player){
         updatePlayer(player,flyingProps,ci,pressedKeys);
     }
     updateFlyingProps(flyingProps,ci);
+    if(ci.isGameSuccess()){
+        emit gameSuccess();
+    }
+    if(ci.isGmaeOver()){
+        emit gameOver();
+    }
 }
 
 // 更新玩家的信息
-void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, CollisionInspector &ci, const QSet<int> &pressedKeys)
+void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const CollisionInspector &ci, const QSet<int> &pressedKeys)
 {
     // 玩家的大小
     int width = player->width();
@@ -34,11 +41,19 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, Colli
     //    qDebug() << player->getRect().topLeft() << player->getRect().bottomRight();
 
     // 跳跃
-    if(pressedKeys.contains(Qt::Key_K)){
+    if(pressedKeys.contains(Qt::Key_K)||pressedKeys.contains(Qt::Key_2)){
         // 禁止多次跳跃与空中跳跃
         if(ci.isOnGround(player->getRect())){
             player->jump();
         }
+    }
+
+    // 快速向下
+    if(pressedKeys.contains(Qt::Key_L)||pressedKeys.contains(Qt::Key_3)){
+        player->setDownSpeed(3*player->getOriginDownSpeed());
+        player->jumpOver();
+    }else{
+        player->refreshDownSpeed();
     }
 
     for(int i=1;i<=unit_speed;i+=judge_unit){
@@ -104,8 +119,8 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, Colli
         }
 
         // 发射子弹
-        if(player->ifCanAttack()&&pressedKeys.contains(Qt::Key_J)){
-            FlyingProp* flyingprop = player->emitFlyingProp();
+        if(player->ifCanAttack()&&(pressedKeys.contains(Qt::Key_J)||pressedKeys.contains(Qt::Key_1))){
+            FlyingProp* flyingprop = player->launchFlyingProp();
             if(flyingprop){
                 flyingProps.insert(flyingprop);
             }
@@ -117,7 +132,7 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, Colli
 }
 
 // 更新会移动的东西
-void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethings, CollisionInspector &ci)
+void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethings, const CollisionInspector &ci)
 {
     for(auto iter = movethings.begin();iter!=movethings.end();++iter){
         int unit_speed = (*iter)->getMoveSpeed() * fps / 1000;
@@ -140,7 +155,7 @@ void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethin
                 }else{
                     flyingBrick->confirmPos();
                     // 人随砖走
-                    if(ci.isPlayerOnFlyingBrick(flyingBrick)){
+                    if(player&&ci.isPlayerOnFlyingBrick(flyingBrick)){
                         int new_x = player->x();
                         int new_y = player->y();
                         new_x = flyingBrick->isReverse()?new_x-judge_unit:new_x+judge_unit;
@@ -149,7 +164,7 @@ void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethin
                         }
                     }
                 }
-            }         
+            }
             // 第一类怪物
             if(dynamic_cast<FirstMonster* >(*iter)){
                 FirstMonster* firstMonster = dynamic_cast<FirstMonster*>(*iter);
@@ -185,8 +200,19 @@ void Updater::updateMoveThings(Player* player, const QSet<MoveThing *> &movethin
     }
 }
 
+// 更新发射者的发射状态
+void Updater::updateLaunchers(const QSet<Launcher *> &launchers, QSet<FlyingProp *> &flyingProps)
+{
+    for(auto iter=launchers.begin();iter!=launchers.end();++iter){
+        FlyingProp* flyingprop = (*iter)->launchFlyingProp();
+        if(flyingprop){
+            flyingProps.insert(flyingprop);
+        }
+    }
+}
+
 // 更新飞行物
-void Updater::updateFlyingProps(QSet<FlyingProp *> &flyingProps, CollisionInspector &ci)
+void Updater::updateFlyingProps(QSet<FlyingProp *> &flyingProps, const CollisionInspector &ci)
 {
     for(auto iter = flyingProps.begin();iter!=flyingProps.end();++iter){
         int unit_speed = (*iter)->getMoveSpeed() * fps / 1000;

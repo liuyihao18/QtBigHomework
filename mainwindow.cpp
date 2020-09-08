@@ -84,7 +84,7 @@ void MainWindow::clearChooseSceneWidget()
 {
     QVector<QAction*> actions = {ui->srcPlayer, ui->srcRock,ui->srcFloorGrass, ui->srcSpring,
                                 ui->srcFlyingBrick, ui->srcDestructibleBrick,ui->srcActiveTrap,
-                                ui->srcPassiveTrap,ui->srcArrowTrap, ui->srcFirstMonster,
+                                ui->srcPassiveTrap,ui->srcArrowTerrain, ui->srcFirstMonster,
                                  ui->srcSecondMonster, ui->srcThirdMonster,ui->srcMushroomBuff,
                                  ui->srcFlowerBuff,ui->srcGold, ui->srcGoal};
     for(auto iter=actions.begin();iter!=actions.end();++iter){
