@@ -19,15 +19,15 @@ public slots:
     void stopJumpMusic();
     void setJumpMusic(int volume);
 
-    void playLauncherMusic();
-    void stioLauncherMusic();
-    void setLauncherMusic(int volume);
+    void playLaunchMusic();
+    void stopLaunchMusic();
+    void setLaunchMusic(int volume);
 
 protected:
     QMediaPlaylist bgMusicPlayList;
     QMediaPlayer bgMusic;
     QMediaPlayer jumpMusic;
-    QMediaPlayer launcherMusic;
+    QMediaPlayer launchMusic;
 };
 
 #endif // MUSICMANAGER_H

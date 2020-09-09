@@ -223,6 +223,9 @@ void MainWindow::makeConnection()
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
     // 游戏重新开始
     connect(this,SIGNAL(gameRestart()),ui->scene,SLOT(gameRestart()));
+    // 音乐连接
+    connect(ui->scene->getUpdater(),SIGNAL(playJumpMusic()),&mm,SLOT(playJumpMusic()));
+    connect(ui->scene->getUpdater(),SIGNAL(playLaunchMusic()),&mm,SLOT(playLaunchMusic()));
 }
 
 

@@ -45,6 +45,7 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const
         // 禁止多次跳跃与空中跳跃
         if(ci.isOnGround(player->getRect())){
             player->jump();
+            emit playJumpMusic();
         }
     }
 
@@ -122,6 +123,7 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const
         if(player->ifCanAttack()&&(pressedKeys.contains(Qt::Key_J)||pressedKeys.contains(Qt::Key_1))){
             FlyingProp* flyingprop = player->launchFlyingProp();
             if(flyingprop){
+                emit playLaunchMusic();
                 flyingProps.insert(flyingprop);
             }
         }

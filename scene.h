@@ -19,7 +19,7 @@
 class Scene : public QWidget
 {
     Q_OBJECT
-private:
+protected:
     int gameState; // 游戏状态
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
@@ -83,6 +83,7 @@ public:
     int getFPS() const; // 返回帧率
     int getGameState() const; // 返回游戏状态
     void setGameState(int gameState); // 设置游戏状态
+    const Updater* getUpdater() const;// 返回Updater
 
 signals:
     void clearChooseSceneWidget(); // 右击清除已选择，返回信号给主窗口

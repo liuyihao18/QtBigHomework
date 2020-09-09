@@ -865,3 +865,9 @@ void Scene::setGameState(int gameState)
     }
 }
 
+// 返回Updater指针
+const Updater *Scene::getUpdater() const
+{
+    return &updater;
+}
+

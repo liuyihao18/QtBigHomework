@@ -68,5 +68,7 @@
     </qresource>
     <qresource prefix="/bgm">
         <file>bgm/dango.mp3</file>
+        <file>bgm/jump.mp3</file>
+        <file>bgm/magicBullet.mp3</file>
     </qresource>
 </RCC>

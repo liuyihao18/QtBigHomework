@@ -1,11 +1,17 @@
 #include "musicmanager.h"
 
-MusicManager::MusicManager(QObject *parent): QObject(parent),bgMusicPlayList(this),bgMusic(this),jumpMusic(this),launcherMusic(this)
+MusicManager::MusicManager(QObject *parent): QObject(parent),bgMusicPlayList(this),bgMusic(this),jumpMusic(this),launchMusic(this)
 {
     bgMusicPlayList.addMedia(QUrl("qrc:/bgm/bgm/dango.mp3"));
     bgMusicPlayList.setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
     bgMusic.setPlaylist(&bgMusicPlayList);
     bgMusic.setVolume(20);
+
+    jumpMusic.setMedia(QUrl("qrc:/bgm/bgm/jump.mp3"));
+    jumpMusic.setVolume(20);
+
+    launchMusic.setMedia(QUrl("qrc:/bgm/bgm/magicBullet.mp3"));
+    jumpMusic.setVolume(20);
 }
 
 void MusicManager::playBGMusic()
@@ -42,19 +48,19 @@ void MusicManager::setJumpMusic(int volume)
     }
 }
 
-void MusicManager::playLauncherMusic()
+void MusicManager::playLaunchMusic()
 {
-    launcherMusic.play();
+    launchMusic.play();
 }
 
-void MusicManager::stioLauncherMusic()
+void MusicManager::stopLaunchMusic()
 {
-    launcherMusic.stop();
+    launchMusic.stop();
 }
 
-void MusicManager::setLauncherMusic(int volume)
+void MusicManager::setLaunchMusic(int volume)
 {
     if(volume>=0&&volume<=100){
-        launcherMusic.setVolume(volume);
+        launchMusic.setVolume(volume);
     }
 }
