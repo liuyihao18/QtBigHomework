@@ -7,7 +7,8 @@ enum SceneState {
     Editing,
     Success,
     GameOver,
-    Rank
+    Rank,
+    Pause
 };
 
 #endif // SCENESTATE_H

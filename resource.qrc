@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/splash">
-        <file>splash/fuko.jpg</file>
-        <file>splash/opacity.png</file>
         <file>splash/splash.png</file>
     </qresource>
     <qresource prefix="/icons">
@@ -21,18 +19,15 @@
         <file>icon/play.png</file>
         <file>icon/muted.png</file>
     </qresource>
-    <qresource prefix="/qss">
-        <file>qss/main.qss</file>
-    </qresource>
     <qresource prefix="/images/background">
         <file>images/background/loader.gif</file>
         <file>images/background/background.png</file>
         <file>images/background/success.png</file>
         <file>images/background/gameOver.png</file>
+        <file>images/background/rank.png</file>
     </qresource>
     <qresource prefix="/images/player">
-        <file>images/player/plane.png</file>
-        <file>images/player/mario.png</file>
+        <file>images/player/player.png</file>
     </qresource>
     <qresource prefix="/images/monster">
         <file>images/monster/monster1.png</file>
@@ -47,11 +42,11 @@
         <file>images/terrain/destuctibleBrick.png</file>
         <file>images/terrain/flyingBrick.png</file>
         <file>images/terrain/spring.png</file>
+        <file>images/terrain/arrowTerrain.png</file>
     </qresource>
     <qresource prefix="/images/trap">
-        <file>images/trap/activeTrap.jpg</file>
-        <file>images/trap/passiveTrap.jpg</file>
-        <file>images/trap/arrowTrap.jpg</file>
+        <file>images/trap/activeTrap.png</file>
+        <file>images/trap/passiveTrap.png</file>
     </qresource>
     <qresource prefix="/images/buff">
         <file>images/buff/flowerBuff.png</file>
@@ -61,12 +56,12 @@
         <file>images/gold/gold.png</file>
     </qresource>
     <qresource prefix="/images/goal">
-        <file>images/goal/goal.jpg</file>
+        <file>images/goal/goal.png</file>
     </qresource>
     <qresource prefix="/images/flyingprop">
         <file>images/flyingprop/arrow.png</file>
-        <file>images/flyingprop/fireball.png</file>
         <file>images/flyingprop/magicBullet.png</file>
+        <file>images/flyingprop/fireBall.png</file>
     </qresource>
     <qresource prefix="/bgm">
         <file>bgm/dango.mp3</file>
@@ -74,5 +69,8 @@
         <file>bgm/magicBullet.mp3</file>
         <file>bgm/gameOver.mp3</file>
         <file>bgm/success.mp3</file>
+    </qresource>
+    <qresource prefix="/cursor">
+        <file>cursor/cursor.png</file>
     </qresource>
 </RCC>

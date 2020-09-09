@@ -8,7 +8,7 @@ Player::Player(QObject* parent) :Role(parent)
 }
 
 Player::Player(int x, int y, int width,int height, QObject* parent)
-    :Role(x,y,width,height,":/images/player/images/player/mario.png",400,3,Right,parent),Launcher(100),
+    :Role(x,y,width,height,":/images/player/images/player/player.png",400,3,Right,parent),Launcher(100),
       points(0),downSpeed(400),originDownSpeed(downSpeed), upSpeed(400),originUpSpeed(upSpeed), jumpTime(400), fallDownHPReduce(1), canAttack(false), jumping(false),
       jumpTimer(this),launchTimer(this)
 {
@@ -154,7 +154,7 @@ FlyingProp *Player::launchFlyingProp()
     launch();
     launchTimer.setInterval(launchInteval);
     launchTimer.start();
-    int flyingPropWidth = 0.4*width();
+    int flyingPropWidth = 0.4*width()*0.6666667;
     int flyingPropHeight = 0.4*height();
     int posX = 0;
     int posY = 0;

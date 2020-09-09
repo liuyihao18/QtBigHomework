@@ -57,10 +57,10 @@ bool CollisionInspector::canAddInScene(const QRect &rect) const
 // 返回是否在场景中（弱判断）
 bool CollisionInspector::isInScene(const QRect &rect) const
 {
-    if(rect.x()<0||rect.x()+rect.width()>width()){
+    if(rect.left()<0||rect.right()>width()){
         return false;
     }
-    if(rect.y()>height()){
+    if(rect.top()>height()){
         return false;
     }
     return true;
@@ -164,10 +164,11 @@ bool CollisionInspector::isInSky(const QRect &rect) const
 bool CollisionInspector::isOnGround(const QRect &rect) const
 {
     for(auto iter = sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
-        // 偏移1像素判断
+        // 偏移1像素判断，三点判断
         if((*iter)->isShow()){
-            if((*iter)->getRect().contains(QPoint(rect.bottomLeft().x(),rect.bottomLeft().y()+1))
-                    ||(*iter)->getRect().contains(QPoint(rect.bottomRight().x(),rect.bottomRight().y()+1))){
+            if((*iter)->getRect().contains(QPoint(rect.left(),rect.bottom()+1))
+                    ||(*iter)->getRect().contains(QPoint(rect.left()+rect.width()/2,rect.bottom()+1))
+                    ||(*iter)->getRect().contains(QPoint(rect.right(),rect.bottom()+1))){
                 return true;
             }
         }
@@ -242,19 +243,21 @@ bool CollisionInspector::dealWithPlayerCollision() const
 {
     bool dealt = false;
     Player* player = (*sceneinfo.player);
+    QRect rect = (*sceneinfo.player)->getRect();
     if(player&&player->isShow()){
         // 判断地形，弹簧和可破坏砖块
         for(auto iter=sceneinfo.terrains->begin();iter!=sceneinfo.terrains->end();++iter){
             if((*iter)->isShow()){
                 if((*iter)->metaObject()->className()==QString("Spring")){
-                    if((*iter)->getRect().contains(QPoint(player->getRect().bottomLeft().x(),player->getRect().bottomLeft().y()+1))
-                            ||(*iter)->getRect().contains(QPoint(player->getRect().bottomRight().x(),player->getRect().bottomRight().y()+1))){
+                    if((*iter)->getRect().contains(QPoint(rect.left(),rect.bottom()+1))
+                            ||(*iter)->getRect().contains(QPoint(rect.left()+rect.width()/2,rect.bottom()+1))
+                            ||(*iter)->getRect().contains(QPoint(rect.right(),rect.bottom()+1))){
                         player->jump(true);
                         dealt = true;
                     }
                 }
                 if((*iter)->metaObject()->className()==QString("DestructibleBrick")){
-                    if((*iter)->getRect().contains(QPoint(player->getRect().x()+player->width()/2,player->getRect().y()-1))){
+                    if((*iter)->getRect().contains(QPoint(rect.left()+player->width()/2,rect.top()-1))){
                         static_cast<DestructibleBrick*>(*iter)->collide();
                         player->jumpOver();
                         player->addPoins(static_cast<DestructibleBrick*>(*iter)->getPoints());
@@ -266,7 +269,7 @@ bool CollisionInspector::dealWithPlayerCollision() const
         // 陷阱扣血
         for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
             if((*iter)->isShow()){
-                if((*iter)->getRect().intersects(player->getRect())){
+                if((*iter)->getRect().intersects(rect)){
                     player->reduceHP((*iter)->getHPReduce());
                     dealt = true;
                 }
@@ -275,7 +278,7 @@ bool CollisionInspector::dealWithPlayerCollision() const
         // 怪物扣血
         for(auto iter=sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
             if((*iter)->isShow()){
-                if((*iter)->getRect().intersects(player->getRect())){
+                if((*iter)->getRect().intersects(rect)){
                     player->reduceHP((*iter)->getHPReduce());
                     dealt = true;
                 }
@@ -284,7 +287,7 @@ bool CollisionInspector::dealWithPlayerCollision() const
         // 加Buff
         for(auto iter=sceneinfo.buffs->begin();iter!=sceneinfo.buffs->end();++iter){
             if((*iter)->isShow()){
-                if((*iter)->getRect().intersects(player->getRect())){
+                if((*iter)->getRect().intersects(rect)){
                     (*iter)->hide();
                     player->addBuff((*iter)->metaObject()->className());
                     dealt = true;
@@ -294,7 +297,7 @@ bool CollisionInspector::dealWithPlayerCollision() const
         // 加分数
         for(auto iter=sceneinfo.values->begin();iter!=sceneinfo.values->end();++iter){
             if((*iter)->isShow()){
-                if((*iter)->getRect().intersects(player->getRect())){
+                if((*iter)->getRect().intersects(rect)){
                     (*iter)->hide();
                     player->addPoins((*iter)->getValue());
                     dealt = true;
@@ -312,7 +315,7 @@ bool CollisionInspector::dealWithActiveTrap() const
     Player* player = (*sceneinfo.player);
     for(auto iter=sceneinfo.traps->begin();iter!=sceneinfo.traps->end();++iter){
         if(dynamic_cast<ActiveTrap*>(*iter)){
-            if(distance((*iter)->getRect(),player->getRect())<200){
+            if(distance((*iter)->getRect(),player->getRect())<150){
                 (*iter)->show();
                 dealt = true;
             }else{

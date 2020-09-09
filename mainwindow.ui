@@ -148,7 +148,6 @@
    <addaction name="actOption"/>
    <addaction name="actMuted"/>
    <addaction name="actMinimize"/>
-   <addaction name="actFullScreen"/>
    <addaction name="actExit"/>
   </widget>
   <action name="actExit">
@@ -295,7 +294,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/player/images/player/mario.png</normaloff>:/images/player/images/player/mario.png</iconset>
+     <normaloff>:/images/player/images/player/player.png</normaloff>:/images/player/images/player/player.png</iconset>
    </property>
    <property name="text">
     <string>Player</string>
@@ -403,7 +402,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/trap/images/trap/activeTrap.jpg</normaloff>:/images/trap/images/trap/activeTrap.jpg</iconset>
+     <normaloff>:/images/trap/images/trap/activeTrap.png</normaloff>:/images/trap/images/trap/activeTrap.png</iconset>
    </property>
    <property name="text">
     <string>ActiveTrap</string>
@@ -421,7 +420,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/trap/images/trap/passiveTrap.jpg</normaloff>:/images/trap/images/trap/passiveTrap.jpg</iconset>
+     <normaloff>:/images/trap/images/trap/passiveTrap.png</normaloff>:/images/trap/images/trap/passiveTrap.png</iconset>
    </property>
    <property name="text">
     <string>PassiveTrap</string>
@@ -532,7 +531,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/trap/images/trap/arrowTrap.jpg</normaloff>:/images/trap/images/trap/arrowTrap.jpg</iconset>
+     <normaloff>:/images/terrain/images/terrain/arrowTerrain.png</normaloff>:/images/terrain/images/terrain/arrowTerrain.png</iconset>
    </property>
    <property name="text">
     <string>ArrowTerrain</string>
@@ -568,7 +567,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/goal/images/goal/goal.jpg</normaloff>:/images/goal/images/goal/goal.jpg</iconset>
+     <normaloff>:/images/goal/images/goal/goal.png</normaloff>:/images/goal/images/goal/goal.png</iconset>
    </property>
    <property name="text">
     <string>Goal</string>
@@ -607,7 +606,7 @@
     <string>重新开始当前游戏</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actHome">

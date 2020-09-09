@@ -5,6 +5,7 @@
 #include "musicmanager.h"
 #include "musicconfig.h"
 #include <QMainWindow>
+#include <QBitmap>
 #include <QTimer>
 #include <QSet>
 #include <QKeyEvent>
@@ -38,7 +39,6 @@ signals:
     void loadScene(const QString&); // 发送加载的场景文件
     void saveScene(const QString&); // 发送保存的场景文件
     void chooseSceneWidget(bool, const QString&); // 发送选择的场景组件
-    void gameRestart(); // 开始游戏
 
 private slots:
     void loadOver(); // 加载结束
@@ -49,7 +49,8 @@ private slots:
     void on_actSave_triggered(); // 保存按钮触发
     void on_actSaveAs_triggered(); // 另存为按钮触发
     void on_actRestart_triggered(); // 重新开始当前游戏
-    void on_actOption_triggered();
+    void on_actOption_triggered(); // 音乐设置
+    void on_actScreenShot_triggered(); // 截图保存
 
 private:
     Ui::MainWindow *ui; // ui指针

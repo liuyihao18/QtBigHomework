@@ -78,6 +78,7 @@ void Scene::paintEvent(QPaintEvent *)
     double heightratio = (double)height () /1002;
     // 绘制背景
     p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(backgroundImage));
+
     switch (gameState) {
     case Loading:
         // 绘制加载图像
@@ -159,18 +160,15 @@ void Scene::paintEvent(QPaintEvent *)
         break;
     case Rank:
         // 绘制文字
+        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(rankImage));
         p.scale(widthratio,heightratio);
         font.setPointSize(20);
         p.setFont(font);
-        p.drawText(QRect(650,250-60,200,60),"日期");
-        p.drawText(QRect(850,250-60,150,60),"时间");
-        p.drawText(QRect(1000,250-60,50,60),"分数");
-        p.drawText(QRect(1050,250-60,100,60),"通关时间");
         for(int i = 0;i<(10>rankinfos.size()?rankinfos.size():10);i++){
-            p.drawText(QRect(650,250+60*i,200,60),rankinfos[i].date);
-            p.drawText(QRect(850,250+60*i,150,60),rankinfos[i].time);
-            p.drawText(QRect(1000,250+60*i,50,60),rankinfos[i].point);
-            p.drawText(QRect(1050,250+60*i,100,60),rankinfos[i].passTime);
+            p.drawText(QRect(550,245.2+58.2*i,200,58),rankinfos[i].date);
+            p.drawText(QRect(777,245.2+58.2*i,150,58),rankinfos[i].time);
+            p.drawText(QRect(1030,245.2+58.2*i,150,58),rankinfos[i].point);
+            p.drawText(QRect(1250,245.2+58.2*i,150,58),rankinfos[i].passTime);
         }
         break;
     default:
@@ -222,7 +220,7 @@ void Scene::mouseMoveEvent(QMouseEvent *event)
         break;
     case Editing:
         if(temp){
-            temp->moveRect(event->pos().x()-temp->width()/2,event->pos().y()-temp->height()/2);
+            temp->moveRect(event->pos().x()-temp->width()*0.5,event->pos().y()-temp->height()*0.5);
         }
         break;
     default:
@@ -239,7 +237,6 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
     }
     double widthratio = (double)width() / 1902;
     double heightratio = (double)height () /1002;
-    qDebug() << event->pos();
     switch(gameState){
     case Loading:
         if(event->button()==Qt::LeftButton){
@@ -291,6 +288,13 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
             }
         }
         break;
+    case Rank:
+        if(event->button()==Qt::LeftButton){
+            if(QRect(870*widthratio,910*heightratio,165*widthratio,45*heightratio).contains(event->pos())){
+                emit returnHome();
+            }
+        }
+        break;
     default:
         break;
     }
@@ -313,7 +317,7 @@ void Scene::addSceneWidget(int x, int y)
         return;
     }
     // 放置精度为地图单位的一半
-    temp->moveRect(temp->x()/placeAcc*placeAcc,(temp->y()+placeAcc/2)/placeAcc*placeAcc);
+    temp->moveRect(temp->x()/placeAcc*placeAcc,static_cast<int>((temp->y()+temp->width()*0.15))/placeAcc*placeAcc);
     // 如果这个释放的位置没有东西，则加入，并且再次新建，保证创建的连续性
     if(ci.canAddInScene(temp->getRect())){
         // qDebug()<<"("<<x/map_unit<<", "<<y/map_unit<<")插入"<<temp->metaObject()->className();
@@ -328,7 +332,7 @@ void Scene::addSceneWidget(int x, int y)
                 delete player;
             }
             player = static_cast<Player*>(temp);
-            temp = new Player(x+1, y+1,map_unit-2,map_unit-2, this);
+            temp = new Player(x+1, y+1,(map_unit-2)*1.5,map_unit-2, this);
             break;
         case ClassName::Rock:
             terrains.insert(static_cast<Rock*>(temp));
@@ -340,12 +344,12 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::Spring:
             terrains.insert(static_cast<Spring*>(temp));
-            temp = new Spring(x,y,map_unit,map_unit/2,this);
+            temp = new Spring(x,y,map_unit,map_unit*0.5,this);
             break;
         case ClassName::FlyingBrick:
             terrains.insert(static_cast<FlyingBrick*>(temp));
             moveThings.insert(static_cast<FlyingBrick*>(temp));
-            temp = new FlyingBrick(x,y,map_unit,map_unit/2,this);
+            temp = new FlyingBrick(x,y,map_unit*1.5,map_unit*0.5,this);
             break;
         case ClassName::DestructibleBrick:
             terrains.insert(static_cast<DestructibleBrick*>(temp));
@@ -362,7 +366,7 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::PassiveTrap:
             traps.insert(static_cast<PassiveTrap*>(temp));
-            temp = new PassiveTrap(x,y,map_unit,map_unit,this);
+            temp = new PassiveTrap(x,y,map_unit,map_unit*0.5,this);
             break;
         case ClassName::FirstMonster:
             monsters.insert(static_cast<FirstMonster*>(temp));
@@ -399,7 +403,7 @@ void Scene::addSceneWidget(int x, int y)
                 delete goal;
             }
             goal = static_cast<Goal*>(temp);
-            temp = new Goal(x, y,map_unit,map_unit, this);
+            temp = new Goal(x, y,map_unit,map_unit*1.5, this);
             break;
         default:
             break;
@@ -492,7 +496,7 @@ void Scene::moveSceneWidget(int x, int y)
         if(temp){
             if(mapFromGlobal(cursor().pos()).x()>0&&mapFromGlobal(cursor().pos()).y()>0){
                 isShowChooseWidget = true;
-                temp->moveRect(mapFromGlobal(cursor().pos()).x()-temp->width()/2,mapFromGlobal(cursor().pos()).y()-temp->height()/2);
+                temp->moveRect(mapFromGlobal(cursor().pos()).x()-temp->width()*0.5,mapFromGlobal(cursor().pos()).y()-temp->height()*0.5);
             }
         }
         isMovingThing = true;
@@ -535,7 +539,10 @@ void Scene::writeRankFile()
 // 更新场景事件，使用Updater类
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
-    if(gameState==Gaming){
+    if(gameState==Pause){
+        return;
+    }
+    else if(gameState==Gaming){
         updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
     }
     else if(gameState==Editing){
@@ -543,7 +550,7 @@ void Scene::updateScene(const QSet<int>& pressedKeys)
         if(temp){
             setCursor(Qt::BlankCursor);
         }else{
-            setCursor(Qt::ArrowCursor);
+            setCursor(featherCursor);
         }
     }
     update();
@@ -562,7 +569,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     if(isChoose){
         switch(name2num[className]){
         case ClassName::Player:
-            temp = new Player(0,0,map_unit-2,map_unit-2,this);
+            temp = new Player(0,0,(map_unit-2)*1.5,map_unit-2,this);
             break;
         case ClassName::Rock:
             temp = new Rock(0,0,map_unit,map_unit,this);
@@ -571,10 +578,10 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
             temp = new FloorGrass(0,0,map_unit,map_unit,this);
             break;
         case ClassName::Spring:
-            temp = new Spring(0,0,map_unit,map_unit/2,this);
+            temp = new Spring(0,0,map_unit,map_unit*0.5,this);
             break;
         case ClassName::FlyingBrick:
-            temp = new FlyingBrick(0,0,map_unit,map_unit/2,this);
+            temp = new FlyingBrick(0,0,map_unit*1.5,map_unit*0.5,this);
             break;
         case ClassName::DestructibleBrick:
             temp = new DestructibleBrick(0,0,map_unit,map_unit,this);
@@ -586,7 +593,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
             temp = new ActiveTrap(0,0,map_unit,map_unit,this);
             break;
         case ClassName::PassiveTrap:
-            temp = new PassiveTrap(0,0,map_unit,map_unit,this);
+            temp = new PassiveTrap(0,0,map_unit,map_unit*0.5,this);
             break;
         case ClassName::FirstMonster:
             temp = new FirstMonster(0,0,map_unit,map_unit,this);
@@ -607,7 +614,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
             temp = new Gold(0,0,map_unit,map_unit,this);
             break;
         case ClassName::Goal:
-            temp = new Goal(0,0,map_unit,map_unit,this);
+            temp = new Goal(0,0,map_unit,map_unit*1.5,this);
             break;
         default:
             break;
@@ -616,7 +623,7 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
         if(temp){
             if(mapFromGlobal(cursor().pos()).x()>0&&mapFromGlobal(cursor().pos()).y()>0){
                 isShowChooseWidget = true;
-                temp->moveRect(mapFromGlobal(cursor().pos()).x()-temp->width()/2,mapFromGlobal(cursor().pos()).y()-temp->height()/2);
+                temp->moveRect(mapFromGlobal(cursor().pos()).x()-temp->width()*0.5,mapFromGlobal(cursor().pos()).y()-temp->height()*0.5);
             }
         }
         isMovingThing = false;
@@ -649,7 +656,7 @@ void Scene::loadScene(const QString &scenePath)
             switch (name2num[className]) {
             case ClassName::None:break;
             case ClassName::Player:
-                player = new Player(x+1,y+1,width-2,height-2,this);
+                player = new Player(x+1,y+1,width,height,this);
                 newObject = player;
                 break;
             case ClassName::Rock:
@@ -817,17 +824,22 @@ void Scene::gameOver()
     emit clearKeyPressed();
 }
 
+// 加载结束
 void Scene::loadOver()
 {
     loading = false;
 }
 
 // 构造函数，初始化
-Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902),m_height(1002),map_unit(50),placeAcc(0.5*map_unit),
-    fps(16),loading(true), gameTime(0),gamePassTime(0),
+Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),
+    m_width(1902),m_height(1002),map_unit(50),placeAcc(0.5*map_unit),
+    fps(16),loading(true),
+    featherCursor(QPixmap::fromImage(QImage(":/cursor/cursor/cursor.png")).scaled(QSize(32,32),Qt::KeepAspectRatio),0,31),
+    gameTime(0),gamePassTime(0),
     backgroundImage(":/images/background/images/background/background.png"),
     successImage(":/images/background/images/background/success.png"),
     gameOverImage(":/images/background/images/background/gameOver.png"),
+    rankImage(":/images/background/images/background/rank.png"),
     loaderImage(":/images/background/images/background/loader.gif",true),
     player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
@@ -868,19 +880,6 @@ void Scene::setGameState(int gameState)
     this->gameState = gameState;
     isShowChooseWidget = false;
     isMovingThing = false;
-    switch (gameState) {
-    case Loading:
-        initialize();
-        break;
-    case Gaming:
-        gameStart();
-        break;
-    case Editing:
-        gameReload();
-        break;
-    default:
-        break;
-    }
 }
 
 // 返回Updater指针

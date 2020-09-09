@@ -24,11 +24,13 @@ protected:
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
     bool loading; // 加载中
+    QCursor featherCursor; // 鼠标样式
     clock_t gameTime,gamePassTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
     QImage backgroundImage; // 背景图片
     QImage successImage; // 过关图片
     QImage gameOverImage; // 失败图片
+    QImage rankImage; // 积分榜图片
     Gif loaderImage; // 加载图片
     Player* player; // 玩家
     Goal* goal; // 终点
@@ -65,7 +67,7 @@ protected:
     void readRankFile(); // 读取排名文件
     void writeRankFile(); // 写入排名
 
-protected slots:
+public slots:
     void updateScene(const QSet<int>&); // 更新场景
     void chooseSceneWidget(bool, const QString&); // 选择的组件
     void newScene(); // 新建场景

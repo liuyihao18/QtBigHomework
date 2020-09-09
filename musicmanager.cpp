@@ -9,7 +9,7 @@ MusicManager::MusicManager(QObject *parent)
     bgMusic.setVolume(20);
 
     jumpMusic.setMedia(QUrl("qrc:/bgm/bgm/jump.mp3"));
-    jumpMusic.setVolume(15);
+    jumpMusic.setVolume(10);
 
     launchMusic.setMedia(QUrl("qrc:/bgm/bgm/magicBullet.mp3"));
     launchMusic.setVolume(20);

@@ -13,10 +13,16 @@ MainWindow::MainWindow(QWidget *parent)
     timer.setInterval(fps); // 设定帧率为16ms
     timer.start(); // 开始定时器
     stateTimer.setInterval(1000); // 提示时间1s
-    //    loaderTimer.setInterval(3750); // 加载时间5s
-    loaderTimer.setInterval(100);
+    loaderTimer.setInterval(3000); // 加载时间3s
+    //    loaderTimer.setInterval(100);
     makeConnection(); // 建立连接
     showFullScreen(); // 全屏显示
+
+    // 设置鼠标形状
+    QPixmap cursorImg = QPixmap::fromImage(QImage(":/cursor/cursor/cursor.png")).scaled(QSize(32,32),Qt::KeepAspectRatio);
+    QCursor cursor(cursorImg,0,31);
+    setCursor(cursor);
+
     loaderTimer.start(); // 开始加载计时
     mm.playBGMusic(); // 播放背景音乐
 }
@@ -30,10 +36,6 @@ MainWindow::~MainWindow()
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     pressedKeys.insert(event->key());
-    // 刷新
-    if(event->key()==Qt::Key_F5){
-        on_actRestart_triggered();
-    }
     // 全屏显示
     if(event->key()==Qt::Key_F11){
         if(isFullScreen()){
@@ -50,7 +52,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     if(event->key()==Qt::Key_Space&&(ui->scene->getGameState()==Success||ui->scene->getGameState()==GameOver)){
         ui->scene->setGameState(Gaming);
-        emit gameRestart();
+        ui->scene->gameRestart();
     }
     QMainWindow::keyPressEvent(event);
 }
@@ -140,8 +142,10 @@ void MainWindow::on_actEdit_triggered(bool checked)
     ui->sceneWidgets->setEnabled(checked); // 场景组件是否可用
     if(checked){
         ui->scene->setGameState(Editing);
+        ui->scene->gameReload();
     }else{
         ui->scene->setGameState(Gaming);
+        ui->scene->gameRestart();
     }
 }
 
@@ -155,8 +159,10 @@ void MainWindow::on_actOpen_triggered()
         emit loadScene(sceneFileName); // 加载
         if(ui->actEdit->isChecked()){
             ui->scene->setGameState(Editing);
+            ui->scene->gameReload();
         }else{
             ui->scene->setGameState(Gaming);
+            ui->scene->gameStart();
         }
         ui->stateLabel->setText("打开成功"); // 提示文字
     }else{
@@ -169,12 +175,14 @@ void MainWindow::on_actOpen_triggered()
 void MainWindow::on_actSave_triggered()
 {
     // 保存，向场景发出保存的信号
-    if(!sceneFileName.isEmpty()){
-        emit saveScene(sceneFileName); // 如果已经打开文件，则保存
-        ui->stateLabel->setText("保存成功");
-        stateTimer.start();
-    }else{
-        on_actSaveAs_triggered(); // 否则另存为
+    if(ui->scene->getGameState()==Editing||ui->scene->getGameState()==Gaming){
+        if(!sceneFileName.isEmpty()){
+            emit saveScene(sceneFileName); // 如果已经打开文件，则保存
+            ui->stateLabel->setText("保存成功");
+            stateTimer.start();
+        }else{
+            on_actSaveAs_triggered(); // 否则另存为
+        }
     }
 }
 
@@ -182,18 +190,17 @@ void MainWindow::on_actSave_triggered()
 void MainWindow::on_actSaveAs_triggered()
 {
     // 另存为按钮，向场景发出保存的信号
-    QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Scene"),"./scene/",tr("Scene Files(*.scene)"));
-    if(!saveFile.isEmpty()){
-        if(sceneFileName.isEmpty()){
-            on_actNew_triggered();
+    if(ui->scene->getGameState()==Editing||ui->scene->getGameState()==Gaming){
+        QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Scene"),"./scene/",tr("Scene Files(*.scene)"));
+        if(!saveFile.isEmpty()){
+            sceneFileName = saveFile; // 另存为会改变打开的文件名
+            emit saveScene(sceneFileName);
+            ui->stateLabel->setText("保存成功");
+        }else{
+            ui->stateLabel->setText("保存失败");
         }
-        sceneFileName = saveFile; // 另存为会改变打开的文件名
-        emit saveScene(sceneFileName);
-        ui->stateLabel->setText("保存成功");
-    }else{
-        ui->stateLabel->setText("保存失败");
+        stateTimer.start();
     }
-    stateTimer.start();
 }
 
 // 重启游戏
@@ -201,7 +208,7 @@ void MainWindow::on_actRestart_triggered()
 {
     if(ui->scene->getGameState()==Gaming||ui->scene->getGameState()==Success||ui->scene->getGameState()==GameOver){
         ui->scene->setGameState(Gaming);
-        emit gameRestart();
+        ui->scene->gameRestart();
     }
 }
 
@@ -220,6 +227,17 @@ void MainWindow::on_actOption_triggered()
     connect(musicConfig.getGameOverMusicButton(),SIGNAL(clicked()),&mm,SLOT(testGameOverMusic()));
     musicConfig.exec();
 }
+
+// 截图保存
+void MainWindow::on_actScreenShot_triggered()
+{
+    QPixmap pixmap = ui->scene->grab();
+    QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Image"),"./image/",tr("Image Files(*.jpg)"));
+    if(!saveFile.isEmpty()){
+        pixmap.save(saveFile);
+    }
+}
+
 
 // 建立连接
 void MainWindow::makeConnection()
@@ -248,8 +266,6 @@ void MainWindow::makeConnection()
     connect(&stateTimer,SIGNAL(timeout()),this,SLOT(clearStateLabel()));
     // 游戏过关或者结束清楚键盘状态
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
-    // 游戏重新开始
-    connect(this,SIGNAL(gameRestart()),ui->scene,SLOT(gameRestart()));
     // 返回主页
     connect(ui->scene,SIGNAL(returnHome()),this,SLOT(on_actHome_triggered()));
     // 音乐连接
