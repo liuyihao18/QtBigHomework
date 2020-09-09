@@ -33,19 +33,18 @@
         <file>images/player/mario.png</file>
     </qresource>
     <qresource prefix="/images/monster">
-        <file>images/monster/monster.png</file>
-        <file>images/monster/monster1.jpg</file>
-        <file>images/monster/monster2.jpg</file>
-        <file>images/monster/monster3.jpg</file>
+        <file>images/monster/monster1.png</file>
+        <file>images/monster/monster2.png</file>
+        <file>images/monster/monster3.png</file>
     </qresource>
     <qresource prefix="/images/terrain/ground">
-        <file>images/terrain/ground/floor_grass.jpg</file>
-        <file>images/terrain/ground/rock.jpg</file>
+        <file>images/terrain/ground/floorGrass.png</file>
+        <file>images/terrain/ground/rock.png</file>
     </qresource>
     <qresource prefix="/images/terrain">
-        <file>images/terrain/flyingBrick.jpg</file>
-        <file>images/terrain/spring.jpg</file>
         <file>images/terrain/destuctibleBrick.png</file>
+        <file>images/terrain/flyingBrick.png</file>
+        <file>images/terrain/spring.png</file>
     </qresource>
     <qresource prefix="/images/trap">
         <file>images/trap/activeTrap.jpg</file>
@@ -65,6 +64,6 @@
     <qresource prefix="/images/flyingprop">
         <file>images/flyingprop/arrow.png</file>
         <file>images/flyingprop/fireball.png</file>
-        <file>images/flyingprop/magicbullet.png</file>
+        <file>images/flyingprop/magicBullet.png</file>
     </qresource>
 </RCC>

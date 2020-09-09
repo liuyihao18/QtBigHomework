@@ -130,21 +130,21 @@ void Scene::paintEvent(QPaintEvent *)
         if(temp && isShowChooseWidget){
             p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
         }
-        // 绘制文字
-        if(player){
-            // 绘制人物生命
-            p.drawText(QRect(100,10,200,50),QString::number(player->getHP()));
-            // 绘制游戏分数
-            p.drawText(QRect(300,10,200,50),QString::number(player->getPoints()));
-        }else{
-            // 绘制人物生命
-            p.drawText(QRect(100,10,200,50),QString("???"));
-            // 绘制游戏分数
-            p.drawText(QRect(300,10,200,50),QString("???"));
-        }
-        // 绘制游戏时间
         if(gameState==Gaming){
-            p.drawText(QRect(width()-200,10,200,50),QTime(0,0).addMSecs(clock()-gameTime).toString("mm:ss"));
+            // 绘制文字
+            if(player){
+                // 绘制人物生命
+                p.drawText(QRect(200,35,200,50),QString::number(player->getHP()));
+                // 绘制游戏分数
+                p.drawText(QRect(420,35,200,50),QString::number(player->getPoints()));
+            }else{
+                // 绘制人物生命
+                p.drawText(QRect(200,35,200,50),QString("???"));
+                // 绘制游戏分数
+                p.drawText(QRect(420,35,200,50),QString("???"));
+            }
+            // 绘制游戏时间
+            p.drawText(QRect(width()-175,35,200,50),QTime(0,0).addMSecs(clock()-gameTime).toString("mm:ss"));
         }
         break;
     case Success:
@@ -179,7 +179,7 @@ void Scene::enterEvent(QEvent *event)
     case Gaming:
         break;
     case Editing:
-            isShowChooseWidget = true;
+        isShowChooseWidget = true;
         break;
     default:
         break;
@@ -229,6 +229,7 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
     if(loading){
         return;
     }
+    qDebug() << event->pos();
     switch(gameState){
     case Loading:
         if(event->button()==Qt::LeftButton){
@@ -314,12 +315,12 @@ void Scene::addSceneWidget(int x, int y)
             break;
         case ClassName::Spring:
             terrains.insert(static_cast<Spring*>(temp));
-            temp = new Spring(x,y,map_unit,map_unit,this);
+            temp = new Spring(x,y,map_unit,map_unit/2,this);
             break;
         case ClassName::FlyingBrick:
             terrains.insert(static_cast<FlyingBrick*>(temp));
             moveThings.insert(static_cast<FlyingBrick*>(temp));
-            temp = new FlyingBrick(x,y,map_unit,map_unit,this);
+            temp = new FlyingBrick(x,y,map_unit,map_unit/2,this);
             break;
         case ClassName::DestructibleBrick:
             terrains.insert(static_cast<DestructibleBrick*>(temp));
@@ -546,10 +547,10 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
             temp = new FloorGrass(0,0,map_unit,map_unit,this);
             break;
         case ClassName::Spring:
-            temp = new Spring(0,0,map_unit,map_unit,this);
+            temp = new Spring(0,0,map_unit,map_unit/2,this);
             break;
         case ClassName::FlyingBrick:
-            temp = new FlyingBrick(0,0,map_unit,map_unit,this);
+            temp = new FlyingBrick(0,0,map_unit,map_unit/2,this);
             break;
         case ClassName::DestructibleBrick:
             temp = new DestructibleBrick(0,0,map_unit,map_unit,this);

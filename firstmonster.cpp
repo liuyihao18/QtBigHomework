@@ -6,7 +6,7 @@ FirstMonster::FirstMonster(QObject*parent):Monster(parent)
 }
 
 FirstMonster::FirstMonster(int x, int y, int width, int height, QObject *parent)
-    :Monster(x,y,width,height,":/images/monster/images/monster/monster1.jpg",1,Right,1,parent),reverse(false)
+    :Monster(x,y,width,height,":/images/monster/images/monster/monster1.png",1,Right,1,parent),reverse(false)
 {
 
 }

@@ -311,7 +311,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/terrain/ground/images/terrain/ground/rock.jpg</normaloff>:/images/terrain/ground/images/terrain/ground/rock.jpg</iconset>
+     <normaloff>:/images/terrain/ground/images/terrain/ground/rock.png</normaloff>:/images/terrain/ground/images/terrain/ground/rock.png</iconset>
    </property>
    <property name="text">
     <string>Rock</string>
@@ -329,7 +329,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/terrain/ground/images/terrain/ground/floor_grass.jpg</normaloff>:/images/terrain/ground/images/terrain/ground/floor_grass.jpg</iconset>
+     <normaloff>:/images/terrain/ground/images/terrain/ground/floorGrass.png</normaloff>:/images/terrain/ground/images/terrain/ground/floorGrass.png</iconset>
    </property>
    <property name="text">
     <string>FloorGrass</string>
@@ -347,7 +347,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/terrain/images/terrain/spring.jpg</normaloff>:/images/terrain/images/terrain/spring.jpg</iconset>
+     <normaloff>:/images/terrain/images/terrain/spring.png</normaloff>:/images/terrain/images/terrain/spring.png</iconset>
    </property>
    <property name="text">
     <string>Spring</string>
@@ -365,7 +365,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/terrain/images/terrain/flyingBrick.jpg</normaloff>:/images/terrain/images/terrain/flyingBrick.jpg</iconset>
+     <normaloff>:/images/terrain/images/terrain/flyingBrick.png</normaloff>:/images/terrain/images/terrain/flyingBrick.png</iconset>
    </property>
    <property name="text">
     <string>FlyingBrick</string>
@@ -437,7 +437,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/monster/images/monster/monster1.jpg</normaloff>:/images/monster/images/monster/monster1.jpg</iconset>
+     <normaloff>:/images/monster/images/monster/monster1.png</normaloff>:/images/monster/images/monster/monster1.png</iconset>
    </property>
    <property name="text">
     <string>FirstMonster</string>
@@ -455,7 +455,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/monster/images/monster/monster2.jpg</normaloff>:/images/monster/images/monster/monster2.jpg</iconset>
+     <normaloff>:/images/monster/images/monster/monster2.png</normaloff>:/images/monster/images/monster/monster2.png</iconset>
    </property>
    <property name="text">
     <string>SecondMonster</string>
@@ -473,7 +473,7 @@
    </property>
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/images/monster/images/monster/monster3.jpg</normaloff>:/images/monster/images/monster/monster3.jpg</iconset>
+     <normaloff>:/images/monster/images/monster/monster3.png</normaloff>:/images/monster/images/monster/monster3.png</iconset>
    </property>
    <property name="text">
     <string>ThirdMonster</string>

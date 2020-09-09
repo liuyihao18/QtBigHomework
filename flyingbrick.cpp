@@ -6,7 +6,7 @@ FlyingBrick::FlyingBrick(QObject* parent) :Terrain(parent)
 }
 
 FlyingBrick::FlyingBrick(int x, int y, int width,int height, QObject *parent)
-    :Terrain(x,y, width, height,":/images/terrain/images/terrain/flyingBrick.jpg",parent),MoveThing(x,y,width,height,Right,200),reverse(false)
+    :Terrain(x,y, width, height,":/images/terrain/images/terrain/flyingBrick.png",parent),MoveThing(x,y,width,height,Right,200),reverse(false)
 {
 
 }

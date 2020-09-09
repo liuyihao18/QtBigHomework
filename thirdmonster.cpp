@@ -10,7 +10,7 @@ ThirdMonster::ThirdMonster(QObject* parent):Monster(parent)
 }
 
 ThirdMonster::ThirdMonster(int x, int y, int width,int height, QObject *parent)
-    :Monster(x,y,width,height,":/images/monster/images/monster/monster3.jpg",1,Up,1,parent),
+    :Monster(x,y,width,height,":/images/monster/images/monster/monster3.png",1,Up,1,parent),
       Launcher(1500+rand()%1000), m_num(num++),originMoveSpeed(move_speed),launchTimer(this)
 {
     connect(&launchTimer,SIGNAL(timeout()),this,SLOT(launchOver()));
