@@ -3,6 +3,7 @@
 
 #include "scenestate.h"
 #include "musicmanager.h"
+#include "musicconfig.h"
 #include <QMainWindow>
 #include <QTimer>
 #include <QSet>
@@ -48,6 +49,7 @@ private slots:
     void on_actSave_triggered(); // 保存按钮触发
     void on_actSaveAs_triggered(); // 另存为按钮触发
     void on_actRestart_triggered(); // 重新开始当前游戏
+    void on_actOption_triggered();
 
 private:
     Ui::MainWindow *ui; // ui指针

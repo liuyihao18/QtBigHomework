@@ -77,11 +77,11 @@ void Scene::paintEvent(QPaintEvent *)
     double widthratio = (double)width() / 1902;
     double heightratio = (double)height () /1002;
     // 绘制背景
-    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage(gameState==Editing)));
+    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(backgroundImage));
     switch (gameState) {
     case Loading:
         // 绘制加载图像
-        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loader.getImage()));
+        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loaderImage.getImage()));
         break;
     case Gaming:
     case Editing:
@@ -152,8 +152,10 @@ void Scene::paintEvent(QPaintEvent *)
         }
         break;
     case Success:
+        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(successImage));
         break;
     case GameOver:
+        p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(gameOverImage));
         break;
     case Rank:
         // 绘制文字
@@ -273,6 +275,21 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
             }
         }
         mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
+        break;
+    case Success:
+    case GameOver:
+        if(event->button()==Qt::LeftButton){
+            if(QRect(455*widthratio,605*heightratio,265*widthratio,110*heightratio).contains(event->pos())){
+                gameState = Gaming;
+                gameRestart();
+            }
+            if(QRect(820*widthratio,605*heightratio,265*widthratio,110*heightratio).contains(event->pos())){
+                emit chooseSceneFile();
+            }
+            if(QRect(1180*widthratio,605*heightratio,265*widthratio,110*heightratio).contains(event->pos())){
+                emit returnHome();
+            }
+        }
         break;
     default:
         break;
@@ -499,7 +516,7 @@ void Scene::readRankFile()
         file.close();
         std::sort(rankinfos.begin(),rankinfos.end(),RankInfoCmp());
     }else {
-        QMessageBox::warning(this,tr("Sorry"),tr("找不到排名文件！"));
+        QMessageBox::warning(this,tr("Sorry"),tr("暂无排名！"));
     }
 }
 
@@ -507,13 +524,12 @@ void Scene::readRankFile()
 void Scene::writeRankFile()
 {
     QFile file(rankFile);
-    if(file.open(QIODevice::Append)){
-        QTextStream out(&file);
-        if(player){
-            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<" "<<QTime(0,0).addMSecs(clock()-gameTime).toString("hh:mm:ss")<<endl;
-        }
-        file.close();
+    file.open(QIODevice::Append);
+    QTextStream out(&file);
+    if(player){
+        out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<" "<<QTime(0,0).addMSecs(clock()-gameTime).toString("hh:mm:ss")<<endl;
     }
+    file.close();
 }
 
 // 更新场景事件，使用Updater类
@@ -787,16 +803,17 @@ void Scene::gameRestart()
 void Scene::gameSuccess()
 {
     writeRankFile();
-    QMessageBox::information(this,"Congratulation","恭喜过关！");
-    gameRestart();
+    gamePassTime = clock();
+    gameState = Success;
     emit clearKeyPressed();
 }
 
 // SLOT，游戏结束
 void Scene::gameOver()
 {
-    QMessageBox::information(this,"Sorry","游戏结束！");
-    gameStart();
+
+    gamePassTime = clock();
+    gameState = GameOver;
     emit clearKeyPressed();
 }
 
@@ -807,8 +824,11 @@ void Scene::loadOver()
 
 // 构造函数，初始化
 Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902),m_height(1002),map_unit(50),placeAcc(0.5*map_unit),
-    fps(16),loading(true), gameTime(0),background(":/images/background/images/background/background.gif"),
-    loader(":/images/background/images/background/loader.gif",true),
+    fps(16),loading(true), gameTime(0),gamePassTime(0),
+    backgroundImage(":/images/background/images/background/background.png"),
+    successImage(":/images/background/images/background/success.png"),
+    gameOverImage(":/images/background/images/background/gameOver.png"),
+    loaderImage(":/images/background/images/background/loader.gif",true),
     player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
     rankFile("./rank/rank.rank"),
@@ -846,16 +866,14 @@ int Scene::getGameState() const
 void Scene::setGameState(int gameState)
 {
     this->gameState = gameState;
+    isShowChooseWidget = false;
+    isMovingThing = false;
     switch (gameState) {
     case Loading:
         initialize();
-        isShowChooseWidget = false;
-        isMovingThing = false;
         break;
     case Gaming:
         gameStart();
-        isShowChooseWidget = false;
-        isMovingThing = false;
         break;
     case Editing:
         gameReload();

@@ -21,6 +21,7 @@ void ThirdMonster::updatePos(int judge_unit)
     srand(time(nullptr)+m_num);
     direction = rand()%8;
     move_speed = originMoveSpeed-75+rand()%150;
+    launchInteval = 1500+rand()%1000;
     switch (direction) {
     case Up:
         tempPos.moveTo(x(),y()-judge_unit);

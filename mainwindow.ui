@@ -97,7 +97,6 @@
    <addaction name="actSaveAs"/>
    <addaction name="actEdit"/>
    <addaction name="actRestart"/>
-   <addaction name="actOption"/>
    <addaction name="actScreenShot"/>
   </widget>
   <widget class="QToolBar" name="sceneWidgets">
@@ -146,6 +145,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actOption"/>
+   <addaction name="actMuted"/>
    <addaction name="actMinimize"/>
    <addaction name="actFullScreen"/>
    <addaction name="actExit"/>
@@ -619,6 +620,22 @@
    </property>
    <property name="toolTip">
     <string>回到开始界面</string>
+   </property>
+  </action>
+  <action name="actMuted">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icon/muted.png</normaloff>
+     <normalon>:/icons/icon/music.png</normalon>:/icons/icon/muted.png</iconset>
+   </property>
+   <property name="text">
+    <string>静音</string>
+   </property>
+   <property name="toolTip">
+    <string>静音</string>
    </property>
   </action>
  </widget>

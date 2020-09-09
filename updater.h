@@ -29,6 +29,8 @@ signals:
     void gameOver(); // 游戏结束信号
     void playJumpMusic(); // 播放跳跃音乐
     void playLaunchMusic(); // 播放发射子弹音乐
+    void playSuccessMusic(); // 播放过关音乐
+    void playGameOverMusic(); // 播放游戏结束音乐
 };
 
 #endif // UPDATER_H

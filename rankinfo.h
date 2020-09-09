@@ -18,8 +18,8 @@ struct RankInfoCmp{
     bool operator()(const RankInfo& rankinfo1, const RankInfo& rankinfo2){
         int point1 = rankinfo1.point.toInt();
         int point2 = rankinfo2.point.toInt();
-        int passTime1 = QTime::fromString(rankinfo1.passTime,"hh:mm:ss").minute()*60+QTime::fromString(rankinfo1.passTime,"mm:ss").second();
-        int passTime2 = QTime::fromString(rankinfo2.passTime,"hh:mm:ss").minute()*60+QTime::fromString(rankinfo2.passTime,"mm:ss").second();
+        int passTime1 = QTime::fromString(rankinfo1.passTime,"hh:mm:ss").hour()*3600 + QTime::fromString(rankinfo1.passTime,"hh:mm:ss").minute()*60+QTime::fromString(rankinfo1.passTime,"hh:mm:ss").second();
+        int passTime2 = QTime::fromString(rankinfo2.passTime,"hh:mm:ss").hour()*3600 + QTime::fromString(rankinfo2.passTime,"hh:mm:ss").minute()*60+QTime::fromString(rankinfo2.passTime,"hh:mm:ss").second();
         return !(point1<point2||(point1==point2&&passTime1>passTime2));
     }
 };

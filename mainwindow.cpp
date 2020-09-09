@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     timer.setInterval(fps); // 设定帧率为16ms
     timer.start(); // 开始定时器
     stateTimer.setInterval(1000); // 提示时间1s
-//    loaderTimer.setInterval(3750); // 加载时间5s
+    //    loaderTimer.setInterval(3750); // 加载时间5s
     loaderTimer.setInterval(100);
     makeConnection(); // 建立连接
     showFullScreen(); // 全屏显示
@@ -30,6 +30,10 @@ MainWindow::~MainWindow()
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     pressedKeys.insert(event->key());
+    // 刷新
+    if(event->key()==Qt::Key_F5){
+        on_actRestart_triggered();
+    }
     // 全屏显示
     if(event->key()==Qt::Key_F11){
         if(isFullScreen()){
@@ -43,6 +47,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         if(ui->actEdit->isChecked()){
             emit chooseSceneWidget(false,"");
         }
+    }
+    if(event->key()==Qt::Key_Space&&(ui->scene->getGameState()==Success||ui->scene->getGameState()==GameOver)){
+        ui->scene->setGameState(Gaming);
+        emit gameRestart();
     }
     QMainWindow::keyPressEvent(event);
 }
@@ -74,8 +82,8 @@ void MainWindow::triggerSceneWidgets(QAction* action)
 void MainWindow::clearChooseSceneWidget()
 {
     QVector<QAction*> actions = {ui->srcPlayer, ui->srcRock,ui->srcFloorGrass, ui->srcSpring,
-                                ui->srcFlyingBrick, ui->srcDestructibleBrick,ui->srcActiveTrap,
-                                ui->srcPassiveTrap,ui->srcArrowTerrain, ui->srcFirstMonster,
+                                 ui->srcFlyingBrick, ui->srcDestructibleBrick,ui->srcActiveTrap,
+                                 ui->srcPassiveTrap,ui->srcArrowTerrain, ui->srcFirstMonster,
                                  ui->srcSecondMonster, ui->srcThirdMonster,ui->srcMushroomBuff,
                                  ui->srcFlowerBuff,ui->srcGold, ui->srcGoal};
     for(auto iter=actions.begin();iter!=actions.end();++iter){
@@ -191,7 +199,26 @@ void MainWindow::on_actSaveAs_triggered()
 // 重启游戏
 void MainWindow::on_actRestart_triggered()
 {
-    emit gameRestart();
+    if(ui->scene->getGameState()==Gaming||ui->scene->getGameState()==Success||ui->scene->getGameState()==GameOver){
+        ui->scene->setGameState(Gaming);
+        emit gameRestart();
+    }
+}
+
+// 音乐设置
+void MainWindow::on_actOption_triggered()
+{
+    MusicConfig musicConfig(mm.getBGMusicVolume(),mm.getJumpMusicVolume(),mm.getLaunchMusicVolume(),mm.getSuccessMusicVolume(),mm.getGameOverMusicVolume());
+    connect(musicConfig.getBGMusicSlider(),SIGNAL(valueChanged(int)),&mm,SLOT(setBGMusicVolume(int)));
+    connect(musicConfig.getJumpMusicSlider(),SIGNAL(valueChanged(int)),&mm,SLOT(setJumpMusicVolume(int)));
+    connect(musicConfig.getLaunchMusicSlider(),SIGNAL(valueChanged(int)),&mm,SLOT(setLaunchMusicVolume(int)));
+    connect(musicConfig.getSuccessMusicSlider(),SIGNAL(valueChanged(int)),&mm,SLOT(setSuccessMusicVolume(int)));
+    connect(musicConfig.getGameOverMusicSlider(),SIGNAL(valueChanged(int)),&mm,SLOT(setGameOverMusicVolume(int)));
+    connect(musicConfig.getJumpMusicButton(),SIGNAL(clicked()),&mm,SLOT(testJumpMusic()));
+    connect(musicConfig.getLaunchMusicButton(),SIGNAL(clicked()),&mm,SLOT(testLaunchMusic()));
+    connect(musicConfig.getSuccessMusicButton(),SIGNAL(clicked()),&mm,SLOT(testSuccessMusic()));
+    connect(musicConfig.getGameOverMusicButton(),SIGNAL(clicked()),&mm,SLOT(testGameOverMusic()));
+    musicConfig.exec();
 }
 
 // 建立连接
@@ -223,10 +250,12 @@ void MainWindow::makeConnection()
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
     // 游戏重新开始
     connect(this,SIGNAL(gameRestart()),ui->scene,SLOT(gameRestart()));
+    // 返回主页
+    connect(ui->scene,SIGNAL(returnHome()),this,SLOT(on_actHome_triggered()));
     // 音乐连接
     connect(ui->scene->getUpdater(),SIGNAL(playJumpMusic()),&mm,SLOT(playJumpMusic()));
     connect(ui->scene->getUpdater(),SIGNAL(playLaunchMusic()),&mm,SLOT(playLaunchMusic()));
+    connect(ui->scene->getUpdater(),SIGNAL(playSuccessMusic()),&mm,SLOT(playSuccessMusic()));
+    connect(ui->scene->getUpdater(),SIGNAL(playGameOverMusic()),&mm,SLOT(playGameOverMusic()));
+    connect(ui->actMuted,SIGNAL(triggered(bool)),&mm,SLOT(setMuted(bool)));
 }
-
-
-

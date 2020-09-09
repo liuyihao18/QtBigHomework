@@ -22,9 +22,11 @@ void Updater::updateAll(Player *player, const QSet<MoveThing *> &movethings, con
     }
     updateFlyingProps(flyingProps,ci);
     if(ci.isGameSuccess()){
+        emit playSuccessMusic();
         emit gameSuccess();
     }
     if(ci.isGmaeOver()){
+        emit playGameOverMusic();
         emit gameOver();
     }
 }

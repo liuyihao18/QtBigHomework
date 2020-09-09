@@ -24,10 +24,12 @@ protected:
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
     bool loading; // 加载中
-    clock_t gameTime; // 游戏时间
+    clock_t gameTime,gamePassTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
-    Gif background; // 背景图片
-    Gif loader; // 加载图片
+    QImage backgroundImage; // 背景图片
+    QImage successImage; // 过关图片
+    QImage gameOverImage; // 失败图片
+    Gif loaderImage; // 加载图片
     Player* player; // 玩家
     Goal* goal; // 终点
     QSet<BaseObject*> allWidgets; // 保存所有的指针
@@ -90,6 +92,7 @@ signals:
     void clearKeyPressed(); // 清楚键盘状态
     void chooseSceneFile(); // 选择场景文件
     void newSceneFile(); // 新建场景文件
+    void returnHome(); // 返回主页
 };
 
 #endif // MAP_H

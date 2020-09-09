@@ -18,15 +18,17 @@
         <file>icon/new.png</file>
         <file>icon/restart.png</file>
         <file>icon/home.png</file>
+        <file>icon/play.png</file>
+        <file>icon/muted.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>qss/main.qss</file>
     </qresource>
     <qresource prefix="/images/background">
-        <file>images/background/Kiminona.jpg</file>
-        <file>images/background/SAO.jpg</file>
-        <file>images/background/background.gif</file>
         <file>images/background/loader.gif</file>
+        <file>images/background/background.png</file>
+        <file>images/background/success.png</file>
+        <file>images/background/gameOver.png</file>
     </qresource>
     <qresource prefix="/images/player">
         <file>images/player/plane.png</file>
@@ -70,5 +72,7 @@
         <file>bgm/dango.mp3</file>
         <file>bgm/jump.mp3</file>
         <file>bgm/magicBullet.mp3</file>
+        <file>bgm/gameOver.mp3</file>
+        <file>bgm/success.mp3</file>
     </qresource>
 </RCC>

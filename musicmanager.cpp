@@ -1,6 +1,7 @@
 #include "musicmanager.h"
 
-MusicManager::MusicManager(QObject *parent): QObject(parent),bgMusicPlayList(this),bgMusic(this),jumpMusic(this),launchMusic(this)
+MusicManager::MusicManager(QObject *parent)
+    : QObject(parent),bgMusicPlayList(this),bgMusic(this),jumpMusic(this),launchMusic(this),muted(false)
 {
     bgMusicPlayList.addMedia(QUrl("qrc:/bgm/bgm/dango.mp3"));
     bgMusicPlayList.setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
@@ -8,15 +9,23 @@ MusicManager::MusicManager(QObject *parent): QObject(parent),bgMusicPlayList(thi
     bgMusic.setVolume(20);
 
     jumpMusic.setMedia(QUrl("qrc:/bgm/bgm/jump.mp3"));
-    jumpMusic.setVolume(20);
+    jumpMusic.setVolume(15);
 
     launchMusic.setMedia(QUrl("qrc:/bgm/bgm/magicBullet.mp3"));
-    jumpMusic.setVolume(20);
+    launchMusic.setVolume(20);
+
+    successMusic.setMedia(QUrl("qrc:/bgm/bgm/success.mp3"));
+    successMusic.setVolume(20);
+
+    gameOverMusic.setMedia(QUrl("qrc:/bgm/bgm/gameOver.mp3"));
+    gameOverMusic.setVolume(20);
 }
 
 void MusicManager::playBGMusic()
 {
-    bgMusic.play();
+    if(!muted){
+        bgMusic.play();
+    }
 }
 
 void MusicManager::stopBGMusic()
@@ -24,16 +33,23 @@ void MusicManager::stopBGMusic()
     bgMusic.stop();
 }
 
-void MusicManager::setBGMusic(int volume)
+void MusicManager::setBGMusicVolume(int volume)
 {
     if(volume>=0&&volume<=100){
         bgMusic.setVolume(volume);
     }
 }
 
+int MusicManager::getBGMusicVolume() const
+{
+    return bgMusic.volume();
+}
+
 void MusicManager::playJumpMusic()
 {
-    jumpMusic.play();
+    if(!muted){
+        jumpMusic.play();
+    }
 }
 
 void MusicManager::stopJumpMusic()
@@ -41,16 +57,28 @@ void MusicManager::stopJumpMusic()
     jumpMusic.stop();
 }
 
-void MusicManager::setJumpMusic(int volume)
+void MusicManager::setJumpMusicVolume(int volume)
 {
     if(volume>=0&&volume<=100){
         jumpMusic.setVolume(volume);
     }
 }
 
+void MusicManager::testJumpMusic()
+{
+    jumpMusic.play();
+}
+
+int MusicManager::getJumpMusicVolume() const
+{
+    return jumpMusic.volume();
+}
+
 void MusicManager::playLaunchMusic()
 {
-    launchMusic.play();
+    if(!muted){
+        launchMusic.play();
+    }
 }
 
 void MusicManager::stopLaunchMusic()
@@ -58,9 +86,89 @@ void MusicManager::stopLaunchMusic()
     launchMusic.stop();
 }
 
-void MusicManager::setLaunchMusic(int volume)
+void MusicManager::setLaunchMusicVolume(int volume)
 {
     if(volume>=0&&volume<=100){
         launchMusic.setVolume(volume);
+    }
+}
+
+void MusicManager::testLaunchMusic()
+{
+    launchMusic.play();
+}
+
+int MusicManager::getLaunchMusicVolume() const
+{
+    return launchMusic.volume();
+}
+
+void MusicManager::playSuccessMusic()
+{
+    if(!muted){
+        successMusic.play();
+    }
+}
+
+void MusicManager::stopSuccessMusic()
+{
+    successMusic.stop();
+}
+
+void MusicManager::setSuccessMusicVolume(int volume)
+{
+    if(volume>=0&&volume<=100){
+        successMusic.setVolume(volume);
+    }
+}
+
+void MusicManager::testSuccessMusic()
+{
+    successMusic.play();
+}
+
+int MusicManager::getSuccessMusicVolume() const
+{
+    return successMusic.volume();
+}
+
+void MusicManager::playGameOverMusic()
+{
+    if(!muted){
+        gameOverMusic.play();
+    }
+}
+
+void MusicManager::stopGameOverMusic()
+{
+    gameOverMusic.stop();
+}
+
+void MusicManager::setGameOverMusicVolume(int volume)
+{
+    if(volume>=0&&volume<=100){
+        gameOverMusic.setVolume(volume);
+    }
+}
+
+void MusicManager::testGameOverMusic()
+{
+    gameOverMusic.play();
+}
+
+int MusicManager::getGameOverMusicVolume() const
+{
+    return gameOverMusic.volume();
+}
+
+void MusicManager::setMuted(bool muted)
+{
+    this->muted = muted;
+    if(muted){
+        bgMusic.stop();
+        jumpMusic.stop();
+        launchMusic.stop();
+    }else{
+        bgMusic.play();
     }
 }

@@ -42,6 +42,7 @@ SOURCES += \
     monster.cpp \
     movething.cpp \
     mushroombuff.cpp \
+    musicconfig.cpp \
     musicmanager.cpp \
     passivetrap.cpp \
     player.cpp \
@@ -83,6 +84,7 @@ HEADERS += \
     monster.h \
     movething.h \
     mushroombuff.h \
+    musicconfig.h \
     musicmanager.h \
     passivetrap.h \
     player.h \
@@ -102,7 +104,8 @@ HEADERS += \
     values.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    musicconfig.ui
 
 TRANSLATIONS += \
     BigHomework_zh_CN.ts
