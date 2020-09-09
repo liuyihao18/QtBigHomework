@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += core gui\
+            multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -41,6 +42,7 @@ SOURCES += \
     monster.cpp \
     movething.cpp \
     mushroombuff.cpp \
+    musicmanager.cpp \
     passivetrap.cpp \
     player.cpp \
     rock.cpp \
@@ -81,6 +83,7 @@ HEADERS += \
     monster.h \
     movething.h \
     mushroombuff.h \
+    musicmanager.h \
     passivetrap.h \
     player.h \
     rankinfo.h \

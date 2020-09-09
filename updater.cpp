@@ -70,9 +70,7 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const
             player->cancelPos();
         }
 
-        // 键盘调整任务朝向
-        int new_x = player->x();
-        int new_y = player->y();
+        // 键盘调整人物朝向
         if((pressedKeys.contains(Qt::Key_W)||pressedKeys.contains(Qt::Key_Up))
                 &&(pressedKeys.contains(Qt::Key_D)||pressedKeys.contains(Qt::Key_Right))){
             player->setDirection(UpRight);
@@ -103,6 +101,8 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const
         }
 
         // 键盘控制左右运动
+        int new_x = player->x();
+        int new_y = player->y();
         if(pressedKeys.contains(Qt::Key_A)||pressedKeys.contains(Qt::Key_Left)){
             if(ci.isInScene(QRect(new_x-judge_unit,new_y,width,height))
                     &&!ci.isCollideTerrain(QRect(new_x-judge_unit,new_y,width,height))){
@@ -125,6 +125,7 @@ void Updater::updatePlayer(Player *player, QSet<FlyingProp*>& flyingProps, const
                 flyingProps.insert(flyingprop);
             }
         }
+
         // 处理事件
         ci.dealWithPlayerCollision();
         ci.dealWithActiveTrap();

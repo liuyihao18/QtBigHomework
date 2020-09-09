@@ -6,7 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), timer(this), stateTimer(this), loaderTimer(this), fps(0)
+    , ui(new Ui::MainWindow), timer(this), stateTimer(this), loaderTimer(this), fps(0), mm(this)
 {
     ui->setupUi(this);
     fps = ui->scene->getFPS();
@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     makeConnection(); // 建立连接
     showFullScreen(); // 全屏显示
     loaderTimer.start(); // 开始加载计时
+    mm.playBGMusic(); // 播放背景音乐
 }
 
 MainWindow::~MainWindow()

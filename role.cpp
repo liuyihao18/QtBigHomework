@@ -7,7 +7,7 @@ Role::Role(QObject* parent) :BaseObject(parent), HP(3)
 
 Role::Role(int x, int y, int width,int height, const QString &imgPath, int speed,int HP, int direction, QObject* parent)
     :BaseObject(x,y,width,height,imgPath, parent), MoveThing(x,y,width,height,direction,speed) ,
-      HP(HP), originHP(HP), invincible(false),invincibleTimer(this)
+      HP(HP), originHP(HP), invincible(false), invincibleTimer(this)
 {
     invincibleTimer.setInterval(1000);
     connect(&invincibleTimer,SIGNAL(timeout()),this,SLOT(invincibleOver()));

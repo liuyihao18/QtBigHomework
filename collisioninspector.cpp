@@ -42,7 +42,7 @@ void CollisionInspector::setHeight(int height)
 bool CollisionInspector::canAddInScene(const QRect &rect) const
 {
     // 判断在窗口内部
-    if(!QRect(0,0,width(),height()).contains(rect)){
+    if(!QRect(0,0,width()+1902,height()+1002).contains(rect)){
         return false;
     }
     // 判断不会和其他组件碰撞
@@ -137,7 +137,7 @@ bool CollisionInspector::isCollideValues(const QRect &rect) const
     return false;
 }
 
-// 返回是否和除了某个指定物体之外的东西碰撞
+// 返回飞行砖块是否可以以移动
 bool CollisionInspector::canFlyingBrickMove(BaseObject* object) const
 {
     FlyingBrick* flyingBrick = dynamic_cast<FlyingBrick*>(object);
@@ -327,6 +327,7 @@ bool CollisionInspector::dealWithActiveTrap() const
 bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp) const
 {
     bool dealt = false;
+    // 玩家发射的子弹
     if(dynamic_cast<MagicBullet*>(flyingProp)){
         for(auto iter = sceneinfo.monsters->begin();iter!=sceneinfo.monsters->end();++iter){
             if((*iter)->isShow()){
@@ -340,6 +341,7 @@ bool CollisionInspector::dealWithFlyingProp(FlyingProp* flyingProp) const
             }
         }
     }
+    // 其他怪物发射的子弹
     else if(*sceneinfo.player&&(dynamic_cast<Arrow*>(flyingProp)||dynamic_cast<FireBall*>(flyingProp))){
         if((*sceneinfo.player)->getRect().intersects(flyingProp->getRect())){
             (*sceneinfo.player)->reduceHP(flyingProp->getHPReduce());

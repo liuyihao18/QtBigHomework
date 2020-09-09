@@ -74,10 +74,13 @@ void Scene::paintEvent(QPaintEvent *)
     QPainter p(this);
     QFont font("华文新魏",32,QFont::Bold,false);
     p.setFont(font);
+    double widthratio = (double)width() / 1902;
+    double heightratio = (double)height () /1002;
     // 绘制背景
     p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage(gameState==Editing)));
     switch (gameState) {
     case Loading:
+        // 绘制加载图像
         p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loader.getImage()));
         break;
     case Gaming:
@@ -127,10 +130,11 @@ void Scene::paintEvent(QPaintEvent *)
             }
         }
         // 绘制临时指针，当且仅当存在并且需要显示时
-        if(temp && isShowChooseWidget){
+        if(gameState==Editing && temp && isShowChooseWidget){
             p.drawPixmap(temp->getRect(),QPixmap::fromImage(temp->getImage()));
         }
         if(gameState==Gaming){
+            p.scale(widthratio,heightratio);
             // 绘制文字
             if(player){
                 // 绘制人物生命
@@ -152,17 +156,19 @@ void Scene::paintEvent(QPaintEvent *)
     case GameOver:
         break;
     case Rank:
+        // 绘制文字
+        p.scale(widthratio,heightratio);
         font.setPointSize(20);
         p.setFont(font);
-        p.drawText(QRect(width()/2-300,250-60,200,60),"日期");
-        p.drawText(QRect(width()/2-100,250-60,150,60),"时间");
-        p.drawText(QRect(width()/2+50,250-60,50,60),"分数");
-        p.drawText(QRect(width()/2+100,250-60,100,60),"通关时间");
+        p.drawText(QRect(650,250-60,200,60),"日期");
+        p.drawText(QRect(850,250-60,150,60),"时间");
+        p.drawText(QRect(1000,250-60,50,60),"分数");
+        p.drawText(QRect(1050,250-60,100,60),"通关时间");
         for(int i = 0;i<(10>rankinfos.size()?rankinfos.size():10);i++){
-            p.drawText(QRect(width()/2-300,250+60*i,200,60),rankinfos[i].date);
-            p.drawText(QRect(width()/2-100,250+60*i,150,60),rankinfos[i].time);
-            p.drawText(QRect(width()/2+50,250+60*i,50,60),rankinfos[i].point);
-            p.drawText(QRect(width()/2+100,250+60*i,100,60),rankinfos[i].passTime);
+            p.drawText(QRect(650,250+60*i,200,60),rankinfos[i].date);
+            p.drawText(QRect(850,250+60*i,150,60),rankinfos[i].time);
+            p.drawText(QRect(1000,250+60*i,50,60),rankinfos[i].point);
+            p.drawText(QRect(1050,250+60*i,100,60),rankinfos[i].passTime);
         }
         break;
     default:
@@ -229,17 +235,19 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
     if(loading){
         return;
     }
+    double widthratio = (double)width() / 1902;
+    double heightratio = (double)height () /1002;
     qDebug() << event->pos();
     switch(gameState){
     case Loading:
         if(event->button()==Qt::LeftButton){
-            if(QRect(888*width()/1902,510*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+            if(QRect(888*widthratio,510*heightratio,230*widthratio,40*heightratio).contains(event->pos())){
                 emit chooseSceneFile();
             }
-            if(QRect(888*width()/1902,580*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+            if(QRect(888*widthratio,580*heightratio,230*widthratio,40*heightratio).contains(event->pos())){
                 emit newSceneFile();
             }
-            if(QRect(888*width()/1902,650*height()/1002,230*width()/1902,40*height()/1002).contains(event->pos())){
+            if(QRect(888*widthratio,650*heightratio,230*widthratio,40*heightratio).contains(event->pos())){
                 gameState = Rank;
                 readRankFile();
             }
@@ -287,7 +295,7 @@ void Scene::addSceneWidget(int x, int y)
     if (!temp){
         return;
     }
-
+    // 放置精度为地图单位的一半
     temp->moveRect(temp->x()/placeAcc*placeAcc,(temp->y()+placeAcc/2)/placeAcc*placeAcc);
     // 如果这个释放的位置没有东西，则加入，并且再次新建，保证创建的连续性
     if(ci.canAddInScene(temp->getRect())){

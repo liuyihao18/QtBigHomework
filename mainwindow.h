@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "scenestate.h"
+#include "musicmanager.h"
 #include <QMainWindow>
 #include <QTimer>
 #include <QSet>
@@ -56,6 +57,7 @@ private:
     QSet<int> pressedKeys; // 键盘按下的按键
     int fps; // 帧率
     QString sceneFileName; // 打开的场景文件
+    MusicManager mm; // 播放音乐
     void makeConnection(); // 建立连接
 };
 #endif // MAINWINDOW_H

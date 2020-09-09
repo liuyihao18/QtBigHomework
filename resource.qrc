@@ -66,4 +66,7 @@
         <file>images/flyingprop/fireball.png</file>
         <file>images/flyingprop/magicBullet.png</file>
     </qresource>
+    <qresource prefix="/bgm">
+        <file>bgm/dango.mp3</file>
+    </qresource>
 </RCC>
