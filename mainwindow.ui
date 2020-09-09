@@ -99,8 +99,6 @@
    <addaction name="actRestart"/>
    <addaction name="actOption"/>
    <addaction name="actScreenShot"/>
-   <addaction name="actMinimize"/>
-   <addaction name="actExit"/>
   </widget>
   <widget class="QToolBar" name="sceneWidgets">
    <property name="enabled">
@@ -134,6 +132,22 @@
    <addaction name="srcFlowerBuff"/>
    <addaction name="srcGold"/>
    <addaction name="srcGoal"/>
+  </widget>
+  <widget class="QToolBar" name="windowOptions">
+   <property name="windowTitle">
+    <string>windowOptions</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actMinimize"/>
+   <addaction name="actExit"/>
   </widget>
   <action name="actExit">
    <property name="icon">

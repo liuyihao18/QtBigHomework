@@ -144,7 +144,7 @@ void Scene::paintEvent(QPaintEvent *)
         }
         // 绘制游戏时间
         if(gameState==Gaming){
-            p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
+            p.drawText(QRect(width()-200,10,200,50),QTime(0,0).addMSecs(clock()-gameTime).toString("mm:ss"));
         }
         break;
     case Success:
@@ -488,6 +488,9 @@ void Scene::readRankFile()
             }
         }
         file.close();
+        std::sort(rankinfos.begin(),rankinfos.end(),RankInfoCmp());
+    }else {
+        QMessageBox::warning(this,tr("Sorry"),tr("找不到排名文件！"));
     }
 }
 
@@ -498,7 +501,7 @@ void Scene::writeRankFile()
     if(file.open(QIODevice::Append)){
         QTextStream out(&file);
         if(player){
-            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<" "<<QString::number(clock()-gameTime)+"ms"<<endl;
+            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<" "<<player->getPoints()<<" "<<QTime(0,0).addMSecs(clock()-gameTime).toString("hh:mm:ss")<<endl;
         }
         file.close();
     }
@@ -595,12 +598,6 @@ void Scene::chooseSceneWidget(bool isChoose, const QString & className)
     }else{
         emit clearChooseSceneWidget();
     }
-}
-
-// 加载结束
-void Scene::loadOver()
-{
-    loading = false;
 }
 
 // 新建场景，调用初始化函数
@@ -782,7 +779,7 @@ void Scene::gameSuccess()
 {
     writeRankFile();
     QMessageBox::information(this,"Congratulation","恭喜过关！");
-    gameStart();
+    gameRestart();
     emit clearKeyPressed();
 }
 
@@ -792,6 +789,11 @@ void Scene::gameOver()
     QMessageBox::information(this,"Sorry","游戏结束！");
     gameStart();
     emit clearKeyPressed();
+}
+
+void Scene::loadOver()
+{
+    loading = false;
 }
 
 // 构造函数，初始化

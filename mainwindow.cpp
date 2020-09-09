@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
     timer.setInterval(fps); // 设定帧率为16ms
     timer.start(); // 开始定时器
     stateTimer.setInterval(1000); // 提示时间1s
-//    loaderTimer.setInterval(4750); // 加载时间5s
-    loaderTimer.setInterval(100);
+    loaderTimer.setInterval(3750); // 加载时间5s
+//    loaderTimer.setInterval(100);
     makeConnection(); // 建立连接
     showFullScreen(); // 全屏显示
     loaderTimer.start(); // 开始加载计时

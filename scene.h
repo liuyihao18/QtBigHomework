@@ -23,7 +23,7 @@ private:
     int gameState; // 游戏状态
     int m_width, m_height, map_unit, placeAcc; // 场景的长宽，地图单位，放置精度
     int fps; // 游戏帧率
-    bool loading;
+    bool loading; // 加载中
     clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
     Gif background; // 背景图片
@@ -66,7 +66,6 @@ protected:
 protected slots:
     void updateScene(const QSet<int>&); // 更新场景
     void chooseSceneWidget(bool, const QString&); // 选择的组件
-    void loadOver(); // 加载完成
     void newScene(); // 新建场景
     void loadScene(const QString& scenePath); // 加载场景
     void saveScene(const QString& scenePath); // 保存场景
@@ -75,6 +74,7 @@ protected slots:
     void gameRestart(); // 游戏重新开始
     void gameSuccess(); // 游戏通关
     void gameOver(); // 游戏结束
+    void loadOver(); // 加载结束
 
 
 public:
