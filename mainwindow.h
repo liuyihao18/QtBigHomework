@@ -35,7 +35,6 @@ signals:
     void newScene(); // 新建场景
     void loadScene(const QString&); // 发送加载的场景文件
     void saveScene(const QString&); // 发送保存的场景文件
-    void edit(bool); // 发送是否处于编辑状态
     void chooseSceneWidget(bool, const QString&); // 发送选择的场景组件
     void gameRestart(); // 开始游戏
 

@@ -26,7 +26,6 @@ private:
     bool loading;
     clock_t gameTime; // 游戏时间
     QMap<QString,int> name2num; // className与数字的映射，方便switch
-    QString sceneFileName; // 场景文件的名字
     Gif background; // 背景图片
     Gif loader; // 加载图片
     Player* player; // 玩家
@@ -45,7 +44,7 @@ private:
     Updater updater; // 更新场景的类
     QString rankFile; // 排名文件
     QVector<RankInfo> rankinfos; // 排名
-    bool isEdit,isShowChooseWidget,isMovingThing; // 与编辑模式时的显示有关
+    bool isShowChooseWidget,isMovingThing; // 与编辑模式时的显示有关
     void makeName2Num(); // 构造映射
     void makeConnection(); // 构造连接
     void initialize(); // 初始化
@@ -66,7 +65,6 @@ protected:
 
 protected slots:
     void updateScene(const QSet<int>&); // 更新场景
-    void edit(bool); // 编辑模式
     void chooseSceneWidget(bool, const QString&); // 选择的组件
     void loadOver(); // 加载完成
     void newScene(); // 新建场景

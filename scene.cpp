@@ -75,12 +75,13 @@ void Scene::paintEvent(QPaintEvent *)
     QFont font("华文新魏",32,QFont::Bold,false);
     p.setFont(font);
     // 绘制背景
-    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage(isEdit)));
+    p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(background.getImage(gameState==Editing)));
     switch (gameState) {
     case Loading:
         p.drawPixmap(QRect(0,0,width(),height()),QPixmap::fromImage(loader.getImage()));
         break;
     case Gaming:
+    case Editing:
         // 绘制终点
         if(goal&&goal->isShow()){
             p.drawPixmap(goal->getRect(),QPixmap::fromImage(goal->getImage()));
@@ -142,7 +143,7 @@ void Scene::paintEvent(QPaintEvent *)
             p.drawText(QRect(300,10,200,50),QString("???"));
         }
         // 绘制游戏时间
-        if(!isEdit){
+        if(gameState==Gaming){
             p.drawText(QRect(width()-200,10,200,50),QString::number(clock()-gameTime)+"ms");
         }
         break;
@@ -176,9 +177,9 @@ void Scene::enterEvent(QEvent *event)
     case Loading:
         break;
     case Gaming:
-        if(isEdit){
+        break;
+    case Editing:
             isShowChooseWidget = true;
-        }
         break;
     default:
         break;
@@ -193,9 +194,9 @@ void Scene::leaveEvent(QEvent *event)
     case Loading:
         break;
     case Gaming:
-        if(isEdit){
-            isShowChooseWidget = false;
-        }
+        break;
+    case Editing:
+        isShowChooseWidget = false;
         break;
     default:
         break;
@@ -210,10 +211,10 @@ void Scene::mouseMoveEvent(QMouseEvent *event)
     case Loading:
         break;
     case Gaming:
-        if(isEdit){
-            if(temp){
-                temp->moveRect(event->pos().x()-temp->width()/2,event->pos().y()-temp->height()/2);
-            }
+        break;
+    case Editing:
+        if(temp){
+            temp->moveRect(event->pos().x()-temp->width()/2,event->pos().y()-temp->height()/2);
         }
         break;
     default:
@@ -244,25 +245,25 @@ void Scene::mouseReleaseEvent(QMouseEvent *event)
         }
         break;
     case Gaming:
-        if(isEdit){
-            if(event->button()==Qt::RightButton){
-                if(temp){
-                    delete temp;
-                    temp = nullptr;
-                    emit clearChooseSceneWidget(); // 发出信号，通知主窗口取消组件工具栏的选择
-                } else {
-                    deleteSceneWidget(event->x(),event->y()); // 删除鼠标位置的部件
-                }
+        break;
+    case Editing:
+        if(event->button()==Qt::RightButton){
+            if(temp){
+                delete temp;
+                temp = nullptr;
+                emit clearChooseSceneWidget(); // 发出信号，通知主窗口取消组件工具栏的选择
+            } else {
+                deleteSceneWidget(event->x(),event->y()); // 删除鼠标位置的部件
             }
-            if(event->button()==Qt::LeftButton){
-                if(temp){
-                    addSceneWidget(event->x(),event->y()); // 将临时指针的内容放置在地图上
-                } else {
-                    moveSceneWidget(event->x(),event->y()); // 取出点击的物体
-                }
-            }
-            mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
         }
+        if(event->button()==Qt::LeftButton){
+            if(temp){
+                addSceneWidget(event->x(),event->y()); // 将临时指针的内容放置在地图上
+            } else {
+                moveSceneWidget(event->x(),event->y()); // 取出点击的物体
+            }
+        }
+        mouseMoveEvent(event); // 触发一次mouseMoveEvent事件，保证图形位置正确
         break;
     default:
         break;
@@ -507,51 +508,26 @@ void Scene::writeRankFile()
 void Scene::updateScene(const QSet<int>& pressedKeys)
 {
     if(gameState==Gaming){
+        updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
+    }
+    else if(gameState==Editing){
         // 鼠标是否显示
         if(temp){
             setCursor(Qt::BlankCursor);
         }else{
             setCursor(Qt::ArrowCursor);
         }
-        // 非编辑模式下，会移动的物体移动
-        if(!isEdit){
-            updater.updateAll(player,moveThings,launchers,flyingProps,ci,pressedKeys);
-        }
     }
     update();
-}
-
-// 编辑模式
-void Scene::edit(bool edit)
-{
-    // 接收主窗口传来的信号
-    isEdit = edit;
-    if(!isEdit){
-        // 如果编辑模式取消了，删除临时指针的内容
-        if(temp){
-            delete temp;
-            temp = nullptr;
-        }
-        // 与编辑模式有关的变量初始化
-        isShowChooseWidget = false;
-        isMovingThing = false;
-        gameStart();
-    }else{
-        gameState = Gaming;
-        gameReload();
-    }
 }
 
 // 选择的场景组件，生成临时变量
 void Scene::chooseSceneWidget(bool isChoose, const QString & className)
 {
-    if(gameState!=Gaming){
+    if(gameState!=Editing){
         return;
     }
 
-    if(!isEdit){
-        return;
-    }
     // 如果是选中触发，则删除原来的临时指针，创建新的临时指针，否则直接删除临时指针
     delete temp;
     temp = nullptr;
@@ -630,14 +606,12 @@ void Scene::loadOver()
 // 新建场景，调用初始化函数
 void Scene::newScene()
 {
-    sceneFileName = "";
     initialize();
 }
 
 // 加载场景
 void Scene::loadScene(const QString &scenePath)
 {
-    gameState = Gaming;
     initialize(); // 先进行初始化
     //    qDebug()<<"open";
     QFile file(scenePath);
@@ -731,15 +705,11 @@ void Scene::loadScene(const QString &scenePath)
         }
     }
     file.close();
-    if(!isEdit){
-        gameStart();
-    }
 }
 
 // 保存场景
 void Scene::saveScene(const QString &scenePath)
 {
-    sceneFileName = scenePath;
     //    qDebug() << "save";
     QFile file(scenePath);
     file.open(QIODevice::WriteOnly);
@@ -758,6 +728,12 @@ void Scene::gameReload()
     // 人物初始化
     if(player){
         player->initialize();
+    }
+
+    //删除临时指针
+    if(temp){
+        delete temp;
+        temp = nullptr;
     }
 
     // 移动物体初始化
@@ -780,7 +756,6 @@ void Scene::gameReload()
 // 游戏开始
 void Scene::gameStart()
 {
-    gameState = Gaming;
     gameReload();
     gameTime = clock();
     // 小提示
@@ -797,7 +772,7 @@ void Scene::gameStart()
 // 游戏重新开始
 void Scene::gameRestart()
 {
-    if(!isEdit){
+    if(gameState==Gaming){
         gameStart();
     }
 }
@@ -826,7 +801,7 @@ Scene::Scene(QWidget *parent) : QWidget(parent),gameState(Loading),m_width(1902)
     player(nullptr),goal(nullptr), temp(nullptr),
     ci(SceneInfo(m_width,m_height,&player,&goal,&allWidgets,&terrains,&traps,&monsters,&buffs,&values,&flyingProps)), updater(fps, this),
     rankFile("./rank/rank.rank"),
-    isEdit(false), isShowChooseWidget(false),isMovingThing(false)
+    isShowChooseWidget(false),isMovingThing(false)
 {
     resize(m_width,m_height); // 重构大小
     setMouseTracking(true); // 鼠标追踪
@@ -863,9 +838,16 @@ void Scene::setGameState(int gameState)
     switch (gameState) {
     case Loading:
         initialize();
-        isEdit = false;
         isShowChooseWidget = false;
         isMovingThing = false;
+        break;
+    case Gaming:
+        gameStart();
+        isShowChooseWidget = false;
+        isMovingThing = false;
+        break;
+    case Editing:
+        gameReload();
         break;
     default:
         break;

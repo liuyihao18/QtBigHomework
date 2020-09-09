@@ -4,9 +4,10 @@
 enum SceneState {
     Loading = 0,
     Gaming = 1,
-    Success = 2,
-    GameOver = 3,
-    Rank = 4
+    Editing,
+    Success,
+    GameOver,
+    Rank
 };
 
 #endif // SCENESTATE_H

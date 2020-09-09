@@ -129,7 +129,11 @@ void MainWindow::on_actEdit_triggered(bool checked)
     // 进入编辑模式，向场景类发送进入编辑模式的信号
     clearChooseSceneWidget();
     ui->sceneWidgets->setEnabled(checked); // 场景组件是否可用
-    emit edit(checked);
+    if(checked){
+        ui->scene->setGameState(Editing);
+    }else{
+        ui->scene->setGameState(Gaming);
+    }
 }
 
 // 打开按钮
@@ -140,6 +144,11 @@ void MainWindow::on_actOpen_triggered()
     if(!openFile.isEmpty()){
         sceneFileName = openFile; // 保存打开的文件名
         emit loadScene(sceneFileName); // 加载
+        if(ui->actEdit->isChecked()){
+            ui->scene->setGameState(Editing);
+        }else{
+            ui->scene->setGameState(Gaming);
+        }
         ui->stateLabel->setText("打开成功"); // 提示文字
     }else{
         ui->stateLabel->setText("打开失败"); // 提示文字
@@ -166,6 +175,9 @@ void MainWindow::on_actSaveAs_triggered()
     // 另存为按钮，向场景发出保存的信号
     QString saveFile = QFileDialog::getSaveFileName(this,tr("Save Scene"),"./scene/",tr("Scene Files(*.scene)"));
     if(!saveFile.isEmpty()){
+        if(sceneFileName.isEmpty()){
+            on_actNew_triggered();
+        }
         sceneFileName = saveFile; // 另存为会改变打开的文件名
         emit saveScene(sceneFileName);
         ui->stateLabel->setText("保存成功");
@@ -191,8 +203,6 @@ void MainWindow::makeConnection()
     connect(&timer,SIGNAL(timeout()),this,SLOT(timeout()));
     // 主窗口发出携带键盘信息的信号给地图，使地图更新画面
     connect(this,SIGNAL(updateScene(const QSet<int>&)),ui->scene,SLOT(updateScene(const QSet<int>&)));
-    // 编辑模式禁止移动
-    connect(this,SIGNAL(edit(bool)),ui->scene,SLOT(edit(bool)));
     // sceneWidgets与槽函数连接
     connect(ui->sceneWidgets,SIGNAL(actionTriggered(QAction*)),this,SLOT(triggerSceneWidgets(QAction*)));
     connect(this,SIGNAL(chooseSceneWidget(bool, const QString&)),ui->scene,SLOT(chooseSceneWidget(bool, const QString&)));
@@ -208,7 +218,6 @@ void MainWindow::makeConnection()
     connect(this,SIGNAL(saveScene(const QString&)),ui->scene,SLOT(saveScene(const QString&)));
     // 状态栏与编辑模式清空状态栏显示
     connect(&stateTimer,SIGNAL(timeout()),this,SLOT(clearStateLabel()));
-    connect(this,SIGNAL(edit(bool)),this,SLOT(clearStateLabel()));
     // 游戏过关或者结束清楚键盘状态
     connect(ui->scene,SIGNAL(clearKeyPressed()),this,SLOT(clearKeyPressed()));
     // 游戏重新开始
