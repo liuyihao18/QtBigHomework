@@ -1,6 +1,6 @@
 #include "gif.h"
 
-Gif::Gif(const QString &imgPath,bool once) :gifImg(imgPath),frameNum(0),frameCount(gifImg.frameCount()),once(once)
+Gif::Gif(const QString &imgPath,bool once) :_gifImg(imgPath),_frameNum(0),_frameCount(_gifImg.frameCount()),_once(once)
 {
 
 }
@@ -8,21 +8,21 @@ Gif::Gif(const QString &imgPath,bool once) :gifImg(imgPath),frameNum(0),frameCou
 const QImage& Gif::getImage(bool paused, bool returnOrigin)
 {
     if(returnOrigin){
-        frameNum = 0;
-        gifImg.jumpToFrame(frameNum);
+        _frameNum = 0;
+        _gifImg.jumpToFrame(_frameNum);
     }
     else{if(!paused){
-            gifImg.jumpToFrame(frameNum++);
-            if(frameNum>=frameCount){
-                if(!once){
-                    frameNum = 0;
+            _gifImg.jumpToFrame(_frameNum++);
+            if(_frameNum>=_frameCount){
+                if(!_once){
+                    _frameNum = 0;
                 }else{
-                    frameNum--;
+                    _frameNum--;
                 }
             }
         }
     }
-    currentImg = gifImg.currentImage();
-    return currentImg;
+    _currentImg = _gifImg.currentImage();
+    return _currentImg;
 }
 

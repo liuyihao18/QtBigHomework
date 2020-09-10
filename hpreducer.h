@@ -2,14 +2,15 @@
 #define HPREDUCER_H
 
 
-class HPReducer
-{
+class HPReducer {
 public:
-    HPReducer(int HPReduce = 1);
+
+    HPReducer(int _HPReduce = 1);
     int getHPReduce() const;
 
 protected:
-    int HPReduce;
+
+    int _HPReduce;
 };
 
 #endif // HPREDUCER_H

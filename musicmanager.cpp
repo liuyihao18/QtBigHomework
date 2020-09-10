@@ -1,7 +1,8 @@
 #include "musicmanager.h"
 
 MusicManager::MusicManager(QObject *parent)
-    : QObject(parent),bgMusicPlayList(this),bgMusic(this),jumpMusic(this),launchMusic(this),muted(false)
+    : QObject(parent), bgMusicPlayList(this), bgMusic(this), jumpMusic(this),
+    launchMusic(this), muted(false)
 {
     bgMusicPlayList.addMedia(QUrl("qrc:/bgm/bgm/dango.mp3"));
     bgMusicPlayList.setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
@@ -23,7 +24,7 @@ MusicManager::MusicManager(QObject *parent)
 
 void MusicManager::playBGMusic()
 {
-    if(!muted){
+    if (!muted) {
         bgMusic.play();
     }
 }
@@ -35,7 +36,7 @@ void MusicManager::stopBGMusic()
 
 void MusicManager::setBGMusicVolume(int volume)
 {
-    if(volume>=0&&volume<=100){
+    if ((volume >= 0) && (volume <= 100)) {
         bgMusic.setVolume(volume);
     }
 }
@@ -47,7 +48,7 @@ int MusicManager::getBGMusicVolume() const
 
 void MusicManager::playJumpMusic()
 {
-    if(!muted){
+    if (!muted) {
         jumpMusic.play();
     }
 }
@@ -59,7 +60,7 @@ void MusicManager::stopJumpMusic()
 
 void MusicManager::setJumpMusicVolume(int volume)
 {
-    if(volume>=0&&volume<=100){
+    if ((volume >= 0) && (volume <= 100)) {
         jumpMusic.setVolume(volume);
     }
 }
@@ -76,7 +77,7 @@ int MusicManager::getJumpMusicVolume() const
 
 void MusicManager::playLaunchMusic()
 {
-    if(!muted){
+    if (!muted) {
         launchMusic.play();
     }
 }
@@ -88,7 +89,7 @@ void MusicManager::stopLaunchMusic()
 
 void MusicManager::setLaunchMusicVolume(int volume)
 {
-    if(volume>=0&&volume<=100){
+    if ((volume >= 0) && (volume <= 100)) {
         launchMusic.setVolume(volume);
     }
 }
@@ -105,7 +106,7 @@ int MusicManager::getLaunchMusicVolume() const
 
 void MusicManager::playSuccessMusic()
 {
-    if(!muted){
+    if (!muted) {
         successMusic.play();
     }
 }
@@ -117,7 +118,7 @@ void MusicManager::stopSuccessMusic()
 
 void MusicManager::setSuccessMusicVolume(int volume)
 {
-    if(volume>=0&&volume<=100){
+    if ((volume >= 0) && (volume <= 100)) {
         successMusic.setVolume(volume);
     }
 }
@@ -134,7 +135,7 @@ int MusicManager::getSuccessMusicVolume() const
 
 void MusicManager::playGameOverMusic()
 {
-    if(!muted){
+    if (!muted) {
         gameOverMusic.play();
     }
 }
@@ -146,7 +147,7 @@ void MusicManager::stopGameOverMusic()
 
 void MusicManager::setGameOverMusicVolume(int volume)
 {
-    if(volume>=0&&volume<=100){
+    if ((volume >= 0) && (volume <= 100)) {
         gameOverMusic.setVolume(volume);
     }
 }
@@ -164,11 +165,12 @@ int MusicManager::getGameOverMusicVolume() const
 void MusicManager::setMuted(bool muted)
 {
     this->muted = muted;
-    if(muted){
+
+    if (muted) {
         bgMusic.stop();
         jumpMusic.stop();
         launchMusic.stop();
-    }else{
+    } else {
         bgMusic.play();
     }
 }

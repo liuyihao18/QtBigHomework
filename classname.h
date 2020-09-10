@@ -3,25 +3,25 @@
 
 // 定义命名空间的枚举
 namespace ClassName {
-    enum {
-        None = 0,
-        Player,
-        Rock,
-        FloorGrass,
-        Spring,
-        FlyingBrick,
-        DestructibleBrick,
-        ArrowTerrain,
-        ActiveTrap,
-        PassiveTrap,
-        FirstMonster,
-        SecondMonster,
-        ThirdMonster,
-        MushroomBuff,
-        FlowerBuff,
-        Gold,
-        Goal
-    };
+enum {
+    None = 0,
+    Player,
+    Rock,
+    FloorGrass,
+    Spring,
+    FlyingBrick,
+    DestructibleBrick,
+    ArrowTerrain,
+    ActiveTrap,
+    PassiveTrap,
+    FirstMonster,
+    SecondMonster,
+    ThirdMonster,
+    MushroomBuff,
+    FlowerBuff,
+    Gold,
+    Goal
+};
 }
 
 #endif // CLASSNAME_H

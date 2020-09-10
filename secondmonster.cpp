@@ -1,35 +1,39 @@
 #include "secondmonster.h"
 
-SecondMonster::SecondMonster(QObject* parent):Monster(parent)
-{
-
-}
+SecondMonster::SecondMonster(QObject *parent) : Monster(parent)
+{}
 
 SecondMonster::SecondMonster(int x, int y, int width, int height, QObject *parent)
-    :Monster(x,y,width,height,":/images/monster/images/monster/monster2.png",1,Up,1,parent),
-      reverse(false),upHeight(0),maxUpHeight(300)
-{
-
-}
+    : Monster(x,
+              y,
+              width,
+              height,
+              ":/images/monster/images/monster/monster2.png",
+              1,
+              Up,
+              1,
+              parent),
+    _reverse(false), _upHeight(0), _maxUpHeight(300)
+{}
 
 bool SecondMonster::isUpToMaxUpHeight() const
 {
-    return upHeight == maxUpHeight;
+    return _upHeight == _maxUpHeight;
 }
 
-void SecondMonster::updatePos(int judge_unit)
+void SecondMonster::updatePos(int judgeUnit)
 {
-    if(!reverse){
-        tempPos.moveTo(x(),y()-judge_unit);
-    }else{
-        tempPos.moveTo(x(),y()+judge_unit);
+    if (!_reverse) {
+        _tempPos.moveTo(x(), y() - judgeUnit);
+    } else {
+        _tempPos.moveTo(x(), y() + judgeUnit);
     }
-    upHeight++;
+    _upHeight++;
 }
 
 void SecondMonster::needToChangeMove()
 {
-    reverse = !reverse;
-    direction = reverse?Down:Up;
-    upHeight = 0;
+    _reverse = !_reverse;
+    directio_n = _reverse ? Down : Up;
+    _upHeight = 0;
 }

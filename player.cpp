@@ -2,18 +2,26 @@
 #include <QSet>
 #include <QDebug>
 
-Player::Player(QObject* parent) :Role(parent)
-{
+Player::Player(QObject *parent) : Role(parent)
+{}
 
-}
-
-Player::Player(int x, int y, int width,int height, QObject* parent)
-    :Role(x,y,width,height,":/images/player/images/player/player.png",400,3,Right,parent),Launcher(100),
-      points(0),downSpeed(400),originDownSpeed(downSpeed), upSpeed(400),originUpSpeed(upSpeed), jumpTime(400), fallDownHPReduce(1), canAttack(false), jumping(false),
-      jumpTimer(this),launchTimer(this)
+Player::Player(int x, int y, int width, int height, QObject *parent)
+    : Role(x,
+           y,
+           width,
+           height,
+           ":/images/player/images/player/player.png",
+           400,
+           3,
+           Right,
+           parent), Launcher(100),
+    points(0), downSpeed(400), originDownSpeed(downSpeed), upSpeed(400),
+    originUpSpeed(upSpeed), jumpTime(400), fallDownHPReduce(1), canAttack(false),
+    jumping(false),
+    jumpTimer(this), launchTimer(this)
 {
-    connect(&jumpTimer,SIGNAL(timeout()),this,SLOT(jumpOver()));
-    connect(&launchTimer,SIGNAL(timeout()),this,SLOT(launchOver()));
+    connect(&jumpTimer,   SIGNAL(timeout()), this, SLOT(jumpOver()));
+    connect(&launchTimer, SIGNAL(timeout()), this, SLOT(launchOver()));
 }
 
 int Player::getPoints() const
@@ -23,21 +31,21 @@ int Player::getPoints() const
 
 void Player::addPoins(int point)
 {
-    points+=point;
+    points += point;
 }
 
 void Player::reducePoints(int point)
 {
-    points-=point;
+    points -= point;
 }
 
-void Player::addBuff(const QString &buffName)
+void Player::addBuff(const QString& buffName)
 {
-    if(buffName==QString("MushroomBuff")){
+    if (buffName == QString("MushroomBuff")) {
         addHP(1);
         jumpTime = 450;
         addPoins(10);
-    }else if(buffName==QString("FlowerBuff")){
+    } else if (buffName == QString("FlowerBuff")) {
         addHP(1);
         jumpTime = 450;
         canAttack = true;
@@ -107,12 +115,13 @@ void Player::setUpSpeed(int upSpeed)
 
 void Player::jump(bool springJump)
 {
-    if(!jumping){
+    if (!jumping) {
         jumping = true;
-        if(!springJump){
+
+        if (!springJump) {
             jumpTimer.setInterval(jumpTime);
-        }else{
-            upSpeed = 2*originUpSpeed;
+        } else {
+            upSpeed = 2 * originUpSpeed;
             jumpTimer.setInterval(jumpTime);
         }
         jumpTimer.start();
@@ -126,15 +135,15 @@ bool Player::ifCanAttack() const
 
 int Player::getMoveSpeed() const
 {
-    return move_speed;
+    return _moveSpeed;
 }
 
 void Player::updatePos(int judge_unit)
 {
-    if(jumping){
-        tempPos.moveTo(x(),y()-judge_unit*upSpeed/move_speed);
-    }else{
-        tempPos.moveTo(x(),y()+judge_unit*downSpeed/move_speed);
+    if (jumping) {
+        _tempPos.moveTo(x(), y() - judge_unit * upSpeed / _moveSpeed);
+    } else {
+        _tempPos.moveTo(x(), y() + judge_unit * downSpeed / _moveSpeed);
     }
 }
 
@@ -146,55 +155,69 @@ void Player::initialize()
     jumping = false;
 }
 
-FlyingProp *Player::launchFlyingProp()
+FlyingProp * Player::launchFlyingProp()
 {
-    if(!canLaunch()||!canAttack||!isShow()){
+    if (!canLaunch() || !canAttack || !isShow()) {
         return nullptr;
     }
     launch();
-    launchTimer.setInterval(launchInteval);
+    launchTimer.setInterval(_launchInteval);
     launchTimer.start();
-    int flyingPropWidth = 0.4*width()*0.6666667;
-    int flyingPropHeight = 0.4*height();
+    int flyingPropWidth = 0.4 * width() * 0.6666667;
+    int flyingPropHeight = 0.4 * height();
     int posX = 0;
     int posY = 0;
-    switch(direction){
+
+    switch (directio_n) {
     case Up:
-        posX = x()+width()/2-flyingPropWidth/2;
-        posY = y()-flyingPropHeight;
+        posX = x() + width() / 2 - flyingPropWidth / 2;
+        posY = y() - flyingPropHeight;
         break;
+
     case UpRight:
-        posX = x()+width();
-        posY = y()-flyingPropHeight;
+        posX = x() + width();
+        posY = y() - flyingPropHeight;
         break;
+
     case Right:
-        posX = x()+width();
-        posY = y()+height()/2-flyingPropHeight/2;
+        posX = x() + width();
+        posY = y() + height() / 2 - flyingPropHeight / 2;
         break;
+
     case DownRight:
-        posX = x()+width();
-        posY = y()+height();
+        posX = x() + width();
+        posY = y() + height();
         break;
+
     case Down:
-        posX = x()+width()/2-flyingPropWidth/2;
-        posY = y()+height();
+        posX = x() + width() / 2 - flyingPropWidth / 2;
+        posY = y() + height();
         break;
+
     case DownLeft:
-        posX = x()-flyingPropWidth;
-        posY = y()+height();
+        posX = x() - flyingPropWidth;
+        posY = y() + height();
         break;
+
     case Left:
-        posX = x()-flyingPropWidth;
-        posY = y()+height()/2-flyingPropHeight/2;
+        posX = x() - flyingPropWidth;
+        posY = y() + height() / 2 - flyingPropHeight / 2;
         break;
+
     case UpLeft:
-        posX = x()-flyingPropWidth;
-        posY = y()-flyingPropHeight;
+        posX = x() - flyingPropWidth;
+        posY = y() - flyingPropHeight;
         break;
+
     default:
         break;
     }
-    return new MagicBullet(posX,posY,flyingPropWidth,flyingPropHeight,direction,this);
+    return new MagicBullet(posX,
+                           posY,
+                           flyingPropWidth,
+                           flyingPropHeight,
+                           directio_n,
+                           this);
 }
 
 void Player::jumpOver()
@@ -209,6 +232,3 @@ void Player::launchOver()
     ready();
     launchTimer.stop();
 }
-
-
-

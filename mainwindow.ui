@@ -215,6 +215,9 @@
    <property name="toolTip">
     <string>打开地图</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actSave">
    <property name="icon">
@@ -619,6 +622,9 @@
    </property>
    <property name="toolTip">
     <string>回到开始界面</string>
+   </property>
+   <property name="shortcut">
+    <string>Home</string>
    </property>
   </action>
   <action name="actMuted">

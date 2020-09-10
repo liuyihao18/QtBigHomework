@@ -4,18 +4,24 @@
 #include "terrain.h"
 
 // 可被破坏的岩石
-class DestructibleBrick : public Terrain
-{
+class DestructibleBrick : public Terrain {
     Q_OBJECT
+
 public:
-    DestructibleBrick(QObject* parent = nullptr);
-    DestructibleBrick(int x,int y, int width, int height,QObject* parent = nullptr);
-    int getPoints() const;
+
+    DestructibleBrick(QObject *parent = nullptr);
+    DestructibleBrick(int      x,
+                      int      y,
+                      int      width,
+                      int      height,
+                      QObject *parent = nullptr);
+    int  getPoints() const;
     void collide();
 
 protected:
-    int points;
-    int collisionCount;
+
+    int _points;
+    int _collisionCount;
 };
 
 #endif // DESTRUCTIBLEBRICK_H

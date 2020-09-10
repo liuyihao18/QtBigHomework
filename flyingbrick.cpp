@@ -1,53 +1,54 @@
 #include "flyingbrick.h"
 
-FlyingBrick::FlyingBrick(QObject* parent) :Terrain(parent)
-{
+FlyingBrick::FlyingBrick(QObject *parent) : Terrain(parent)
+{}
 
-}
-
-FlyingBrick::FlyingBrick(int x, int y, int width,int height, QObject *parent)
-    :Terrain(x,y, width, height,":/images/terrain/images/terrain/flyingBrick.png",parent),MoveThing(x,y,width,height,Right,200),reverse(false)
-{
-
-}
+FlyingBrick::FlyingBrick(int x, int y, int width, int height, QObject *parent)
+    : Terrain(x,
+              y,
+              width,
+              height,
+              ":/images/terrain/images/terrain/flyingBrick.png",
+              parent), MoveThing(x, y, width, height, Right, 200), _reverse(false)
+{}
 
 bool FlyingBrick::isReverse() const
 {
-    return reverse;
+    return _reverse;
 }
 
-void FlyingBrick::updatePos(int judge_unit)
+void FlyingBrick::updatePos(int judgeUnit)
 {
-    if(!reverse){
-        tempPos.moveTo(x()+judge_unit,y());
-    }else{
-        tempPos.moveTo(x()-judge_unit,y());
+    if (!_reverse) {
+        _tempPos.moveTo(x() + judgeUnit, y());
+    } else {
+        _tempPos.moveTo(x() - judgeUnit, y());
     }
 }
 
 void FlyingBrick::confirmPos()
 {
     MoveThing::confirmPos();
-    rect = tempPos;
+    _rect = _tempPos;
 }
 
 void FlyingBrick::cancelPos()
 {
     MoveThing::cancelPos();
-    tempPos = rect;
+    _tempPos = _rect;
 }
 
 void FlyingBrick::returnOriginPos()
 {
     MoveThing::returnOriginPos();
-    moveRect(originX(),originY());
+    moveRect(_originX, _originY);
 }
 
 void FlyingBrick::needToChangeMove()
 {
     MoveThing::needToChangeMove();
-    reverse = !reverse;
-    direction = reverse?Left:Right;
+    _reverse = !_reverse;
+    directio_n = _reverse ? Left : Right;
 }
 
 void FlyingBrick::initialize()

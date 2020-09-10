@@ -4,45 +4,48 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 
-class MusicManager: public QObject
-{
+class MusicManager : public QObject {
     Q_OBJECT
+
 public:
-    MusicManager(QObject* parent=nullptr);
+
+    MusicManager(QObject *parent = nullptr);
 
 public slots:
+
     void playBGMusic();
     void stopBGMusic();
     void setBGMusicVolume(int volume);
-    int getBGMusicVolume() const;
+    int  getBGMusicVolume() const;
 
     void playJumpMusic();
     void stopJumpMusic();
     void setJumpMusicVolume(int volume);
     void testJumpMusic();
-    int getJumpMusicVolume() const;
+    int  getJumpMusicVolume() const;
 
     void playLaunchMusic();
     void stopLaunchMusic();
     void setLaunchMusicVolume(int volume);
     void testLaunchMusic();
-    int getLaunchMusicVolume() const;
+    int  getLaunchMusicVolume() const;
 
     void playSuccessMusic();
     void stopSuccessMusic();
     void setSuccessMusicVolume(int volume);
     void testSuccessMusic();
-    int getSuccessMusicVolume() const;
+    int  getSuccessMusicVolume() const;
 
     void playGameOverMusic();
     void stopGameOverMusic();
     void setGameOverMusicVolume(int volume);
     void testGameOverMusic();
-    int getGameOverMusicVolume() const;
+    int  getGameOverMusicVolume() const;
 
     void setMuted(bool muted);
 
 protected:
+
     QMediaPlaylist bgMusicPlayList;
     QMediaPlayer bgMusic;
     QMediaPlayer jumpMusic;

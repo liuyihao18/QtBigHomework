@@ -3,7 +3,7 @@
 
 enum SceneState {
     Loading = 0,
-    Gaming = 1,
+    Gaming  = 1,
     Editing,
     Success,
     GameOver,

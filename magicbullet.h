@@ -3,12 +3,18 @@
 
 #include "flyingprop.h"
 
-class MagicBullet : public FlyingProp
-{
+class MagicBullet : public FlyingProp {
     Q_OBJECT
+
 public:
-    MagicBullet(QObject* parent=nullptr);
-    MagicBullet(int x,int y,int width,int height,int direction, QObject* parent=nullptr);
+
+    MagicBullet(QObject *parent = nullptr);
+    MagicBullet(int      x,
+                int      y,
+                int      width,
+                int      height,
+                int      directio_n,
+                QObject *parent = nullptr);
 };
 
 #endif // MAGICBULLET_H

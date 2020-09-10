@@ -3,12 +3,18 @@
 
 #include "flyingprop.h"
 
-class FireBall: public FlyingProp
-{
+class FireBall : public FlyingProp {
     Q_OBJECT
+
 public:
-    FireBall(QObject* parent = nullptr);
-    FireBall(int x,int y,int width,int height,int direction,QObject* parent = nullptr);
+
+    FireBall(QObject *parent = nullptr);
+    FireBall(int      x,
+             int      y,
+             int      width,
+             int      height,
+             int      directio_n,
+             QObject *parent = nullptr);
 };
 
 #endif // FIREBALL_H

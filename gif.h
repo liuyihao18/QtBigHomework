@@ -3,18 +3,21 @@
 
 #include <QMovie>
 
-class Gif
-{
+class Gif {
 public:
-    Gif(const QString& imgPath,bool once = false);
-    const QImage& getImage(bool paused = false,bool returnOrigin = false);
+
+    Gif(const QString& imgPath,
+        bool           _once = false);
+    const QImage& getImage(bool paused = false,
+                           bool returnOrigin = false);
 
 protected:
-    QMovie gifImg;
-    QImage currentImg;
-    int frameNum;
-    int frameCount;
-    bool once;
+
+    QMovie _gifImg;
+    QImage _currentImg;
+    int _frameNum;
+    int _frameCount;
+    bool _once;
 };
 
 #endif // GIF_H

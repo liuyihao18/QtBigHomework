@@ -1,11 +1,9 @@
 #include "hpreducer.h"
 
-HPReducer::HPReducer(int HPReduce):HPReduce(HPReduce)
-{
-
-}
+HPReducer::HPReducer(int HPReduce) : _HPReduce(HPReduce)
+{}
 
 int HPReducer::getHPReduce() const
 {
-    return HPReduce;
+    return _HPReduce;
 }

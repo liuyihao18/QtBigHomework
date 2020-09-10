@@ -1,71 +1,69 @@
 #include "movething.h"
 
 MoveThing::MoveThing()
-{
+{}
 
-}
-
-MoveThing::MoveThing(int x,int y, int width, int height, int direction, int moveSpeed)
-    :direction(direction),originDirection(direction), move_speed(moveSpeed),tempPos(x,y,width,height)
-{
-
-}
-
+MoveThing::MoveThing(int x,
+                     int y,
+                     int width,
+                     int height,
+                     int direction,
+                     int moveSpeed)
+    : directio_n(direction), _originDirection(direction), _moveSpeed(moveSpeed),
+    _tempPos(x, y, width, height)
+{}
 
 void MoveThing::initialize()
 {
-    direction = originDirection;
+    directio_n = _originDirection;
 }
 
-void MoveThing::returnOriginPos()
+void         MoveThing::returnOriginPos()
+{}
+
+void         MoveThing::updatePos(int)
+{}
+
+void         MoveThing::confirmPos()
+{}
+
+void         MoveThing::cancelPos()
+{}
+
+void         MoveThing::needToChangeMove()
+{}
+
+const QRect& MoveThing::getTempPos()
 {
-
-}
-
-void MoveThing::updatePos(int)
-{
-
-}
-
-void MoveThing::confirmPos()
-{
-
-}
-
-void MoveThing::cancelPos()
-{
-
-}
-
-void MoveThing::needToChangeMove()
-{
-
-}
-
-const QRect &MoveThing::getTempPos()
-{
-    return tempPos;
+    return _tempPos;
 }
 
 int MoveThing::getDirection() const
 {
-    return direction;
+    return directio_n;
+}
+
+void MoveThing::setDirection(int direction)
+{
+    this->directio_n = direction;
 }
 
 int MoveThing::getMoveSpeed() const
 {
-    switch (direction) {
+    switch (directio_n) {
     case Up:
     case Right:
     case Down:
     case Left:
-        return move_speed;
+        return _moveSpeed;
+
     case UpRight:
     case DownRight:
     case DownLeft:
     case UpLeft:
-        return move_speed/1.414;
+        return _moveSpeed / 1.414;
+
     default:
-        return move_speed;
+        return _moveSpeed;
     }
 }

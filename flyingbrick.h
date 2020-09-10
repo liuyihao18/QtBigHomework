@@ -6,14 +6,19 @@
 #include "direction.h"
 
 // 飞行砖块
-class FlyingBrick : public Terrain, public MoveThing
-{
+class FlyingBrick : public Terrain, public MoveThing {
     Q_OBJECT
+
 public:
-    FlyingBrick(QObject* parent = nullptr);
-    FlyingBrick(int x,int y,int width, int height, QObject* parent = nullptr);
+
+    FlyingBrick(QObject *parent = nullptr);
+    FlyingBrick(int      x,
+                int      y,
+                int      width,
+                int      height,
+                QObject *parent = nullptr);
     bool isReverse() const;
-    void updatePos(int judge_unit) override;
+    void updatePos(int judgeUnit) override;
     void confirmPos() override;
     void cancelPos() override;
     void returnOriginPos() override;
@@ -21,7 +26,8 @@ public:
     void initialize() override;
 
 protected:
-    bool reverse;
+
+    bool _reverse;
 };
 
 #endif // FLYINGBRICKS_H

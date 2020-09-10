@@ -1,28 +1,33 @@
 #include "destructiblebrick.h"
 
-DestructibleBrick::DestructibleBrick(QObject* parent) :Terrain(parent)
-{
+DestructibleBrick::DestructibleBrick(QObject *parent) : Terrain(parent)
+{}
 
-}
-
-DestructibleBrick::DestructibleBrick(int x, int y, int width,int height, QObject *parent)
-    :Terrain(x,y,width,height,":/images/terrain/images/terrain/destuctibleBrick.png",parent),points(5), collisionCount(0)
-{
-
-}
+DestructibleBrick::DestructibleBrick(int      x,
+                                     int      y,
+                                     int      width,
+                                     int      height,
+                                     QObject *parent)
+    : Terrain(x,
+              y,
+              width,
+              height,
+              ":/images/terrain/images/terrain/destuctibleBrick.png",
+              parent),
+    _points(5), _collisionCount(0)
+{}
 
 int DestructibleBrick::getPoints() const
 {
-    return points;
+    return _points;
 }
 
 void DestructibleBrick::collide()
 {
-    if(collisionCount==2){
-        collisionCount = 0;
+    if (_collisionCount == 2) {
+        _collisionCount = 0;
         hide();
-    }else{
-        collisionCount++;
+    } else {
+        _collisionCount++;
     }
 }
-

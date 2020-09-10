@@ -3,19 +3,19 @@
 
 #include "flyingprop.h"
 
-class Launcher
-{
+class Launcher {
 public:
-    Launcher(int launchInteval = 100);
+
+    Launcher(int _launchInteval = 100);
     virtual FlyingProp* launchFlyingProp() = 0;
-    bool canLaunch() const;
-    void launch();
-    void ready();
+    bool                canLaunch() const;
+    void                launch();
+    void                ready();
 
 protected:
-    int launchInteval;
-    bool launched;
 
+    int _launchInteval;
+    bool _launched;
 };
 
 #endif // LAUNCHER_H

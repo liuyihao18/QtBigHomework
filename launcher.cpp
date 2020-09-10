@@ -1,22 +1,20 @@
 #include "launcher.h"
 
-Launcher::Launcher(int launchInteval):launchInteval(launchInteval),launched(false)
-{
-
-}
+Launcher::Launcher(int launchInteval) : _launchInteval(launchInteval), _launched(
+        false)
+{}
 
 bool Launcher::canLaunch() const
 {
-    return !launched;
+    return !_launched;
 }
 
 void Launcher::launch()
 {
-    launched = true;
+    _launched = true;
 }
 
 void Launcher::ready()
 {
-    launched = false;
+    _launched = false;
 }
-
